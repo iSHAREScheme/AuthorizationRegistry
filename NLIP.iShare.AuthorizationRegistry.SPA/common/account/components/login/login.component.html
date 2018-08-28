@@ -1,0 +1,22 @@
+<h3>Login</h3>
+<form [formGroup]="form" (ngSubmit)="login()" style="display: inline-block">
+    <div class="form-control">
+        <input autofocus type="text" placeholder="username" formControlName="username">
+        <div class="error-message" *ngIf="form.get('username').hasError('required') && form.get('username').dirty">
+            Username is required.
+        </div>
+    </div>
+    <div class="form-control">
+        <input type="password" placeholder="password" formControlName="password">
+        <div class="error-message" *ngIf="form.get('password').hasError('required') && form.get('password').dirty">
+            Password is required.
+        </div>
+    </div>
+    <div [ngClass]="{'error-message': !!serverError}" *ngIf="!!serverError">
+        {{serverError}}
+    </div>
+    <button type="submit" class="btn btn-primary" ng-click="login()" [disabled]="form.pristine || form.dirty && !form.valid">login
+        <i class="fa fa-arrow-right custom-arrow-right" aria-hidden="true"></i>
+    </button>
+    <a id="forgotPassword" *ngIf="config.enableForgotPassword" class="pull-right" (click)="forgotPassword()">Forgot password?</a>
+</form>

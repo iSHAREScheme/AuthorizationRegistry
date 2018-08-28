@@ -1,0 +1,64 @@
+$timeframe-color: #f6ada9;
+$timeframe-item-width: 150px;
+$timeframe-item-height: 40px;
+
+:host {
+  .btn {
+    margin-top: 10px;
+
+    .fa {
+      margin-right: 10px;
+    }
+  }
+  #json-viewer {
+    border-bottom: 1px solid #f8f8f8;
+    border-top: 1px solid #f8f8f8;
+    padding: 20px;
+  }
+  h4 {
+    color: #61385f;
+    cursor: pointer;
+
+    .fa-history {
+      margin-right: 10px;
+    }
+
+    .fa-chevron-up,
+    .fa-chevron-down {
+      font-size: 10px;
+      margin-left: 5px;
+    }
+  }
+  .no-history {
+    margin: 20px 0;
+    .fa-history {
+      margin-right: 10px;
+    }
+  }
+  #history {
+    overflow: hidden;
+    position: relative;
+
+    #timeframe {
+      border-right: 4px solid $timeframe-color;
+      width: $timeframe-item-width / 2;
+      position: absolute;
+      bottom: 20px;
+      top: 0;
+    }
+
+    &.visible {
+      height: auto;
+      opacity: 1;
+      transition: all 1s ease-in;
+      padding-bottom: 30px;
+    }
+
+    &.hidden {
+      height: 0;
+      opacity: 0;
+      transition: all 1s ease-out;
+      padding-bottom: 0;
+    }
+  }
+}

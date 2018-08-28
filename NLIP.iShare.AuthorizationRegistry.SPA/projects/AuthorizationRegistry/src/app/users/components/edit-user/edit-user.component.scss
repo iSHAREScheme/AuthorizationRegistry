@@ -1,0 +1,49 @@
+:host {
+  .btn {
+    margin-top: 10px;
+    margin-right: 10px;
+    .fa {
+      margin-right: 10px;
+    }
+    
+  }
+  .wideButton {
+    width: 280px;
+  }
+  .role {
+    display: inline-block;
+    color: #aaa;
+    border: 1px solid #aaa;
+    background-color: #fbfbfb;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    padding: 0 10px;
+    height: 40px;
+    line-height: 40px;
+    font-size: 14px;
+    user-select: none;
+    transition: all 0.15s ease-out;
+    cursor: pointer;
+    &:hover {
+      background-color: #e5e5e5;
+      transition: all 0.15s ease-in;
+    }
+    i.fa {
+      margin-right: 10px;
+      font-size: 12px;
+    }
+    &.assigned {
+      background-color: #f6ada9;
+      color: #222;
+      border-color: #623760;
+      cursor: default;
+      font-weight: 700;
+      i.fa {
+        margin-right: 0;
+        margin-left: 10px;
+        font-size: 12px;
+        cursor: pointer;
+      }
+    }
+  }
+}

@@ -1,0 +1,114 @@
+table.app-table {
+  width: 100%;
+  font-size: 16px;
+  border-bottom: 1px solid #f8f8f8;
+  border-collapse: collapse;
+  thead {
+    tr {
+      th {
+        text-align: left;
+        padding: 10px 5px;
+        color: #61385f;
+        border-bottom: 1px solid #f8f8f8;
+        .btn-sort {
+          font-weight: 700;
+          font-size: 14px;
+          margin-left: 5px;
+          cursor: pointer;
+        }
+      }
+    }
+  }
+  tbody {
+    tr:hover .actions {
+      opacity: 1;
+      transition: 0.3s opacity ease-in;
+    }
+
+    .actions-cell {
+      width: 220px;
+      .actions {
+        padding: 0 10px;
+        text-align: right;
+        opacity: 0;
+        transition: 0.3s opacity ease-out;
+        i.fa {
+          width: 30px;
+          height: 30px;
+          text-align: center;
+          line-height: 30px;
+          color: #61385f;
+          background-color: transparent;
+          transition: 0.5s all;
+          &:hover {
+            color: #fff;
+            background-color: #61385f;
+            transition: 0.5s all;
+            cursor: pointer;
+          }
+        }
+      }
+    }
+
+    tr {
+      cursor: default;
+      &:hover {
+        & td {
+          background-color: #f8f8f8;
+        }
+      }
+      td {
+        padding: 5px 5px;
+      }
+    }
+  }
+}
+
+ul.ngx-pagination {
+  padding: 0;
+  margin: 20px 0;
+  text-align: right;
+  li {
+    height: 30px;
+    width: 30px;
+    line-height: 30px;
+    text-align: center;
+    &.current {
+      color: #fff;
+      background-color: #61385f;
+      border: 1px solid #61385f;
+      padding: 0;
+    }
+    &.pagination-previous {
+      a {
+        border: none;
+      }
+      &.disabled {
+        padding: 0;
+      }
+    }
+    &.pagination-next {
+      a {
+        border: none;
+      }
+      &.disabled {
+        padding: 0;
+      }
+    }
+    a {
+      padding: 0;
+      transition: 0.5s all;
+      color: #61385f;
+      border: 1px solid transparent;
+      &:hover {
+        border-color: #61385f;
+        background-color: #fff;
+        color: #61385f;
+        transition: 0.5s all;
+      }
+      &:focus {
+        outline: none;
+      }
+    }
+  }
+}

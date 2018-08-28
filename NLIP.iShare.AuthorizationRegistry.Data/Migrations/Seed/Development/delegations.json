@@ -1,0 +1,98 @@
+[
+  {
+    "Id": "0484FB70-E23D-47BC-9BF8-9F86F1AFC8F3",
+    "AuthorizationRegistryId": "AR.1234567890",
+    "PolicyIssuer": "EU.EORI.NL812972715",
+    "AccessSubject": "EU.EORI.NL000000001",
+    "Policy": "{\"delegationEvidence\":{\"notBefore\":1509633681,\"notOnOrAfter\":1509633741,\"policyIssuer\":\"EU.EORI.NL812972715\",\"target\":{\"accessSubject\":\"EU.EORI.NL000000001\"},\"policySets\":[{\"maxDelegationDepth\":2,\"target\":{\"environment\":{\"licenses\":[\"ISHARE.0001\",\"ISHARE.0003\"]}},\"policies\":[{\"target\":{\"resource\":{\"type\":\"GS1.CONTAINER\",\"identifiers\":[\"*\"],\"attributes\":[\"GS1.CONTAINER.ATTRIBUTE.ETA\",\"GS1.CONTAINER.ATTRIBUTE.WEIGHT\"]},\"actions\":[\"ISHARE.READ\",\"ISHARE.CREATE\"],\"environment\":{\"serviceProviders\":[\"EU.EORI.NL123412345\"]}},\"rules\":[{\"effect\":\"Permit\"},{\"effect\":\"Deny\",\"target\":{\"resource\":{\"attributes\":[\"GS1.CONTAINER.ATTRIBUTE.ETA\"]},\"actions\":[\"ISHARE.CREATE\"]}},{\"effect\":\"Deny\",\"target\":{\"resource\":{\"identifiers\":[\"GS1.CONTAINER.ID.00000000001\"]}}}]}]}]}}",
+    "CreatedById": "FBED39E2-6997-4E38-BC18-61FFF7627B00",
+    "UpdatedById": "FBED39E2-6997-4E38-BC18-61FFF7627B00",
+    "CreatedDate": "2018-06-04T08:00:00",
+    "UpdatedDate": "2018-06-04T08:00:00",
+    "Deleted": "false"
+  },
+  {
+    "Id": "6FD8E961-C2C5-47B0-A4D3-983A2021D233",
+    "AuthorizationRegistryId": "AR.2234567890",
+    "PolicyIssuer": "EU.EORI.NL820599669",
+    "AccessSubject": "EU.EORI.NL000000002",
+    "Policy": "{\"delegationEvidence\":{\"notBefore\":1509633681,\"notOnOrAfter\":1509633741,\"policyIssuer\":\"EU.EORI.NL820599669\",\"target\":{\"accessSubject\":\"EU.EORI.NL000000002\"},\"policySets\":[{\"maxDelegationDepth\":2,\"target\":{\"environment\":{\"licenses\":[\"ISHARE.0001\",\"ISHARE.0003\"]}},\"policies\":[{\"target\":{\"resource\":{\"type\":\"GS1.CONTAINER\",\"identifiers\":[\"*\"],\"attributes\":[\"GS1.CONTAINER.ATTRIBUTE.ETA\",\"GS1.CONTAINER.ATTRIBUTE.WEIGHT\"]},\"actions\":[\"ISHARE.READ\",\"ISHARE.CREATE\"],\"environment\":{\"serviceProviders\":[\"EU.EORI.NL123412345\"]}},\"rules\":[{\"effect\":\"Permit\"},{\"effect\":\"Deny\",\"target\":{\"resource\":{\"attributes\":[\"GS1.CONTAINER.ATTRIBUTE.ETA\"]},\"actions\":[\"ISHARE.CREATE\"]}},{\"effect\":\"Deny\",\"target\":{\"resource\":{\"identifiers\":[\"GS1.CONTAINER.ID.00000000001\"]}}}]}]}]}}",
+    "CreatedById": "FBED39E2-6997-4E38-BC18-61FFF7627B00",
+    "UpdatedById": "FBED39E2-6997-4E38-BC18-61FFF7627B00",
+    "CreatedDate": "2018-06-04T08:00:00",
+    "UpdatedDate": "2018-06-04T08:00:00",
+    "Deleted": "false"
+  },
+  {
+    "Id": "7ECDBB60-527E-48BD-807B-8F129B63935C",
+    "AuthorizationRegistryId": "AR.3234567890",
+    "PolicyIssuer": "EU.EORI.NL850169513",
+    "AccessSubject": "EU.EORI.NL000000003",
+    "Policy": "{\"delegationEvidence\":{\"notBefore\":1509633681,\"notOnOrAfter\":1509633741,\"policyIssuer\":\"EU.EORI.NL850169513\",\"target\":{\"accessSubject\":\"EU.EORI.NL000000003\"},\"policySets\":[{\"maxDelegationDepth\":2,\"target\":{\"environment\":{\"licenses\":[\"ISHARE.0001\",\"ISHARE.0003\"]}},\"policies\":[{\"target\":{\"resource\":{\"type\":\"GS1.CONTAINER\",\"identifiers\":[\"*\"],\"attributes\":[\"GS1.CONTAINER.ATTRIBUTE.ETA\",\"GS1.CONTAINER.ATTRIBUTE.WEIGHT\"]},\"actions\":[\"ISHARE.READ\",\"ISHARE.CREATE\"],\"environment\":{\"serviceProviders\":[\"EU.EORI.NL123412345\"]}},\"rules\":[{\"effect\":\"Permit\"},{\"effect\":\"Deny\",\"target\":{\"resource\":{\"attributes\":[\"GS1.CONTAINER.ATTRIBUTE.ETA\"]},\"actions\":[\"ISHARE.CREATE\"]}},{\"effect\":\"Deny\",\"target\":{\"resource\":{\"identifiers\":[\"GS1.CONTAINER.ID.00000000001\"]}}}]}]}]}}",
+    "CreatedById": "FBED39E2-6997-4E38-BC18-61FFF7627B00",
+    "UpdatedById": "FBED39E2-6997-4E38-BC18-61FFF7627B00",
+    "CreatedDate": "2018-06-04T08:00:00",
+    "UpdatedDate": "2018-06-04T08:00:00",
+    "Deleted": "false"
+  },
+  {
+    "Id": "518CB82F-6939-4142-AA46-3B8020D88F47",
+    "AuthorizationRegistryId": "AR.4234567890",
+    "PolicyIssuer": "EU.EORI.NL850169513",
+    "AccessSubject": "EU.EORI.NL000000001",
+    "Policy": "{\"delegationEvidence\":{\"notBefore\":1509633681,\"notOnOrAfter\":1509633741,\"policyIssuer\":\"EU.EORI.NL812972715\",\"target\":{\"accessSubject\":\"EU.EORI.NL000000001\"},\"policySets\":[{\"maxDelegationDepth\":2,\"target\":{\"environment\":{\"licenses\":[\"ISHARE.0001\",\"ISHARE.0003\"]}},\"policies\":[{\"target\":{\"resource\":{\"type\":\"GS1.CONTAINER\",\"identifiers\":[\"*\"],\"attributes\":[\"GS1.CONTAINER.ATTRIBUTE.ETA\",\"GS1.CONTAINER.ATTRIBUTE.WEIGHT\"]},\"actions\":[\"ISHARE.READ\",\"ISHARE.CREATE\"],\"environment\":{\"serviceProviders\":[\"EU.EORI.NL123412345\"]}},\"rules\":[{\"effect\":\"Permit\"},{\"effect\":\"Deny\",\"target\":{\"resource\":{\"attributes\":[\"GS1.CONTAINER.ATTRIBUTE.ETA\"]},\"actions\":[\"ISHARE.CREATE\"]}},{\"effect\":\"Deny\",\"target\":{\"resource\":{\"identifiers\":[\"GS1.CONTAINER.ID.00000000001\"]}}}]}]}]}}",
+    "CreatedById": "FBED39E2-6997-4E38-BC18-61FFF7627B00",
+    "UpdatedById": "FBED39E2-6997-4E38-BC18-61FFF7627B00",
+    "CreatedDate": "2018-06-04T08:00:00",
+    "UpdatedDate": "2018-06-04T08:00:00",
+    "Deleted": "false"
+  },
+  {
+    "Id": "5238C24B-3F57-4BAF-9A35-8908C12210D7",
+    "AuthorizationRegistryId": "AR.5234567890",
+    "PolicyIssuer": "EU.EORI.NL812972715",
+    "AccessSubject": "EU.EORI.NL000000002",
+    "Policy": "{\"delegationEvidence\":{\"notBefore\":1509633681,\"notOnOrAfter\":1509633741,\"policyIssuer\":\"EU.EORI.NL812972715\",\"target\":{\"accessSubject\":\"EU.EORI.NL000000002\"},\"policySets\":[{\"maxDelegationDepth\":2,\"target\":{\"environment\":{\"licenses\":[\"ISHARE.0001\",\"ISHARE.0003\"]}},\"policies\":[{\"target\":{\"resource\":{\"type\":\"GS1.CONTAINER\",\"identifiers\":[\"*\"],\"attributes\":[\"GS1.CONTAINER.ATTRIBUTE.ETA\",\"GS1.CONTAINER.ATTRIBUTE.WEIGHT\"]},\"actions\":[\"ISHARE.READ\",\"ISHARE.CREATE\"],\"environment\":{\"serviceProviders\":[\"EU.EORI.NL123412345\"]}},\"rules\":[{\"effect\":\"Permit\"},{\"effect\":\"Deny\",\"target\":{\"resource\":{\"attributes\":[\"GS1.CONTAINER.ATTRIBUTE.ETA\"]},\"actions\":[\"ISHARE.CREATE\"]}},{\"effect\":\"Deny\",\"target\":{\"resource\":{\"identifiers\":[\"GS1.CONTAINER.ID.00000000001\"]}}}]}]}]}}",
+    "CreatedById": "FBED39E2-6997-4E38-BC18-61FFF7627B00",
+    "UpdatedById": "FBED39E2-6997-4E38-BC18-61FFF7627B00",
+    "CreatedDate": "2018-06-04T08:00:00",
+    "UpdatedDate": "2018-06-04T08:00:00",
+    "Deleted": "false"
+  },
+  {
+    "Id": "A9BEF372-BA7B-4B51-8255-314BD415BFAA",
+    "AuthorizationRegistryId": "AR.6234567890",
+    "PolicyIssuer": "EU.EORI.NL820599669",
+    "AccessSubject": "EU.EORI.NL000000003",
+    "Policy": "{\"delegationEvidence\":{\"notBefore\":1509633681,\"notOnOrAfter\":1509633741,\"policyIssuer\":\"EU.EORI.NL820599669\",\"target\":{\"accessSubject\":\"EU.EORI.NL000000003\"},\"policySets\":[{\"maxDelegationDepth\":2,\"target\":{\"environment\":{\"licenses\":[\"ISHARE.0001\",\"ISHARE.0003\"]}},\"policies\":[{\"target\":{\"resource\":{\"type\":\"GS1.CONTAINER\",\"identifiers\":[\"*\"],\"attributes\":[\"GS1.CONTAINER.ATTRIBUTE.ETA\",\"GS1.CONTAINER.ATTRIBUTE.WEIGHT\"]},\"actions\":[\"ISHARE.READ\",\"ISHARE.CREATE\"],\"environment\":{\"serviceProviders\":[\"EU.EORI.NL123412345\"]}},\"rules\":[{\"effect\":\"Permit\"},{\"effect\":\"Deny\",\"target\":{\"resource\":{\"attributes\":[\"GS1.CONTAINER.ATTRIBUTE.ETA\"]},\"actions\":[\"ISHARE.CREATE\"]}},{\"effect\":\"Deny\",\"target\":{\"resource\":{\"identifiers\":[\"GS1.CONTAINER.ID.00000000001\"]}}}]}]}]}}",
+    "CreatedById": "FBED39E2-6997-4E38-BC18-61FFF7627B00",
+    "UpdatedById": "FBED39E2-6997-4E38-BC18-61FFF7627B00",
+    "CreatedDate": "2018-06-04T08:00:00",
+    "UpdatedDate": "2018-06-04T08:00:00",
+    "Deleted": "false"
+  },
+  {
+    "Id": "C10CD444-363B-4B49-8723-71A476514FB7",
+    "AuthorizationRegistryId": "AR.HAPPYFLOW1",
+    "PolicyIssuer": "EU.EORI.NL000000003",
+    "AccessSubject": "EU.EORI.NL000000001",
+    "Policy": "{\"delegationEvidence\":{\"notBefore\":1529574873,\"notOnOrAfter\":1539574873,\"policyIssuer\":\"EU.EORI.NL000000003\",\"target\":{\"accessSubject\":\"EU.EORI.NL000000001\"},\"policySets\":[{\"maxDelegationDepth\":5,\"target\":{\"environment\":{\"licenses\":[\"ISHARE.0001\"]}},\"policies\":[{\"target\":{\"resource\":{\"type\":\"CONTAINER.DATA\",\"identifiers\":[\"*\"],\"attributes\":[\"CONTAINER.DATA.ATTRIBUTE.ETA\"]},\"actions\":[\"ISHARE.READ\"]},\"rules\":[{\"effect\":\"Permit\"}]}]}]}}",
+    "CreatedById": "0D5C8E0A-1BDD-4D86-972D-94BF9B150AE4",
+    "UpdatedById": "0D5C8E0A-1BDD-4D86-972D-94BF9B150AE4",
+    "CreatedDate": "2018-07-02T08:00:00",
+    "UpdatedDate": "2018-07-02T08:00:00",
+    "Deleted": "false"
+  },
+  {
+    "Id": "BF7B8371-0A81-478F-BBA2-ACB25FD32320",
+    "AuthorizationRegistryId": "AR.HAPPYFLOW2",
+    "PolicyIssuer": "EU.EORI.NL000000003",
+    "AccessSubject": "EU.EORI.NL000000002",
+    "Policy": "{\"delegationEvidence\":{\"notBefore\":1529574873,\"notOnOrAfter\":1539574873,\"policyIssuer\":\"EU.EORI.NL000000003\",\"target\":{\"accessSubject\":\"EU.EORI.NL000000002\"},\"policySets\":[{\"maxDelegationDepth\":5,\"target\":{\"environment\":{\"licenses\":[\"ISHARE.0001\"]}},\"policies\":[{\"target\":{\"resource\":{\"type\":\"CONTAINER.DATA\",\"identifiers\":[\"*\"],\"attributes\":[\"CONTAINER.DATA.ATTRIBUTE.ETA\"]},\"actions\":[\"ISHARE.READ\"]},\"rules\":[{\"effect\":\"Permit\"},{\"effect\":\"Deny\",\"target\":{\"resource\":{\"type\":\"CONTAINER.DATA\",\"identifiers\":[\"180621.ABC120\",\"180621.ABC121\",\"180621.ABC122\",\"180621.ABC123\"],\"attributes\":[\"*\"]}}}]}]}]}}",
+    "CreatedById": "0D5C8E0A-1BDD-4D86-972D-94BF9B150AE4",
+    "UpdatedById": "0D5C8E0A-1BDD-4D86-972D-94BF9B150AE4",
+    "CreatedDate": "2018-07-02T08:10:00",
+    "UpdatedDate": "2018-07-02T08:10:00",
+    "Deleted": "false"
+  }
+]

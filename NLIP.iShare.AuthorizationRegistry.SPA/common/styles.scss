@@ -1,0 +1,92 @@
+@import url('https://fonts.googleapis.com/css?family=Lato:400,700');
+@import './assets/_buttons.scss';
+@import './assets/_inputs.scss';
+@import './assets/_alrtifyjs_overrides.scss';
+@import './assets/_tables.scss';
+html body {
+  font-family: Lato;
+}
+
+h2 {
+  margin: 0;
+  padding: 5px 0 5px 20px;
+  overflow: hidden;
+  color: #623760;
+  font-size: 16px;
+  line-height: 17px;
+  border-left: 2px solid #623760;
+  margin-right: 60px;
+  margin-top: 3px;
+}
+
+h4 {
+  color: #61385f;
+  font-size: 22px;
+  margin: 8px 0;
+  font-weight: 700;
+}
+
+h3 {
+  color: #61385f;
+  font-size: 32px;
+  margin: 8px 0;
+  font-weight: 700;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="date"] {
+  &[readonly],
+  &[disabled],
+  &:disabled,
+  &:read-only {
+    cursor: default;
+    &:focus {
+      box-shadow: none;
+    }
+  }
+}
+
+fieldset {
+  border: none;
+  margin: 10px 0;
+  padding: 0;
+}
+
+.inline {
+  display: inline;
+}
+
+.left {
+  float: left;
+}
+
+.right {
+  float: right;
+}
+
+.fa {
+    margin-right: 10px;
+    &.fa-check-circle-o {
+      color: green;
+    }
+    &.fa-times-circle-o {
+      color: red;
+    }
+    &.custom-arrow-right {
+      margin-right: -25px;
+    }
+  }
+  label {
+    display: block;
+    color: #aaa;
+    text-transform: uppercase;
+    margin: 5px 0;
+    &.inline {
+      display: inline;
+    }
+  }
+  .required:after {
+    content: '*';
+    color: red;
+  }

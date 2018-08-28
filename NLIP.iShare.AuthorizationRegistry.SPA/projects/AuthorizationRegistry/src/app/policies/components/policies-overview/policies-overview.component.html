@@ -1,0 +1,32 @@
+<button type="button" class="btn btn-primary" (click)="create()" *appAllowedForRoles="[roles.EntitledPartyCreator]">
+  <i class="fa fa-plus" aria-hidden="true"></i>add
+</button>
+<h3> Policies</h3>
+<table class="app-table">
+  <thead>
+    <tr>
+      <th>AR-identifier</th>
+      <th>Policy Issuer</th>
+      <th>Access Subject </th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let policy of policies | async | paginate: { id:'policies-pagination', itemsPerPage: pagination.pageSize, currentPage: pagination.page, totalItems: pagination.total }">
+      <td>{{policy.authorizationRegistryId}}</td>
+      <td>{{policy.policyIssuer}}</td>
+      <td>{{policy.subject}}</td>
+      <td class="actions-cell">
+        <div class="actions">
+          <i *appAllowedForRoles="[roles.EntitledPartyCreator, roles.EntitledPartyViewer, roles.SchemeOwner]" class="fa fa-eye" aria-hidden="true" (click)="view(policy)" title="View"></i>
+          <i *appAllowedForRoles="[roles.EntitledPartyCreator]" class="fa fa-clone" aria-hidden="true" (click)="copy(policy)" title="Copy"></i>
+          <i *appAllowedForRoles="[roles.EntitledPartyCreator]" class="fa fa-pencil" aria-hidden="true" (click)="edit(policy)" title="Edit"></i>
+          <i *appAllowedForRoles="[roles.EntitledPartyCreator, roles.EntitledPartyViewer, roles.SchemeOwner]" class="fa fa-download" aria-hidden="true" (click)="download(policy)" title="Download"></i>
+          <i *appAllowedForRoles="[roles.EntitledPartyCreator]" class="fa fa-trash-o" aria-hidden="true" (click)="delete(policy)" title="Delete"></i>
+        </div>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<pagination-controls *ngIf="!(pagination.page == 1 && pagination.total <= pagination.pageSize)" id="policies-pagination"
+  [directionLinks]="true" [previousLabel]="''" [nextLabel]="''" (pageChange)="onPageChange($event)"></pagination-controls>

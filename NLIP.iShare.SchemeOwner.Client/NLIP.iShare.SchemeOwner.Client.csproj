@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <CodeAnalysisRuleSet>NLIP.iShare.SchemeOwner.Client.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <CodeAnalysisRuleSet>NLIP.iShare.SchemeOwner.Client.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+
+  <ItemGroup>    
+    <ProjectReference Include="..\NLIP.iShare.IdentityServer\NLIP.iShare.IdentityServer.csproj" />    
+    <ProjectReference Include="..\NLIP.iShare.TokenClient\NLIP.iShare.TokenClient.csproj" />
+  </ItemGroup>
+
+</Project>

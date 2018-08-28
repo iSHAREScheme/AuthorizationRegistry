@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <ProjectGuid>25C85B88-3B05-4932-BF18-9BCE176B54BD</ProjectGuid>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="DelegationTestCases\**\*.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="DelegationTestCases\**\*.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Update="DelegationTestCases\**\*.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <!-- Required packages in test libraries -->
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.7.2" />
+    <PackageReference Include="Moq" Version="4.8.2" />
+    <PackageReference Include="Shouldly" Version="3.0.0" />
+    <PackageReference Include="xunit" Version="2.3.1" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.3.1" />
+    <!-- /END Required packages in test libraries -->
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\NLIP.iShare.AuthorizationRegistry.Core\NLIP.iShare.AuthorizationRegistry.Core.csproj" />
+  </ItemGroup>
+
+</Project>

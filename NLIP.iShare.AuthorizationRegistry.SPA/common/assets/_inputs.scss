@@ -1,0 +1,116 @@
+$placeholder-color: #c5c5c5;
+input {
+  &[type='text'],
+  &[type='password'],
+  &[type='date'] {
+    border: 1px solid #e5e5e5;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    padding: 12px;
+    width: 300px;
+
+    &::placeholder {
+      color: $placeholder-color;
+      opacity: 1;
+      text-transform: uppercase;
+    }
+    &:-ms-input-placeholder {
+      color: $placeholder-color;
+      text-transform: uppercase;
+    }
+    &::-ms-input-placeholder {
+      color: $placeholder-color;
+      text-transform: uppercase;
+    }
+    &:focus {
+      outline: 0;
+      box-shadow: 0 0 4px #eb5f56;
+    }
+  }
+}
+.panel {
+  // margin-bottom: 10px;
+  .panel-half {
+    width: 50%;
+    &:nth-child(1) {
+      float: left;
+    }
+    &:nth-child(2) {
+      float: right;
+    }
+    &.form-control {
+      margin: 32px 0 0 0;
+    }
+  }
+  .panel-third {
+    width: 33.33%;
+    float: left;
+  }
+  &:after {
+    content: '';
+    display: block;
+    clear: both;
+  }
+}
+.form-control {
+  margin: 32px 0;
+  .form-info {
+    color: #aaa;
+    user-select: none;
+    display: inline-block;
+    height: 26px;
+    line-height: 26px;
+  }
+  span {
+    margin: 0 5px;
+  }
+}
+
+.error-message {
+  margin: 16px 0;
+  display: block;
+  color: #eb5f56;
+}
+
+input.ngx-datepicker-input {
+  border: 1px solid #e5e5e5;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  padding: 12px !important;
+  width: 300px !important;
+  &::placeholder {
+    color: $placeholder-color;
+    opacity: 1;
+    text-transform: uppercase;
+  }
+  &:-ms-input-placeholder {
+    color: $placeholder-color;
+    text-transform: uppercase;
+  }
+  &::-ms-input-placeholder {
+    color: $placeholder-color;
+    text-transform: uppercase;
+  }
+  &:focus {
+    outline: 0;
+    box-shadow: 0 0 4px #eb5f56;
+  }
+}
+.ngx-datepicker-calendar-container {
+  top: 50px !important;
+  width: 400px !important;
+  z-index: 2;
+  .topbar-container {
+    width: auto !important;
+  }
+  .main-calendar-container {
+    padding: 1px !important;
+    padding-top: 5px !important;
+    .day-unit {
+      width: calc(99.9% / 7) !important;
+    }
+    span {
+      margin: 0;
+    }
+  }
+}

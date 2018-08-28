@@ -1,0 +1,101 @@
+<div class="panel">
+    <div class="panel-third">
+        <h3>Fill in the fields</h3>
+        <form class="delegation" #mask="ngForm">
+            <label for="policyIssuer">Policy Issuer
+                <span class="required"></span>
+            </label>
+            <input [(ngModel)]="delegationMask.delegationRequest.policyIssuer" #policyIssuer="ngModel" type="text" name="policyIssuer"
+                placeholder="Policy Issuer" required>
+            <div class="error-message" *ngIf="policyIssuer.invalid && (policyIssuer.dirty || policyIssuer.touched)">
+                Policy Issuer is required.
+            </div>
+            <br>
+            <label for="accessSubject">Access Subject
+                <span class="required"></span>
+            </label>
+            <input [(ngModel)]="delegationMask.delegationRequest.target.accessSubject" #accessSubject="ngModel" type="text" name="accessSubject"
+                placeholder="Access Subject" required>
+            <div class="error-message" *ngIf="accessSubject.invalid && (accessSubject.dirty || accessSubject.touched)">
+                Access Subject is required.
+            </div>
+            <br>
+            <div *ngFor="let policySet of delegationMask.delegationRequest.policySets">
+                <div *ngFor="let policy of policySet.policies">
+                    <label for="type">Type
+                        <span class="required"></span>
+                    </label>
+                    <input [(ngModel)]="policy.target.resource.type" #type="ngModel" type="text" name="type" placeholder="Type" required>
+                    <div class="error-message" *ngIf="type.invalid && (type.dirty || type.touched)">
+                        Type is required.
+                    </div>
+                    <br>
+                    <label for="identifiers">Identifiers
+                        <span class="required"></span>
+                        <i class="fa fa-plus" (click)="add(policy.target.resource.identifiers)" title="Add identifier"></i>
+                    </label>
+                    <div class="error-message" *ngIf="!policy.target.resource.identifiers.length">
+                        Identifiers must contain at least one identifier.
+                    </div>
+                    <div *ngFor="let identifier of policy.target.resource.identifiers; index as i; trackBy:trackByFn; first as isFirst">
+                        <input [(ngModel)]="policy.target.resource.identifiers[i]" #identifier="ngModel" type="text" name="{{'identifier'+i}}" placeholder="Identifier"
+                            required>
+                        <i *ngIf="!isFirst" class="fa fa-trash" (click)="remove(policy.target.resource.identifiers, identifier)" title="Remove identifier"></i>
+                        <div class="error-message" *ngIf="identifier.invalid && (identifier.dirty || identifier.touched)">
+                            Identifier cannot be empty.
+                        </div>
+                    </div>
+                    <label for="attributes">Attributes
+                        <span class="required"></span>
+                        <i class="fa fa-plus" (click)="add(policy.target.resource.attributes)" title="Add attribute"></i>
+                    </label>
+                    <div class="error-message" *ngIf="!policy.target.resource.attributes.length">
+                        Attributes must contain at least one attribute.
+                    </div>
+                    <div *ngFor="let attribute of policy.target.resource.attributes; index as i; trackBy:trackByFn; first as isFirst">
+                        <input [(ngModel)]="policy.target.resource.attributes[i]" #attribute="ngModel" type="text" name="{{'attributes'+i}}" placeholder="Attribute"
+                            required>
+                        <i *ngIf="!isFirst" class="fa fa-trash" (click)="remove(policy.target.resource.attributes, attribute)" title="Remove attribute"></i>
+                        <div class="error-message" *ngIf="attribute.invalid && (attribute.dirty || attribute.touched)">
+                            Attribute cannot be empty.
+                        </div>
+                    </div>
+                    <label for="actions">Actions
+                        <i class="fa fa-plus" (click)="add(policy.target.actions)" title="Add action"></i>
+                    </label>
+                    <div *ngFor="let action of policy.target.actions; index as i; trackBy:trackByFn">
+                        <input [(ngModel)]="policy.target.actions[i]" #action="ngModel" type="text" name="{{'actions'+i}}" placeholder="Action" required>
+                        <i class="fa fa-trash" (click)="remove(policy.target.actions, action)" title="Remove action"></i>
+                        <div class="error-message" *ngIf="action.invalid && (action.dirty || action.touched)">
+                            Action cannot be empty.
+                        </div>
+                    </div>
+                </div>
+                <br>
+            </div>
+        </form>
+    </div>
+    <div class="panel-third">
+        <h3>Delegation Mask</h3>
+        <pre class="delegation">{{ delegationMask | json}}</pre>
+    </div>
+
+    <div class="panel-third" *ngIf="!!delegationEvidence">
+        <h3>Delegation Response</h3>
+        <pre class="delegation">{{ delegationEvidence | json}}</pre>
+    </div>
+</div>
+<div class="panel">
+    <div [ngClass]="{'error-message': !!serverError}" *ngIf="!!serverError">
+        {{ serverError }}
+    </div>
+    <button type="button" class="btn btn-primary" (click)="back()">
+        <i class="fa fa-arrow-left" aria-hidden="true"></i>back
+    </button>
+    <button type="button" class="btn btn-primary" (click)="clear(); mask.form.reset()">
+        <i class="fa fa-eraser" aria-hidden="true"></i>clear
+    </button>
+    <button type="button" class="btn btn-primary" (click)="test()" [disabled]="!mask.form.valid">
+        <i class="fa fa-check" aria-hidden="true"></i>test
+    </button>
+</div>

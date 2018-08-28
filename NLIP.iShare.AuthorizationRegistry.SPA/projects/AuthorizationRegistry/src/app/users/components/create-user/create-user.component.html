@@ -1,0 +1,62 @@
+<h3>Create user</h3>
+<form [formGroup]="form" (ngSubmit)="save()">
+  <div class="panel">
+    <div class="panel-half">
+      <div class="form-control">
+        <label>e-mail</label>
+        <input autofocus type="text" placeholder="e-mail" formControlName="email" (keyup)="emailChanging()">
+        <div class="error-message" *ngIf="form.get('email').hasError('required') && form.get('email').dirty">
+          Email is required.
+        </div>
+        <div class="error-message" *ngIf="form.get('email').hasError('email') && form.get('email').dirty">
+          Email format is required.
+        </div>
+      </div>
+      <div class="form-control" *ngIf="!isPartyHidden">
+        <label>party id</label>
+        <input type="text" placeholder="party id" formControlName="partyId">
+        <div class="error-message" *ngIf="form.get('partyId').hasError('required') && form.get('partyId').dirty">
+          Party Id is required.
+        </div>
+      </div>
+      <div class="form-control" *ngIf="!isPartyHidden">
+        <label>party name</label>
+        <input type="text" placeholder="party name" formControlName="partyName">
+        <div class="error-message" *ngIf="form.get('partyName').hasError('required') && form.get('partyName').dirty">
+          Party name is required.
+        </div>
+      </div>
+    </div>
+    <div class="panel-half">
+      <div class="form-control">
+        <input type="hidden" formControlName="username">
+        <label>Username: </label>
+        {{form.get('username').value}}
+        <span class="form-info">(auto-generated)</span>
+      </div>
+      <div class="form-control">
+        <input type="hidden" formControlName="roles">
+        <label>Assign</label>
+        <div class="role" *ngFor="let role of unassignedRoles" (click)="addRole(role)">
+          <i class="fa fa-plus" aria-hidden="true"></i>{{role | humanize}}</div>
+        <span *ngIf="unassignedRoles.length === 0" class="form-info">none</span>
+        <label>Roles</label>
+        <div class="role assigned" *ngFor="let role of roles">{{role | humanize}}
+          <i class="fa fa-times" aria-hidden="true" (click)="removeRole(role)"></i>
+        </div>
+        <div class="error-message" *ngIf="form.get('roles').hasError('required') && form.get('roles').touched">
+          At least one role is required.
+        </div>
+      </div>
+    </div>
+  </div>
+  <div [ngClass]="{'error-message': !!serverError}" *ngIf="!!serverError">
+    {{serverError}}
+  </div>
+  <button type="button" class="btn btn-primary" (click)="back()">
+    <i class="fa fa-arrow-left" aria-hidden="true"></i>back
+  </button>
+  <button type="submit" class="btn btn-primary" [disabled]="form.pristine || form.dirty && !form.valid">
+    <i class="fa fa-check" aria-hidden="true"></i>create
+  </button>
+</form>

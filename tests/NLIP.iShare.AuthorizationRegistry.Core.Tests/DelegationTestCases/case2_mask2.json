@@ -1,0 +1,36 @@
+//This is a delegation mask. The 'question being asked' is: Is ABC Trucking permitted by Warehouse 13 to get READ access to the ETA of container 180621.ABC125?
+
+{
+	"delegationRequest": {
+		"policyIssuer": "EU.EORI.NL000000003",
+		"target": {
+			"accessSubject": "EU.EORI.NL000000001"
+		},
+		"policySets": [
+			{
+				"policies": [
+					{
+						"target": {
+							"resource": {
+								"type": "CONTAINER.DATA",
+								"identifiers": [
+									"180621.ABC125"
+								],
+								"attributes": [
+									"CONTAINER.DATA.ATTRIBUTE.ETA"
+								]
+							},
+							"actions": [
+								"ISHARE.READ"]
+						},
+						"rules": [
+							{
+								"effect": "Permit"
+							}
+						]
+					}
+				]
+			}
+		]
+	}
+}       

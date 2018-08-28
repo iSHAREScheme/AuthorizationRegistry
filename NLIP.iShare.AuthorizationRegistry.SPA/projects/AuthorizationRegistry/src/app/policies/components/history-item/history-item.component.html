@@ -1,0 +1,37 @@
+<div class="history-item">
+  <div class="actions">
+    <i class="fa fa-download action" aria-hidden="true" (click)="download(item)" title="Download"></i>
+    <i class="fa fa-eye action" aria-hidden="true" (click)="item.expanded = !item.expanded" title="View JSON" *ngIf="!item.expanded"></i>
+    <i class="fa fa-chevron-up action" aria-hidden="true" (click)="item.expanded = !item.expanded" title="Close JSON view" *ngIf="item.expanded"></i>
+  </div>
+  <div class="timeframe-item">{{item.createdDate | date:'yyyy-MM-dd HH:mm'}}</div>
+  <div class="details">
+    <div class="column">
+      <div class="column-item">
+        <label>AR-identifier</label>
+        <span class="content" title="{{item.authorizationRegistryId}}">{{item.authorizationRegistryId}}</span>
+      </div>
+    </div>
+    <div class="column">
+      <div class="column-item">
+        <label>Policy Issuer</label>
+        <span class="content" title="{{item.policyIssuer}}">{{item.policyIssuer}}</span>
+      </div>
+    </div>
+    <div class="column">
+      <div class="column-item">
+        <label>Access Subject</label>
+        <span class="content" title="{{item.accessSubject}}">{{item.accessSubject}}</span>
+      </div>
+    </div>
+    <div class="column">
+      <div class="column-item">
+        <label>Created by</label>
+        <span class="content" title="{{item.createdBy}}">{{item.createdBy}}</span>
+      </div>
+    </div>
+  </div>
+  <div class="json-wrapper" *ngIf="item.expanded" [ngClass]="{'expanded': item.expanded}">
+    <ngx-json-viewer [json]="item.parsedJson"></ngx-json-viewer>
+  </div>
+</div>

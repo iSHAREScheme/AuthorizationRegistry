@@ -1,0 +1,58 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <ProjectGuid>EC4AF094-4892-44E5-9499-9C69E6D6EB74</ProjectGuid>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <CodeAnalysisRuleSet>NLIP.iShare.AuthorizationRegistry.Data.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <CodeAnalysisRuleSet>NLIP.iShare.AuthorizationRegistry.Data.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Migrations\20180605083952_AddUserAndUpdateDelegationAndDelegationHistory.cs" />
+    <Compile Remove="Migrations\20180605114721_UpdateModels.cs" />
+    <Compile Remove="Migrations\20180608110623_RenameDelegationSubject.cs" />
+    <Compile Remove="Migrations\20180611095151_AddInactiveToDelegation.cs" />
+    <Compile Remove="Migrations\20180622113914_AddUserNewProperties.cs" />
+    <Compile Remove="Migrations\20180622114051_AddUserPartyName.cs" />
+    <Compile Remove="Migrations\20180627111147_SquashMigrations.cs" />
+    <Compile Remove="Migrations\20180628075215_SqaushMigrationsForReadability.cs" />
+    <Compile Remove="Migrations\20180628082321_SqaushMigrationsForReadability.cs" />
+    <Compile Remove="Migrations\20180628083627_SqaushMigrationsForReadability.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Migrations\Seed\**\*.json" />
+    <EmbeddedResource Include="Migrations\Seed\**\*.json" />
+    <EmbeddedResource Update="Migrations\Seed\**\*.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Hosting.Abstractions" Version="2.1.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.1.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.1.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.1.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="2.1.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="2.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <DotNetCliToolReference Include="Microsoft.EntityFrameworkCore" Version="2.0.0" />
+    <DotNetCliToolReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.0.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\NLIP.iShare.EntityFramework\NLIP.iShare.EntityFramework.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions">
+      <HintPath>C:\Program Files\dotnet\sdk\NuGetFallbackFolder\microsoft.extensions.dependencyinjection.abstractions\2.0.0\lib\netstandard2.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+</Project>

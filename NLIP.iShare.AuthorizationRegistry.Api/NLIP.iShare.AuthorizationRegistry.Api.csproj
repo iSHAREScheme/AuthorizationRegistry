@@ -1,0 +1,56 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <ProjectGuid>20010756-856B-43FC-9054-953047B7C1A9</ProjectGuid>
+    <ApplicationInsightsResourceId>/subscriptions/5042975c-809d-4429-b691-0c3e51f323e0/resourcegroups/iSHARE-QA/providers/microsoft.insights/components/ishare-local</ApplicationInsightsResourceId>
+    <ApplicationInsightsAnnotationResourceId>/subscriptions/5042975c-809d-4429-b691-0c3e51f323e0/resourceGroups/iSHARE-QA/providers/microsoft.insights/components/ishare-local</ApplicationInsightsAnnotationResourceId>  
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <CodeAnalysisRuleSet>NLIP.iShare.AuthorizationRegistry.Api.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <CodeAnalysisRuleSet>NLIP.iShare.AuthorizationRegistry.Api.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Manatee.Json" Version="9.9.2" />
+    <PackageReference Include="Microsoft.AspNetCore.All" Version="2.1.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.0" />
+    <PackageReference Include="Serilog.Extensions.Logging.File" Version="1.1.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore.MicrosoftExtensions" Version="0.4.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="2.5.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\NLIP.iShare.Abstractions\NLIP.iShare.Abstractions.csproj" />
+    <ProjectReference Include="..\NLIP.iShare.Api\NLIP.iShare.Api.csproj" />
+    <ProjectReference Include="..\NLIP.iShare.AuthorizationRegistry.Core\NLIP.iShare.AuthorizationRegistry.Core.csproj" />
+    <ProjectReference Include="..\NLIP.iShare.AuthorizationRegistry.Data\NLIP.iShare.AuthorizationRegistry.Data.csproj" />
+    <ProjectReference Include="..\NLIP.iShare.AuthorizationRegistry.IdentityServer\NLIP.iShare.AuthorizationRegistry.IdentityServer.csproj" />
+    <ProjectReference Include="..\NLIP.iShare.EmailClient\NLIP.iShare.EmailClient.csproj" />
+    <ProjectReference Include="..\NLIP.iShare.Models\NLIP.iShare.Models.csproj" />
+    <ProjectReference Include="..\NLIP.iShare.SchemeOwner.Client\NLIP.iShare.SchemeOwner.Client.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="delegationMaskSchema.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services" />
+  </ItemGroup>
+
+  <ProjectExtensions><VisualStudio><UserProperties /></VisualStudio></ProjectExtensions>
+</Project>

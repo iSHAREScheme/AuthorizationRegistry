@@ -1,0 +1,39 @@
+<button type="button" class="btn btn-primary" (click)="create()">
+    <i class="fa fa-plus" aria-hidden="true"></i>add
+</button>
+<h3>Users</h3>
+<table class="app-table">
+    <thead>
+        <tr>
+            <th>Username</th>
+            <th>Party Id
+                <i class="btn-sort fa fa-angle-down" aria-hidden="true" (click)="sort('partyId', sorting.order === 'asc' ? 'desc': 'asc')"
+                    [ngClass]="{'fa-angle-down': sorting.order === 'asc', 'fa-angle-up': sorting.order === 'desc'}"></i>
+            </th>
+            <th>Party Name</th>
+            <th>Created</th>
+            <th>Roles</th>
+            <th>Is Active</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let user of users | async | paginate: { id:'users-pagination', itemsPerPage: pagination.pageSize, currentPage: pagination.page, totalItems: pagination.total }">
+            <td>{{user.username}}</td>
+            <td>{{user.partyId}}</td>
+            <td>{{user.partyName}}</td>
+            <td>{{user.createdDate| date:'yyyy-MM-dd HH:mm'}}</td>
+            <td>{{user.roles | humanize}}</td>
+            <td>
+                <i [ngClass]="user.active ? 'fa fa-check-circle-o' : 'fa fa-times-circle-o'" aria-hidden="true"></i>
+              </td>
+            <td class="actions-cell" *ngIf="user.identityId != currentUser.id">
+                <div class="actions">
+                    <i class="fa fa-pencil" aria-hidden="true" (click)="edit(user)" title="Edit"></i>
+                    <i class="fa fa-trash" aria-hidden="true" (click)="delete(user)" title="Delete"></i>
+                </div>
+            </td>
+        </tr>
+    </tbody>
+</table>
+<pagination-controls *ngIf="!(pagination.page == 1 && pagination.total <= pagination.pageSize)" id="users-pagination" [directionLinks]="true"
+    [previousLabel]="''" [nextLabel]="''" (pageChange)="onPageChange($event)"></pagination-controls>

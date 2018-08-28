@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <ProjectGuid>D5439865-1A28-4F4F-93D3-06663C3E886D</ProjectGuid>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <CodeAnalysisRuleSet>NLIP.iShare.AuthorizationRegistry.Core.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <CodeAnalysisRuleSet>NLIP.iShare.AuthorizationRegistry.Core.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\NLIP.iShare.Abstractions\NLIP.iShare.Abstractions.csproj" />
+    <ProjectReference Include="..\NLIP.iShare.AuthorizationRegistry.Data\NLIP.iShare.AuthorizationRegistry.Data.csproj" />
+    <ProjectReference Include="..\NLIP.iShare.AuthorizationRegistry.IdentityServer\NLIP.iShare.AuthorizationRegistry.IdentityServer.csproj" />
+    <ProjectReference Include="..\NLIP.iShare.Models\NLIP.iShare.Models.csproj" />
+  </ItemGroup>
+
+</Project>

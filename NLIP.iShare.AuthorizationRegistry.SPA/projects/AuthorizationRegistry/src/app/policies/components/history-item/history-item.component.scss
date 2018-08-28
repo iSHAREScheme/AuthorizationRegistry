@@ -1,0 +1,97 @@
+$timeframe-color: #f6ada9;
+$timeframe-item-width: 150px;
+$timeframe-item-height: 40px;
+
+:host {
+  .history-item {
+    min-height: 50px;
+    width: 100%;
+    margin: 20px 0;
+    position: relative;
+    z-index: 10;
+
+    .actions {
+      width: 100px;
+      height: $timeframe-item-height;
+      float: right;
+
+      cursor: pointer;
+      .action {
+        width: 50px;
+        line-height: $timeframe-item-height;
+        text-align: center;
+        background-color: #ddd; // #61385f;
+        color: #61385f;
+        &:hover {
+          background-color: #61385f;
+          color: #fff;
+        }
+        &.fa-chevron-up {
+          background-color: #fff;
+          color: #61385f;
+          width: 48px;
+          line-height: 39px;
+          border: 1px solid #f8f8f8;
+          border-bottom: none;
+        }
+      }
+    }
+
+    .timeframe-item {
+      width: $timeframe-item-width;
+      float: left;
+      background-color: $timeframe-color;
+      text-align: center;
+      font-size: 14px;
+      height: $timeframe-item-height;
+      line-height: $timeframe-item-height;
+    }
+
+    .details {
+      overflow: hidden;
+      background-color: #f8f8f8;
+      height: 40px;
+
+      .column {
+        display: inline-block;
+        width: calc(100% / 4 - 20px);
+        height: 40px;
+        line-height: 58px;
+        overflow: hidden;
+        padding: 0 10px;
+
+        .column-item {
+          height: $timeframe-item-height;
+          display: inline-block;
+          width: 100%;
+
+          label {
+            font-size: 12px;
+            display: block;
+            line-height: 14px;
+            text-align: left;
+            color: #888;
+          }
+
+          .content {
+            font-size: 14px;
+            display: block;
+            line-height: 16px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            width: 100%;
+          }
+        }
+      }
+    }
+
+    .json-wrapper {
+      margin-left: $timeframe-item-width;
+      padding: 10px;
+      padding-top: 10px;
+      border: 1px solid #f8f8f8;
+      border-top: none;
+    }
+  }
+}

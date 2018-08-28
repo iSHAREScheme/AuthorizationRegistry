@@ -1,0 +1,11 @@
+:host {
+  h3 {
+    width: calc(100% - 170px);
+  }
+  .btn {
+    float: right;
+    .fa {
+      margin-right: 10px;
+    }
+  }
+}

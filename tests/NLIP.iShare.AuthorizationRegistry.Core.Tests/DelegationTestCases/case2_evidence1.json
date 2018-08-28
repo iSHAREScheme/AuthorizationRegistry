@@ -1,0 +1,44 @@
+//The evidence suggests that for the specific container 180621.ABC123, ETA Read access is denied by Warehouse 13 to ABC Trucking. A Service Provider can use this evidence to deny the actual access to the CONTAINER.DATA by ABC Trucking. 
+
+{
+	"delegationEvidence": {
+		"notBefore": 1529574873,
+		"notOnOrAfter": 1539574873,
+		"policyIssuer": "EU.EORI.NL000000003",
+		"target": {
+			"accessSubject": "EU.EORI.NL000000001"
+		},
+		"policySets": [
+			{
+                "maxDelegationDepth": 5,
+                "target": {
+                    "environment": {
+                        "licenses": ["ISHARE.0001"]
+                    }
+                },
+				"policies": [
+					{
+						"target": {
+							"resource": {
+								"type": "CONTAINER.DATA",
+								"identifiers": [
+									"180621.ABC123"
+								],
+								"attributes": [
+									"CONTAINER.DATA.ATTRIBUTE.ETA"
+								]
+							},
+							"actions": [
+								"ISHARE.READ"]
+						},
+						"rules": [
+							{
+								"effect": "Deny"
+							}
+						]
+					}
+				]
+			}
+		]
+	}
+}               

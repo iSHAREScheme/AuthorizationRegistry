@@ -1,0 +1,21 @@
+<div id="top-menu-bar">
+  <div id="iShare-logo" routerLink="/"></div>
+  <h2>Authorization Registry</h2>
+  <div id="profile" *ngIf="!!profile">
+    <div id="profileInfo" (click)="goToProfile()">
+      <p>
+        <a class="profile-email">{{profile.email}}</a>
+      </p>
+      <p *ngIf="!profile.partyName">Scheme Owner</p>
+      <p *ngIf="profile.partyName">{{profile.partyName}}</p>
+      <p>{{profile.partyId}}</p>
+    </div>
+    <i id="btn-logout" class="fa fa-sign-out" aria-hidden="true" (click)="logout()"></i>
+  </div>
+</div>
+<app-left-menu [visible]="!!profile"></app-left-menu>
+<div id="app-frame">
+  <div id="content">
+    <router-outlet></router-outlet>
+  </div>
+</div>

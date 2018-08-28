@@ -1,0 +1,77 @@
+<h3>Edit user {{model.username}}</h3>
+<form [formGroup]="form" (ngSubmit)="save()">
+  <div class="panel">
+    <div class="panel-half">
+      <div class="form-control">
+        <label>Email</label>
+        <span class="form-info">{{model.email}}</span>
+      </div>
+      <div class="form-control">
+        <label>username</label>
+        <span class="form-info">{{model.username}}</span>
+      </div>
+      <div class="form-control" *ngIf="!isPartyHidden">
+        <label>Party Id</label>
+        <input autofocus type="text" placeholder="party id" formControlName="partyId">
+        <div class="error-message" *ngIf="form.get('partyId').hasError('required') && form.get('partyId').dirty">
+          Party Id is required.
+        </div>
+      </div>
+      <div class="form-control" *ngIf="!isPartyHidden">
+        <label>Party Name</label>
+        <input type="text" placeholder="party name" formControlName="partyName">
+
+        <div class="error-message" *ngIf="form.get('partyName').hasError('required') && form.get('partyName').dirty">
+          Party name is required.
+        </div>
+      </div>
+    </div>
+    <div class="panel-half">
+      <div class="form-control">
+        <input type="hidden" formControlName="roles">
+        <label>Assign</label>
+        <div class="role" *ngFor="let role of unassignedRoles" (click)="addRole(role)">
+          <i class="fa fa-plus" aria-hidden="true"></i>{{role | humanize}}</div>
+        <span *ngIf="unassignedRoles.length === 0" class="form-info">none</span>
+        <label>Roles</label>
+        <div class="role assigned" *ngFor="let role of roles">{{role | humanize}}
+          <i class="fa fa-times" aria-hidden="true" (click)="removeRole(role)"></i>
+        </div>
+        <div class="error-message" *ngIf="form.get('roles').hasError('required') && form.get('roles').touched">
+          At least one role is required.
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="panel-half form-control">
+      <div class="panel">
+        <div class="panel-half">
+          <label>Activation state</label>
+
+          <span class="form-info">{{model.active ? 'active' : 'inactive'}}
+          </span>
+        </div>
+        <div class="panel-half">
+          <button [disabled]="model.active" type="button" class="btn btn-primary right wideButton" (click)="sendActivationEmail()">
+            <span>send activation email</span>
+          </button>
+          <br/>
+          <button type="button" class="btn btn-primary right wideButton" [disabled]="!model.active || !passwordResetEnabled" (click)="resetUserPassword(); passwordResetEnabled=!passwordResetEnabled">
+            <span>reset password</span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  <div [ngClass]="{'error-message': !!serverError}" *ngIf="!!serverError">
+    {{serverError}}
+  </div>
+  <button type="button" class="btn btn-primary" (click)="back()">
+    <i class="fa fa-arrow-left" aria-hidden="true"></i>back
+  </button>
+  <button type="submit" class="btn btn-primary" [disabled]="form.pristine || form.dirty && !form.valid">
+    <i class="fa fa-check" aria-hidden="true"></i>update
+  </button>
+</form>

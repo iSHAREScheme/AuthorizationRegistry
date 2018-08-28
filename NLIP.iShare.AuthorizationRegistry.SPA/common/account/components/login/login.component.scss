@@ -1,0 +1,16 @@
+:host {
+  input {
+    width: 300px;
+  }
+  .btn {
+    margin-top: 10px;
+  }
+}
+#forgotPassword {
+  cursor: pointer;
+  display: inline-block;
+  margin-top: 25px;
+  &:hover {
+    text-decoration: underline;
+  }
+}
