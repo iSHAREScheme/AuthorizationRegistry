@@ -1,13 +1,12 @@
 ﻿using Flurl;
 using Flurl.Http;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using NLIP.iShare.IdentityServer;
 using NLIP.iShare.IdentityServer.Models;
 using NLIP.iShare.IdentityServer.Validation;
 using NLIP.iShare.TokenClient;
-using System.Linq;
 using System.Threading.Tasks;
+using NLIP.iShare.Configuration.Configurations;
 using ClientAssertion = NLIP.iShare.IdentityServer.ClientAssertion;
 
 namespace NLIP.iShare.SchemeOwner.Client
@@ -17,46 +16,24 @@ namespace NLIP.iShare.SchemeOwner.Client
         private readonly ILogger _logger;
         private readonly ITokenClient _tokenClient;
 
-        private string _schemeOwnerBaseUrl;
-        private string _privateKey;
-        private string[] _publicKeys;
-        private string _clientId;
+        private readonly SchemeOwnerClientOptions _schemeOwnerClientOptions;
+        private readonly PartyDetailsOptions _partyDetailsOptions;
 
-        public SchemeOwnerClient(ITokenClient tokenClient, IConfiguration configuration, ILogger<SchemeOwnerClient> logger)
+        public SchemeOwnerClient(ITokenClient tokenClient,
+            SchemeOwnerClientOptions schemeOwnerClientOptions,
+            PartyDetailsOptions partyDetailsOptions,
+            ILogger<SchemeOwnerClient> logger)
         {
             _logger = logger;
             _tokenClient = tokenClient;
-
-            _schemeOwnerBaseUrl = configuration["SchemeOwner:BaseUri"];
-            _privateKey = configuration["MyDetails:PrivateKey"];
-            _publicKeys = configuration.GetSection("MyDetails:PublicKeys").Get<string[]>();
-            _clientId = configuration["MyDetails:ClientId"];
-
-            if (string.IsNullOrEmpty(_schemeOwnerBaseUrl))
-            {
-                throw new SchemeOwnerClientException("The SchemeOwner Uri is not configured.");
-            }
-
-            if (string.IsNullOrEmpty(_privateKey))
-            {
-                throw new SchemeOwnerClientException("The PrivateKey is not configured.");
-            }
-
-            if (string.IsNullOrEmpty(_clientId))
-            {
-                throw new SchemeOwnerClientException("The ClientId is not configured.");
-            }
-
-            if (!_publicKeys.Any())
-            {
-                throw new SchemeOwnerClientException("The Public Keys are not configured.");
-            }
+            _schemeOwnerClientOptions = schemeOwnerClientOptions;
+            _partyDetailsOptions = partyDetailsOptions;
         }
 
         public async Task<CertificateStatus> GetCertificate(string clientAssertion, string certificateHash)
         {
             var accessToken = await _tokenClient
-                .GetAccessToken(_schemeOwnerBaseUrl, _clientId, clientAssertion)
+                .GetAccessToken(_schemeOwnerClientOptions.BaseUri, _partyDetailsOptions.ClientId, clientAssertion)
                 .ConfigureAwait(false);
 
             return await GetCertificateStatus(accessToken, certificateHash).ConfigureAwait(false);
@@ -73,7 +50,7 @@ namespace NLIP.iShare.SchemeOwner.Client
         {
             _logger.LogInformation("GetCertificateStatus: {accessToken}, {certificateHash}", accessToken, certificateHash);
 
-            var certificateStatus = await _schemeOwnerBaseUrl
+            var certificateStatus = await _schemeOwnerClientOptions.BaseUri
                 .AppendPathSegment("certificates")
                 .AppendPathSegment(certificateHash)
                 .SetQueryParam("full", true)
@@ -94,7 +71,7 @@ namespace NLIP.iShare.SchemeOwner.Client
 
             var accessToken = await GetAccessToken(clientAssertion).ConfigureAwait(false);
 
-            var status = await _schemeOwnerBaseUrl
+            var status = await _schemeOwnerClientOptions.BaseUri
                .AppendPathSegment("certificates/certificate_validation")
                .WithOAuthBearerToken(accessToken)
                .PostJsonAsync(chain)
@@ -114,13 +91,13 @@ namespace NLIP.iShare.SchemeOwner.Client
 
         private async Task<string> GetAccessToken(ClientAssertion clientAssertion)
         {
-            var authorityAudience = $"{_schemeOwnerBaseUrl.TrimEnd('/')}/connect/token";
+            var authorityAudience = $"{_schemeOwnerClientOptions.BaseUri.TrimEnd('/')}/connect/token";
 
             var assertion = new TokenClient.ClientAssertion
             {
-                Subject = _clientId,
-                Issuer = _clientId,
-                Audience = _clientId,
+                Subject = _partyDetailsOptions.ClientId,
+                Issuer = _partyDetailsOptions.ClientId,
+                Audience = _partyDetailsOptions.ClientId,
                 AuthorityAudience = authorityAudience,
                 JwtId = clientAssertion.JwtId,
                 IssuedAt = clientAssertion.IssuedAt,
@@ -128,7 +105,11 @@ namespace NLIP.iShare.SchemeOwner.Client
             };
 
             var accessToken = await _tokenClient
-                .GetAccessToken(_schemeOwnerBaseUrl, _clientId, assertion, _privateKey, _publicKeys)
+                .GetAccessToken(_schemeOwnerClientOptions.BaseUri,
+                    _partyDetailsOptions.ClientId, 
+                    assertion,
+                    _partyDetailsOptions.PrivateKey,
+                    _partyDetailsOptions.PublicKeys)
                 .ConfigureAwait(false);
             return accessToken;
         }

@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using NLIP.iShare.AuthorizationRegistry.IdentityServer.Models;
+using NLIP.iShare.Models;
 
 namespace NLIP.iShare.AuthorizationRegistry.IdentityServer
 {

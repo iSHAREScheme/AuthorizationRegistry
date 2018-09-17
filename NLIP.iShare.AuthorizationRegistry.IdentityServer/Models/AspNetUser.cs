@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Identity;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Identity;
 
-namespace NLIP.iShare.AuthorizationRegistry
+namespace NLIP.iShare.AuthorizationRegistry.IdentityServer.Models
 {
     public class AspNetUser : IdentityUser
     {
@@ -10,7 +10,7 @@ namespace NLIP.iShare.AuthorizationRegistry
         public string Password { get; set; }
 
         [NotMapped]
-        public List<string> Roles { get; set; }
+        public IReadOnlyCollection<string> Roles { get; set; }
 
         public bool IsDeleted { get; set; }
     }

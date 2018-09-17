@@ -47,7 +47,7 @@ namespace NLIP.iShare.AuthorizationRegistry.Api.Controllers
         [Route("{arId}", Name = "GetDelegation")]
         public async Task<IActionResult> GetByAuthorizationRegistryId(string arId)
         {
-            var delegation = await _delegationService.GetByARId(arId, User.GetPartyId());
+            var delegation = await _delegationService.GetByArId(arId, User.GetPartyId());
             if (delegation == null)
             {
                 return NotFound();

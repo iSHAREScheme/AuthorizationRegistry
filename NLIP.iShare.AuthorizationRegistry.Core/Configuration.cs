@@ -1,10 +1,12 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using NLIP.iShare.Abstractions;
+using NLIP.iShare.Abstractions.Email;
 using NLIP.iShare.AuthorizationRegistry.Core.Api;
+using NLIP.iShare.Configuration.Configurations;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
-using NLIP.iShare.Abstractions.Email;
 
 namespace NLIP.iShare.AuthorizationRegistry.Core
 {
@@ -15,16 +17,8 @@ namespace NLIP.iShare.AuthorizationRegistry.Core
             services.AddScoped<IDelegationService, DelegationService>();
             services.AddScoped<IDelegationValidationService, DelegationValidationService>();
             services.AddScoped<IDelegationMaskValidationService, DelegationMaskValidationService>();
-            services.AddScoped<IDelegationTranslateService, DelegationTranslateService>();
-            services.AddScoped<IUsersService, UsersService>();
-            services.AddSingleton(srv => new EmailTemplatesData
-            {
-                EmailData = new Dictionary<string, string>
-                {
-                    { "LogoUrl", configuration["OAuth2:AuthServerUrl"] + "images/ishare_logo.png"}
-                }
-            });
-            services.AddScoped<IDelegationJwtBuilder, DelegationJwtBuilder>();
+            services.AddScoped<IDelegationTranslateService, DelegationTranslateService>();         
+            services.AddScoped<IUsersService, UsersService>();           
 
             services.AddScoped(opts =>
             {
@@ -35,8 +29,7 @@ namespace NLIP.iShare.AuthorizationRegistry.Core
                     return usersService.GetClaims(identityUserId);
                 };
                 return func;
-            });
-            services.AddSingleton<ITemplateService, TemplateService>();
+            });            
         }
     }
 }

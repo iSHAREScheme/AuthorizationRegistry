@@ -21,7 +21,7 @@ namespace NLIP.iShare.AuthorizationRegistry.Api.Controllers
     {
         private readonly IUsersService _usersService;
 
-        public UsersController(IUsersService usersService, ITemplateService templateService, IConfiguration configuration, IEmailClient emailClient)
+        public UsersController(IUsersService usersService)
         {
             _usersService = usersService;
         }
@@ -85,7 +85,7 @@ namespace NLIP.iShare.AuthorizationRegistry.Api.Controllers
 
             if (string.Equals(user.IdentityId, User.GetUserId(), StringComparison.InvariantCultureIgnoreCase))
             {
-                return BadRequest("Cannot modifiy own access details");
+                return BadRequest("Cannot modify own access details");
             }
 
             request.Id = id;
@@ -108,7 +108,7 @@ namespace NLIP.iShare.AuthorizationRegistry.Api.Controllers
                 return NotFound();
             }
 
-            if (string.Equals(user.IdentityId, User.GetUserId(), StringComparison.InvariantCultureIgnoreCase))
+            if (string.Equals(user.IdentityId, User.GetUserId(), StringComparison.OrdinalIgnoreCase))
             {
                 return BadRequest("Cannot delete own account");
             }

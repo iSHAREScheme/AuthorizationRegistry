@@ -11,17 +11,19 @@ using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Logging;
 using NLIP.iShare.AuthorizationRegistry.IdentityServer.Data;
 using NLIP.iShare.AuthorizationRegistry.IdentityServer.Migrations.Seed.Seeders;
+using NLIP.iShare.Configuration.Configurations;
 using NLIP.iShare.EntityFramework;
 using NLIP.iShare.IdentityServer;
 using NLIP.iShare.IdentityServer.Validation;
 using System;
 using System.Reflection;
+using NLIP.iShare.AuthorizationRegistry.IdentityServer.Models;
 
 namespace NLIP.iShare.AuthorizationRegistry.IdentityServer
 {
     public static class IdentityServerConfiguration
     {
-        public static void UseIdentityServerServiceAuthorizationRegistry(this IApplicationBuilder app, IConfiguration configuration,
+        public static void UseIdentityServer(this IApplicationBuilder app, IConfiguration configuration,
             IHostingEnvironment environment)
         {
             app.UseIdentityServer()
@@ -60,7 +62,7 @@ namespace NLIP.iShare.AuthorizationRegistry.IdentityServer
             return app;
         }
 
-        public static void AddIdentityServerForAuthorizationRegistry(this IServiceCollection services,
+        public static void AddIdentityServer(this IServiceCollection services,
             IConfiguration configuration, IHostingEnvironment environment, ILoggerFactory loggerFactory)
         {
             var connectionString = configuration.GetConnectionString("Main");
@@ -87,6 +89,7 @@ namespace NLIP.iShare.AuthorizationRegistry.IdentityServer
 
             services.AddTransient<IProfileService, ProfileService>();
 
+            var partyDetailsOptions = services.BuildServiceProvider().GetRequiredService<PartyDetailsOptions>();
             services.AddIdentityServer(options =>
                 {
                     if (environment.IsDevelopment())
@@ -94,7 +97,7 @@ namespace NLIP.iShare.AuthorizationRegistry.IdentityServer
                         IdentityModelEventSource.ShowPII = true;
                     }
 
-                    options.IssuerUri = configuration["OAuth:AuthServerUrl"];
+                    options.IssuerUri = partyDetailsOptions.BaseUri;
                 })
                 .AddDeveloperSigningCredential()
                 .AddSecretParser<JwtBearerClientAssertionSecretParser>()

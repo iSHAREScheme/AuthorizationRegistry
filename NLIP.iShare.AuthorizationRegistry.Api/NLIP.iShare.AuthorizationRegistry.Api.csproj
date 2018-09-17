@@ -4,7 +4,7 @@
     <TargetFramework>netcoreapp2.1</TargetFramework>
     <ProjectGuid>20010756-856B-43FC-9054-953047B7C1A9</ProjectGuid>
     <ApplicationInsightsResourceId>/subscriptions/5042975c-809d-4429-b691-0c3e51f323e0/resourcegroups/iSHARE-QA/providers/microsoft.insights/components/ishare-local</ApplicationInsightsResourceId>
-    <ApplicationInsightsAnnotationResourceId>/subscriptions/5042975c-809d-4429-b691-0c3e51f323e0/resourceGroups/iSHARE-QA/providers/microsoft.insights/components/ishare-local</ApplicationInsightsAnnotationResourceId>  
+    <ApplicationInsightsAnnotationResourceId>/subscriptions/5042975c-809d-4429-b691-0c3e51f323e0/resourceGroups/iSHARE-QA/providers/microsoft.insights/components/ishare-local</ApplicationInsightsAnnotationResourceId>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -16,12 +16,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Manatee.Json" Version="9.9.2" />
-    <PackageReference Include="Microsoft.AspNetCore.All" Version="2.1.0" />
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.0" />
-    <PackageReference Include="Serilog.Extensions.Logging.File" Version="1.1.0" />
-    <PackageReference Include="Swashbuckle.AspNetCore.MicrosoftExtensions" Version="0.4.0" />
-    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="2.5.0" />
+    <PackageReference Include="Manatee.Json" Version="9.9.5" />
+    <PackageReference Include="Microsoft.AspNetCore.All" Version="2.1.4" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.4" />
   </ItemGroup>
 
   <ItemGroup>
@@ -51,6 +48,4 @@
   <ItemGroup>
     <WCFMetadata Include="Connected Services" />
   </ItemGroup>
-
-  <ProjectExtensions><VisualStudio><UserProperties /></VisualStudio></ProjectExtensions>
 </Project>

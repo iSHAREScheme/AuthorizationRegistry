@@ -1,0 +1,47 @@
+.form-group {
+  height: unset;
+  padding: unset;
+  border: none;
+  line-height: 1.15;
+}
+.form-control {
+  line-height: 1.15;
+  border: none;
+  border-radius: unset;
+  height: unset;
+  &:focus {
+    border: 1px solid #e5e5e5;
+  }
+}
+
+*,
+:after,
+:before {
+  box-sizing: unset;
+}
+h2 {
+  font-weight: 700;
+}
+
+.btn:disabled {
+  opacity: unset;
+}
+.btn {
+  border-radius: unset;
+  white-space: nowrap;
+}
+
+html body {
+  line-height: 1.15;
+}
+
+h3 {
+  line-height: 1.15;
+}
+pre {
+  font-size: 1em;
+  margin-top: 1em;
+}
+p {
+  margin-top: 16px;
+}

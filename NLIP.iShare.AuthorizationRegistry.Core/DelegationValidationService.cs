@@ -21,7 +21,7 @@ namespace NLIP.iShare.AuthorizationRegistry.Core
             var newPolicyIssuer = policyJsonParsed.PolicyIssuer;
             var newAccessSubject = policyJsonParsed.AccessSubject;
 
-            if (String.IsNullOrEmpty(newPolicyIssuer) || String.IsNullOrEmpty(newAccessSubject))
+            if (string.IsNullOrEmpty(newPolicyIssuer) || string.IsNullOrEmpty(newAccessSubject))
             {
                 return ValidationResult.Invalid("Policy issuer and access subject are required.");
             }
@@ -40,7 +40,7 @@ namespace NLIP.iShare.AuthorizationRegistry.Core
             var newPolicyIssuer = policyJsonParsed.PolicyIssuer;
             var newAccessSubject = policyJsonParsed.AccessSubject;
 
-            if (String.IsNullOrEmpty(newPolicyIssuer) || String.IsNullOrEmpty(newAccessSubject))
+            if (string.IsNullOrEmpty(newPolicyIssuer) || string.IsNullOrEmpty(newAccessSubject))
             {
                 return ValidationResult.Invalid("Policy issuer and access subject are required.");
             }
@@ -64,12 +64,12 @@ namespace NLIP.iShare.AuthorizationRegistry.Core
             var newPolicyIssuer = policyJsonParsed.PolicyIssuer;
             var newAccessSubject = policyJsonParsed.AccessSubject;
 
-            if (String.IsNullOrEmpty(newPolicyIssuer) || String.IsNullOrEmpty(newAccessSubject))
+            if (string.IsNullOrEmpty(newPolicyIssuer) || string.IsNullOrEmpty(newAccessSubject))
             {
                 return ValidationResult.Invalid("Policy issuer and access subject are required.");
             }
 
-            var existingEntity = await _delegationService.GetByARId(arId, currentUser.GetPartyId()).ConfigureAwait(false);
+            var existingEntity = await _delegationService.GetByArId(arId, currentUser.GetPartyId()).ConfigureAwait(false);
 
             if (existingEntity.PolicyIssuer != newPolicyIssuer || existingEntity.AccessSubject != newAccessSubject)
             {

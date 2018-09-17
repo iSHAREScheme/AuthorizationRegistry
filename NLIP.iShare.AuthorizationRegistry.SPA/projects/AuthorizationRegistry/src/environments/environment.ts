@@ -6,7 +6,7 @@ export const environment = {
   production: false,
   domain: 'localhost:61433',
   appInsights: {
-    instrumentationKey: 'cea86d4f-e45d-4b7b-916b-683a3c3a48f1'
+    instrumentationKey: '00000000-0000-0000-0000-000000000000'
   },
   client_secret: 'secret',
   api: 'http://localhost:61433/',

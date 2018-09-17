@@ -2,14 +2,11 @@
   input {
     width: 300px;
   }
-  .btn {
-    margin-top: 10px;
-  }
 }
 #forgotPassword {
   cursor: pointer;
   display: inline-block;
-  margin-top: 25px;
+  margin-top: 20px;
   &:hover {
     text-decoration: underline;
   }

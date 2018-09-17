@@ -1,14 +1,15 @@
 ﻿using Flurl;
 using Flurl.Http;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
+using NLIP.iShare.Configuration.Configurations;
 using NLIP.iShare.IdentityServer.Validation.Interfaces;
 using NLIP.iShare.Models.DelegationEvidence;
 using NLIP.iShare.Models.DelegationMask;
 using NLIP.iShare.TokenClient;
+using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Threading.Tasks;
@@ -20,70 +21,59 @@ namespace NLIP.iShare.AuthorizationRegistry.Client
     {
         private readonly ILogger _logger;
         private readonly ITokenClient _tokenClient;
+        private readonly AuthorizationRegistryClientOptions _authorizationRegistryClientOptions;
+        private readonly PartyDetailsOptions _partyDetailsOptions;
 
-        private readonly string _authorizationRegistryBaseUrl;
-        private readonly string _privateKey;
-        private readonly string[] _publicKeys;
-        private readonly string _clientId;
 
-        public AuthorizationRegistryClient(ITokenClient tokenClient, IConfiguration configuration, ILogger<AuthorizationRegistryClient> logger)
+        public AuthorizationRegistryClient(ITokenClient tokenClient,
+            AuthorizationRegistryClientOptions authorizationRegistryClientOptions,
+            PartyDetailsOptions partyDetailsOptions,
+            ILogger<AuthorizationRegistryClient> logger)
         {
             _logger = logger;
             _tokenClient = tokenClient;
-
-            _authorizationRegistryBaseUrl = configuration["AuthorizationRegistry:BaseUri"];
-            _privateKey = configuration["MyDetails:PrivateKey"];
-            _publicKeys = configuration.GetSection("MyDetails:PublicKeys").Get<string[]>();
-            _clientId = configuration["MyDetails:ClientId"];
-
-            if (string.IsNullOrEmpty(_authorizationRegistryBaseUrl))
-            {
-                throw new AuthorizationRegistryClientException("The AuthorizationRegistry Uri is not configured.");
-            }
-
-            if (string.IsNullOrEmpty(_privateKey))
-            {
-                throw new AuthorizationRegistryClientException("The PrivateKey is not configured.");
-            }
-
-            if (string.IsNullOrEmpty(_clientId))
-            {
-                throw new AuthorizationRegistryClientException("The ClientId is not configured.");
-            }
-
-            if (!_publicKeys.Any())
-            {
-                throw new AuthorizationRegistryClientException("The Public Keys are not configured.");
-            }
+            _authorizationRegistryClientOptions = authorizationRegistryClientOptions;
+            _partyDetailsOptions = partyDetailsOptions;
         }
 
         public async Task<DelegationClientTranslationResponse> GetDelegation(DelegationMask mask)
         {
-            var jObjectMask = TransformToJobject(mask);
+            _logger.LogInformation("Get delegation for {policyIssuer} and {target}", mask?.DelegationRequest?.PolicyIssuer, mask?.DelegationRequest?.Target?.AccessSubject);
+            var jObjectMask = TransformToJObject(mask);
 
-            var accessToken = await GetAccessToken(new ClientAssertion(_clientId, _clientId, $"{_authorizationRegistryBaseUrl}connect/token"))
+            var accessToken = await GetAccessToken(new ClientAssertion(_partyDetailsOptions.ClientId,
+                        _partyDetailsOptions.ClientId,
+                    $"{_authorizationRegistryClientOptions.BaseUri}connect/token"))
                 .ConfigureAwait(false);
 
-            var response = await _authorizationRegistryBaseUrl
+            var response = await _authorizationRegistryClientOptions.BaseUri
                 .AppendPathSegment("delegation")
                 .WithOAuthBearerToken(accessToken)
                 .PostJsonAsync(jObjectMask)
                 .ReceiveJson<JObject>()
                 .ConfigureAwait(false);
 
+            if (response == null)
+            {
+                _logger.LogInformation("Get delegation returns {delegationResponse}", "not found");
+                return null;
+            }
+
             var delegationEvidence = GetDelegationEvidenceFromResponse(response);
-            
+
             if (!IsPermitRule(delegationEvidence))
             {
+                _logger.LogInformation("Get delegation returns {delegationResponse}", "deny");
                 return DelegationClientTranslationResponse.Deny();
             }
 
+            _logger.LogInformation("Get delegation returns {delegationResponse}", "permit");
             return DelegationClientTranslationResponse.Permit(delegationEvidence);
         }
 
         private static DelegationEvidence GetDelegationEvidenceFromResponse(JObject response)
         {
-            var delegationToken = response.GetValue("delegation_token").ToString();
+            var delegationToken = response.GetValue("delegation_token", StringComparison.OrdinalIgnoreCase).ToString();
 
             var handler = new JwtSecurityTokenHandler();
             var token = handler.ReadJwtToken(delegationToken);
@@ -92,23 +82,12 @@ namespace NLIP.iShare.AuthorizationRegistry.Client
             return JsonConvert.DeserializeObject<DelegationEvidence>(delegation.Value);
         }
 
-        private bool IsPermitRule(DelegationEvidence delegation)
-        {
-            foreach (var policySet in delegation.PolicySets)
-            {
-                foreach (var policy in policySet.Policies)
-                {
-                    if (!policy.Rules.Any(rule => rule.Effect == "Permit"))
-                    {
-                        return false;
-                    }
-                }
-            }
+        private static bool IsPermitRule(DelegationEvidence delegation)
+            => delegation.PolicySets
+                .SelectMany(policySet => policySet.Policies)
+                .All(policy => policy.Rules.Any(rule => rule.Effect == "Permit"));
 
-            return true;
-        }
-
-        private static JObject TransformToJobject(DelegationMask mask)
+        private static JObject TransformToJObject(DelegationMask mask)
         {
             var serializedMask = JsonConvert.SerializeObject(mask, new JsonSerializerSettings
             {
@@ -121,13 +100,13 @@ namespace NLIP.iShare.AuthorizationRegistry.Client
 
         private async Task<string> GetAccessToken(ClientAssertion clientAssertion)
         {
-            var authorityAudience = $"{_authorizationRegistryBaseUrl}connect/token";
+            var authorityAudience = $"{_authorizationRegistryClientOptions.BaseUri}connect/token";
 
             var assertion = new TokenClient.ClientAssertion
             {
-                Subject = _clientId,
-                Issuer = _clientId,
-                Audience = _clientId,
+                Subject = _partyDetailsOptions.ClientId,
+                Issuer = _partyDetailsOptions.ClientId,
+                Audience = _partyDetailsOptions.ClientId,
                 AuthorityAudience = authorityAudience,
                 JwtId = clientAssertion.JwtId,
                 IssuedAt = clientAssertion.IssuedAt,
@@ -135,7 +114,11 @@ namespace NLIP.iShare.AuthorizationRegistry.Client
             };
 
             var accessToken = await _tokenClient
-                .GetAccessToken(_authorizationRegistryBaseUrl, _clientId, assertion, _privateKey, _publicKeys)
+                .GetAccessToken(_authorizationRegistryClientOptions.BaseUri,
+                    _partyDetailsOptions.ClientId,
+                    assertion,
+                    _partyDetailsOptions.PrivateKey,
+                    _partyDetailsOptions.PublicKeys)
                 .ConfigureAwait(false);
 
             return accessToken;

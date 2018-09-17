@@ -1,25 +1,24 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
+using NLIP.iShare.Configuration.Configurations;
+using OpenSSL.PrivateKeyDecoder;
+using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
-using Microsoft.IdentityModel.Tokens;
-
-using OpenSSL.PrivateKeyDecoder;
 
 namespace NLIP.iShare.TokenClient
 {
     internal class AssertionService : IAssertionService
     {
-        private readonly IConfiguration _configuration;
+        private readonly PartyDetailsOptions _partyDetailsOptions;
         private readonly ILogger _logger;
 
-        public AssertionService(IConfiguration configuration, ILogger<AssertionService> logger)
+        public AssertionService(ILogger<AssertionService> logger, PartyDetailsOptions partyDetailsOptions)
         {
-            _configuration = configuration;
             _logger = logger;
+            _partyDetailsOptions = partyDetailsOptions;
         }
 
         public string CreateJwtAssertion(ClientAssertion clientAssertion, string privateKey, string[] publicKeys)
@@ -42,7 +41,7 @@ namespace NLIP.iShare.TokenClient
             var rsa = RSA.Create();
             rsa.ImportParameters(rsaParams);
 
-            var authorityAudience = $"{_configuration["OAuth2:AuthServerUrl"].TrimEnd('/')}/connect/token";          
+            var authorityAudience = $"{_partyDetailsOptions.BaseUri.TrimEnd('/')}/connect/token";          
 
             var token = new JwtSecurityToken(
                 clientAssertion.Issuer,

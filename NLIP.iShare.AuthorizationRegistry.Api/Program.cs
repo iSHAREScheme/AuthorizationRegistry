@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
+using NLIP.iShare.Api;
 
 namespace NLIP.iShare.AuthorizationRegistry
 {
@@ -10,10 +11,9 @@ namespace NLIP.iShare.AuthorizationRegistry
             BuildWebHost(args).Run();
         }
 
-        public static IWebHost BuildWebHost(string[] args) =>
-            WebHost.CreateDefaultBuilder(args)
-                .UseApplicationInsights()
-                .UseStartup<Startup>()
-                .Build();
+        public static IWebHost BuildWebHost(string[] args)
+            => WebHost.CreateDefaultBuilder(args)
+               .UseDefaultWebHostOptions<Startup>()
+               .Build();
     }
 }

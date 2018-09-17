@@ -35,7 +35,14 @@ export class DelegationMaskComponent implements OnInit {
         this.showResponse = true;
         this.serverError = '';
       },
-      error => (this.serverError = error.message)
+      error => {
+        if (error.status === 404) {
+          this.serverError = 'Combination policy issuer - access subject was not found.';
+        } else {
+          this.serverError = error.message;
+        }
+        this.delegationEvidence = null;
+      }
     );
   }
   add(ids: Array<string>): void {

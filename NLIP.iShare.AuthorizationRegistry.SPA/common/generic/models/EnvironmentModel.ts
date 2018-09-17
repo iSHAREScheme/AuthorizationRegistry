@@ -4,7 +4,6 @@ export class EnvironmentModel {
   appInsights: {
     instrumentationKey: string;
   };
-  client_secret: string;
   api: string;
   scope: string;
   localStorageKeys: {

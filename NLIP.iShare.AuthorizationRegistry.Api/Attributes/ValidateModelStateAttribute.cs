@@ -34,8 +34,9 @@ namespace NLIP.iShare.AuthorizationRegistry.Api.Attributes
 
             if (!result.Valid)
             {
-                var errors = result.Errors.Select(e => e.Message + " " + e.PropertyName);
-                _logger.LogWarning("Errors during policy mask validation", errors);
+                var errors = result.Errors.Select(e => e.Message + " " + e.PropertyName).ToList();
+                var errorMessage = errors.Aggregate("", (s, i) => "" + s + "," + i);
+                _logger.LogWarning($"Errors during policy mask validation: {errorMessage}");
 
                 context.Result = new BadRequestObjectResult(new { error = errors });
             }

@@ -1,34 +1,35 @@
-﻿using System;
+﻿using Flurl.Http;
+using Flurl.Http.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Security.Cryptography;
-using Flurl.Http;
-using Flurl.Http.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace NLIP.iShare.TokenClient
 {
     public static class Configuration
     {
-        public static void AddTokenClient(this IServiceCollection services)
+        public static void AddTokenClient(this IServiceCollection services, IReadOnlyCollection<TokenSource> wellKnownTokenSources)
         {
             services.AddTransient<ITokenClient, TokenClient>();
             services.AddTransient<IAssertionService, AssertionService>();
-        }
-
-        public static void AddTokenClient(this IServiceCollection services, IReadOnlyCollection<TokenSource> wellKnownTokenSources)
-        {
-            AddTokenClient(services);
 
             foreach (var source in wellKnownTokenSources)
             {
                 FlurlHttp.ConfigureClient(source.BaseUri.ToString(), settings =>
                 {
                     settings.Settings.HttpClientFactory = new BypassCertificateValidation(source.Thumbprint);
-                    settings.AllowAnyHttpStatus();                    
+                    settings.AllowAnyHttpStatus();
                 });
             }
         }
+
+        public static void AddTokenClient(this IServiceCollection services) 
+            => services.AddTokenClient(new TokenSource[] { });
+
+        public static void AddTokenClient(this IServiceCollection services, TokenSource tokenSource)
+            => services.AddTokenClient(new[] { tokenSource });
 
         internal class BypassCertificateValidation : DefaultHttpClientFactory
         {

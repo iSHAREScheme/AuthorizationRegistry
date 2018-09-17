@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using NLIP.iShare.AuthorizationRegistry.IdentityServer.Models;
+using NLIP.iShare.Models;
 
 namespace NLIP.iShare.AuthorizationRegistry.IdentityServer.Configurations
 {

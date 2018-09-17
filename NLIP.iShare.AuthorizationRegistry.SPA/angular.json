@@ -25,10 +25,16 @@
             "assets": [
               "projects/AuthorizationRegistry/src/favicon.ico",
               "projects/AuthorizationRegistry/src/assets",
+			  {
+                "glob": "**/*",
+                "input": "common/assets",
+                "output": "/assets"
+              },
               "projects/AuthorizationRegistry/src/web.config"
             ],
             "styles": [
               "./node_modules/normalize.css/normalize.css",
+              "./node_modules/bootstrap/dist/css/bootstrap.min.css",
               "common/styles.scss",
               "./node_modules/font-awesome/css/font-awesome.min.css",
               "./node_modules/alertifyjs/build/css/alertify.min.css",
@@ -51,7 +57,7 @@
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
-              "extractCss": true,
+              "extractCss": false,
               "namedChunks": false,
               "aot": true,
               "extractLicenses": true,
@@ -68,7 +74,7 @@
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
-              "extractCss": true,
+              "extractCss": false,
               "namedChunks": false,
               "aot": true,
               "extractLicenses": true,

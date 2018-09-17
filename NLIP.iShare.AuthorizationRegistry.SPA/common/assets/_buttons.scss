@@ -39,5 +39,16 @@
     position: relative;
     top: -2px;
   }
+  margin-top: 5px;
   margin-bottom: 10px;
+}
+
+.btn-primary:not(:disabled):not(.disabled).active,
+.btn-primary:not(:disabled):not(.disabled):active {
+  color: #61385f;
+  background-color: #fff;
+  border-color: #61385f;
+  &:focus {
+    box-shadow: unset;
+  }
 }

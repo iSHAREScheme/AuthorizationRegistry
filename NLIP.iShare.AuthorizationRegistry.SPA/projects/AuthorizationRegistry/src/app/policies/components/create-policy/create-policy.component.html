@@ -1,12 +1,21 @@
-<h3>Create policy</h3>
-
-<div ace-editor [(text)]="editorText" id="editor" [mode]="'javascript'" #editor [theme]="'crimson_editor'"></div>
-<div [ngClass]="{'error-message': !!serverError}" *ngIf="!!serverError">
-  {{serverError}}
+<div class="container p-0">
+  <div class="row">
+    <div class="col-md">
+      <h3>Create policy</h3>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md">
+      <div ace-editor [(text)]="editorText" id="editor" [mode]="'javascript'" #editor [theme]="'crimson_editor'"></div>
+      <div [ngClass]="{'error-message': !!serverError}" *ngIf="!!serverError">
+        {{serverError}}
+      </div>
+      <button type="button" class="btn btn-primary" (click)="back()">
+        <i class="fa fa-arrow-left" aria-hidden="true"></i>back
+      </button>
+      <button type="button" class="btn btn-primary" (click)="save()">
+        <i class="fa fa-check" aria-hidden="true"></i>create
+      </button>
+    </div>
+  </div>
 </div>
-<button type="button" class="btn btn-primary" (click)="back()">
-  <i class="fa fa-arrow-left" aria-hidden="true"></i>back
-</button>
-<button type="button" class="btn btn-primary" (click)="save()">
-  <i class="fa fa-check" aria-hidden="true"></i>create
-</button>

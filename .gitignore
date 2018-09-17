@@ -2,7 +2,9 @@
 *~
 
 # custom
+*appsettings.Development.json
 .vs
+*tempkey.rsa
 
 # build
 [Oo]bj/

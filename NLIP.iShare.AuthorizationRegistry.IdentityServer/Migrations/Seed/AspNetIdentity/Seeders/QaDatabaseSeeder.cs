@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using NLIP.iShare.AuthorizationRegistry.IdentityServer.Data;
+using NLIP.iShare.AuthorizationRegistry.IdentityServer.Models;
 using NLIP.iShare.EntityFramework;
+using NLIP.iShare.Models;
 
 namespace NLIP.iShare.AuthorizationRegistry.IdentityServer.Migrations.Seed.AspNetIdentity.Seeders
 {

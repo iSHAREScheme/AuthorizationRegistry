@@ -1,13 +1,14 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
+using NLIP.iShare.Abstractions;
 using NLIP.iShare.Api;
 using NLIP.iShare.AuthorizationRegistry.Api.Attributes;
-using NLIP.iShare.AuthorizationRegistry.Api.ViewModels;
 using NLIP.iShare.AuthorizationRegistry.Core.Api;
 using NLIP.iShare.Models.DelegationEvidence;
 using NLIP.iShare.Models.DelegationMask;
-using System;
 using System.Threading.Tasks;
 
 namespace NLIP.iShare.AuthorizationRegistry.Api.Controllers
@@ -19,18 +20,18 @@ namespace NLIP.iShare.AuthorizationRegistry.Api.Controllers
         private readonly IDelegationService _delegationService;
         private readonly IDelegationTranslateService _delegationTranslateService;
         private readonly IDelegationMaskValidationService _delegationMaskValidationService;
-        private readonly IDelegationJwtBuilder _delegationJwtBuilder;
+        private readonly IResponseJwtBuilder _responseJwtBuilder;
 
         public DelegationEvidenceController(
             IDelegationService delegationService,
             IDelegationTranslateService delegationTranslateService,
             IDelegationMaskValidationService delegationMaskValidationService,
-            IDelegationJwtBuilder delegationJwtBuilder)
+            IResponseJwtBuilder responseJwtBuilder)
         {
             _delegationService = delegationService;
             _delegationTranslateService = delegationTranslateService;
             _delegationMaskValidationService = delegationMaskValidationService;
-            _delegationJwtBuilder = delegationJwtBuilder;
+            _responseJwtBuilder = responseJwtBuilder;
         }
 
         /// <summary>
@@ -42,10 +43,22 @@ namespace NLIP.iShare.AuthorizationRegistry.Api.Controllers
         public async Task<IActionResult> Translate([FromBody]JObject mask)
         {
             var result = await TranslateDelegation(mask);
+            if (result.Value == null)
+            {
+                return result.Result;
+            }
+            var delegationEvidence = result.Value.DelegationEvidence;
+            var delegationEvidenceJson = JsonConvert.SerializeObject(delegationEvidence,
+                new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
+            var delegationEvidenceDict = JsonConvert.DeserializeObject<JObject>(delegationEvidenceJson).ToDictionary();
 
-            var token = _delegationJwtBuilder.Create(result.Value.DelegationEvidence, User.GetRequestingPartyId());
 
-            return Ok(new DelegationTokenResponse { DelegationToken = token });
+            var signedDelegationEvidence = _responseJwtBuilder.Create(delegationEvidenceDict,
+                delegationEvidence.Target.AccessSubject,
+                delegationEvidence.PolicyIssuer,
+                User.GetRequestingPartyId(),
+                "delegationEvidence");
+            return Content($@"{{ ""delegation_token"": ""{ signedDelegationEvidence }""}}", "application/json");
         }
 
         /// <summary>

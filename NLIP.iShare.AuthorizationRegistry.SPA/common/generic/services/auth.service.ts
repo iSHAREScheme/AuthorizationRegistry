@@ -32,7 +32,7 @@ export class AuthService {
       const body = new HttpParams()
         .set('grant_type', 'password')
         .set('client_id', 'SPA')
-        .set('client_secret', this.environment.client_secret)
+        .set('client_secret', 'secret')
         .set('scope', this.environment.scope)
         .set('username', username)
         .set('password', password);

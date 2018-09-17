@@ -36,7 +36,7 @@ namespace NLIP.iShare.AuthorizationRegistry.Core
             return await delegations.ToPagedResult(count).ConfigureAwait(false);
         }
 
-        public async Task<Delegation> GetByARId(string arId, string partyId)
+        public async Task<Delegation> GetByArId(string arId, string partyId)
         {
             var delegation = await _db.Delegations
                 .Include(d => d.CreatedBy)
@@ -119,7 +119,7 @@ namespace NLIP.iShare.AuthorizationRegistry.Core
 
         public async Task<Delegation> Update(string arId, CreateOrUpdateDelegationRequest request)
         {
-            var entity = await GetByARId(arId, request.PartyId).ConfigureAwait(false);
+            var entity = await GetByArId(arId, request.PartyId).ConfigureAwait(false);
             var createdBy = _db.Users.First(u => u.AspNetUserId == request.UserId);
 
             var policyJson = new DelegationPolicyJsonParser(request.Policy);

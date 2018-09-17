@@ -2,12 +2,13 @@
 using Microsoft.Extensions.Logging;
 using NLIP.iShare.AuthorizationRegistry.IdentityServer.Data;
 using NLIP.iShare.EntityFramework;
-using System;
 using System.Threading.Tasks;
+using NLIP.iShare.AuthorizationRegistry.IdentityServer.Models;
+using NLIP.iShare.Models;
 
 namespace NLIP.iShare.AuthorizationRegistry.IdentityServer.Migrations.Seed.AspNetIdentity.Seeders
 {
-    public abstract class AspNetIdentityServerDatabaseSeeder
+    public class AspNetIdentityServerDatabaseSeeder
     {
         protected readonly ISeedDataProvider<UserDbContext> SeedDataProvider;
         protected readonly RoleManager<IdentityRole> RoleManager;
@@ -62,7 +63,6 @@ namespace NLIP.iShare.AuthorizationRegistry.IdentityServer.Migrations.Seed.AspNe
                     Id = seedUser.Id,
                     UserName = seedUser.UserName,
                     Email = seedUser.Email,
-                    // PartyId = seedUser.PartyId
                 };
 
                 var result = await UserManager.CreateAsync(user, seedUser.Password).ConfigureAwait(false);

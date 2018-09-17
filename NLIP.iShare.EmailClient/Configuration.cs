@@ -1,20 +1,33 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using NLIP.iShare.Abstractions.Email;
-using NLIP.iShare.EmailClient.Models;
+using NLIP.iShare.Configuration;
+using NLIP.iShare.Configuration.Configurations;
+using System.Collections.Generic;
 
 namespace NLIP.iShare.EmailClient
 {
     public static class Configuration
     {
-        public static void AddEmailClient(this IServiceCollection services, IConfiguration configuration, ILoggerFactory loggerFactory)
+        public static void AddEmailClient(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddSingleton<IEmailClient, EmailClient>(provider => new EmailClient(
-                new EmailConfiguration(
-                    configuration["Email:SendGridKey"],
-                    new EmailAddress(configuration["Email:From:Address"], configuration["Email:From:DisplayName"])),
-                loggerFactory.CreateLogger<EmailClient>()));
+            services.ConfigureOptions<EmailOptions>(configuration, "Email");
+
+            services.AddSingleton<ITemplateService, TemplateService>();
+            services.AddSingleton<IEmailClient, EmailClient>();
+            services.AddScoped(srv =>
+            {
+                var partyDetailsOptions = services
+                    .BuildServiceProvider()
+                    .GetRequiredService<PartyDetailsOptions>();
+                return new EmailTemplatesData
+                {
+                    EmailData = new Dictionary<string, string>
+                    {
+                        { "LogoUrl", partyDetailsOptions.BaseUri + "images/ishare_logo.png"}
+                    }
+                };
+            });
         }
     }
 }

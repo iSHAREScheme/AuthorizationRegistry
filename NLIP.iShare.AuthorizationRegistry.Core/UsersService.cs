@@ -1,22 +1,23 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using NLIP.iShare.Abstractions;
 using NLIP.iShare.Abstractions.Email;
-using NLIP.iShare.Api;
 using NLIP.iShare.Api.Responses;
 using NLIP.iShare.AuthorizationRegistry.Core.Api;
 using NLIP.iShare.AuthorizationRegistry.Core.Requests;
 using NLIP.iShare.AuthorizationRegistry.Core.Responses;
 using NLIP.iShare.AuthorizationRegistry.Data;
 using NLIP.iShare.AuthorizationRegistry.Data.Models;
+using NLIP.iShare.Configuration.Configurations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
-using NLIP.iShare.Abstractions;
+using NLIP.iShare.AuthorizationRegistry.IdentityServer.Models;
+using NLIP.iShare.Models;
 
 
 namespace NLIP.iShare.AuthorizationRegistry.Core
@@ -28,16 +29,16 @@ namespace NLIP.iShare.AuthorizationRegistry.Core
         private readonly ITemplateService _templateService;
         private readonly IEmailClient _emailClient;
         private readonly ILogger<UsersService> _logger;
-        private readonly IConfiguration _configuration;
+        private readonly SpaOptions _spaOptions;
         private readonly EmailTemplatesData _templateData;
 
         public UsersService(AuthorizationRegistryDbContext db,
             UserManager<AspNetUser> userManager,
             ITemplateService templateService,
             IEmailClient emailClient,
-            IConfiguration configuration,
             EmailTemplatesData templateData,
-            ILogger<UsersService> logger)
+            ILogger<UsersService> logger, 
+            SpaOptions spaOptions)
         {
             _templateData = templateData;
             _emailClient = emailClient;
@@ -45,7 +46,7 @@ namespace NLIP.iShare.AuthorizationRegistry.Core
             _db = db;
             _userManager = userManager;
             _logger = logger;
-            _configuration = configuration;
+            _spaOptions = spaOptions;
         }
 
         public async Task<PagedResult<UserModel>> GetAll(Query query)
@@ -141,7 +142,7 @@ namespace NLIP.iShare.AuthorizationRegistry.Core
             _templateData.EmailData.Add("Username", identity.UserName);
 
             var encodedToken = HttpUtility.UrlEncode(token);
-            var actionUrl = $"{_configuration["Spa:BaseUrl"]}account/{action}?uid={user.Id}&token={encodedToken}";
+            var actionUrl = $"{_spaOptions.BaseUri}account/{action}?uid={user.Id}&token={encodedToken}";
 
             _templateData.EmailData.Add("ActionUrl", actionUrl);
 
@@ -451,8 +452,7 @@ namespace NLIP.iShare.AuthorizationRegistry.Core
             {
                 return validationResult;
             }
-            IdentityResult result = IdentityResult.Success;
-            result = await _userManager.ConfirmEmailAsync(identity, request.Token);
+            var result = await _userManager.ConfirmEmailAsync(identity, request.Token);
             if (!result.Succeeded)
             {
                 return Convert(result);

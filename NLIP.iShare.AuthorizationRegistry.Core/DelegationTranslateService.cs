@@ -1,6 +1,5 @@
 ﻿using Newtonsoft.Json;
 using NLIP.iShare.AuthorizationRegistry.Core.Api;
-using NLIP.iShare.AuthorizationRegistry.Core.Responses;
 using NLIP.iShare.Models.DelegationEvidence;
 using NLIP.iShare.Models.DelegationMask;
 using System.Collections.Generic;
@@ -81,30 +80,45 @@ namespace NLIP.iShare.AuthorizationRegistry.Core
         }
 
         private static bool IsMatchingPolicy(Policy maskPolicy, Policy evidencePolicy)
+            => IsTypeMatch(maskPolicy, evidencePolicy)
+               && HasAllIdentifiers(maskPolicy, evidencePolicy)
+               && HasAllAttributes(maskPolicy, evidencePolicy)
+               && HasAllActions(maskPolicy, evidencePolicy);
+
+        private static bool IsTypeMatch(Policy maskPolicy, Policy evidencePolicy)
         {
             var resource = evidencePolicy.Target.Resource;
 
             var isTypeMatch = maskPolicy.Target.Resource.Type == resource.Type;
+            return isTypeMatch;
+        }
 
-            var hasAllIdentifiers = maskPolicy.Target.Resource.Identifiers.All(mId =>
-                    (resource.Identifiers.Count() == 1 &&
-                        resource.Identifiers.Any(eId => eId == "*")) ||
-                    resource.Identifiers.Contains(mId));
+        private static bool HasAllIdentifiers(Policy maskPolicy, Policy evidencePolicy)
+        {
+            var resource = evidencePolicy.Target.Resource;
+            return maskPolicy.Target.Resource.Identifiers.All(mId =>
+                resource.Identifiers.Count == 1 &&
+                resource.Identifiers.Any(eId => eId == "*") ||
+                resource.Identifiers.Contains(mId));
+        }
 
-            var hasAllAttributes = maskPolicy.Target.Resource.Attributes.All(mAtt =>
-                    (resource.Attributes.Count() == 1 &&
-                        resource.Attributes.Any(eAtt => eAtt == "*")) ||
-                    resource.Attributes.Contains(mAtt));
+        private static bool HasAllAttributes(Policy maskPolicy, Policy evidencePolicy)
+        {
+            var resource = evidencePolicy.Target.Resource;
+            return maskPolicy.Target.Resource.Attributes.All(mAtt =>
+                resource.Attributes.Count == 1 &&
+                resource.Attributes.Any(eAtt => eAtt == "*") ||
+                resource.Attributes.Contains(mAtt));
+        }
 
-            var hasAllActions = 
-                maskPolicy.Target.Actions != null &&
-                maskPolicy.Target.Actions.Any() &&
-                (maskPolicy.Target.Actions.All(mAct =>
-                    (evidencePolicy.Target.Actions.Count() == 1 &&
-                        evidencePolicy.Target.Actions.Any(eAct => eAct == "*")) ||
-                    evidencePolicy.Target.Actions.Contains(mAct)));
-
-            return isTypeMatch && hasAllIdentifiers && hasAllAttributes && hasAllActions;
+        private static bool HasAllActions(Policy maskPolicy, Policy evidencePolicy)
+        {
+            return maskPolicy.Target.Actions != null &&
+                   maskPolicy.Target.Actions.Any() &&
+                   maskPolicy.Target.Actions.All(mAct =>
+                       evidencePolicy.Target.Actions.Count == 1 &&
+                       evidencePolicy.Target.Actions.Any(eAct => eAct == "*") ||
+                       evidencePolicy.Target.Actions.Contains(mAct));
         }
 
         private static bool AccessDeniedToContainers(Policy maskPolicy, Policy evidencePolicy)

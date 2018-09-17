@@ -1,24 +1,25 @@
 ﻿using Microsoft.Extensions.Logging;
+using NLIP.iShare.Abstractions;
 using NLIP.iShare.Abstractions.Email;
-using NLIP.iShare.EmailClient.Models;
 using SendGrid;
 using SendGrid.Helpers.Mail;
 using System;
 using System.Net;
 using System.Threading.Tasks;
-using NLIP.iShare.Abstractions;
 using EmailAddress = NLIP.iShare.Abstractions.Email.EmailAddress;
+using SendGridEmailAddress = SendGrid.Helpers.Mail.EmailAddress;
+
 
 namespace NLIP.iShare.EmailClient
 {
     public class EmailClient : IEmailClient
     {
-        private readonly EmailConfiguration _emailConfiguration;
+        private readonly EmailOptions _emailOptions;
         private readonly ILogger<EmailClient> _logger;
 
-        public EmailClient(EmailConfiguration emailConfiguration, ILogger<EmailClient> logger)
+        public EmailClient(EmailOptions emailOptions, ILogger<EmailClient> logger)
         {
-            _emailConfiguration = emailConfiguration;
+            _emailOptions = emailOptions;
             _logger = logger;
         }
 
@@ -31,7 +32,7 @@ namespace NLIP.iShare.EmailClient
             var client = CreateClient();
             var msg = new SendGridMessage
             {
-                From = CreateEmailAddress(_emailConfiguration.From.Address),
+                From = CreateEmailAddress(_emailOptions.From.Address),
                 Subject = subject,
                 HtmlContent = body,
             };
@@ -46,9 +47,15 @@ namespace NLIP.iShare.EmailClient
         public async Task Send(string from, string to, string subject, string body)
         {
             if (!IsValidEmail(from))
+            {
                 throw new ArgumentException($"Invalid email address from: {from}");
-            if(!IsValidEmail(to))
+            }
+
+            if (!IsValidEmail(to))
+            {
                 throw new ArgumentException($"Invalid email address to: {to}");
+            }
+
             subject.NotNullOrEmpty(nameof(subject));
             body.NotNullOrEmpty(nameof(body));
 
@@ -80,7 +87,7 @@ namespace NLIP.iShare.EmailClient
             var client = CreateClient();
             var msg = new SendGridMessage
             {
-                From = CreateEmailAddress(_emailConfiguration.From.Address, _emailConfiguration.From.DisplayName),
+                From = CreateEmailAddress(_emailOptions.From.Address, _emailOptions.From.DisplayName),
                 Subject = subject,
                 HtmlContent = body,
             };
@@ -123,22 +130,16 @@ namespace NLIP.iShare.EmailClient
         }
 
         
-        private SendGridClient CreateClient()
-        {
-            return new SendGridClient(_emailConfiguration.SendGridKey);
-        }
+        private SendGridClient CreateClient() 
+            => new SendGridClient(_emailOptions.SendGridKey);
 
-        private SendGrid.Helpers.Mail.EmailAddress CreateEmailAddress(string address, string name)
-        {
-            return new SendGrid.Helpers.Mail.EmailAddress(address, name);
-        }
+        private static SendGridEmailAddress CreateEmailAddress(string address, string name) 
+            => new SendGridEmailAddress(address, name);
 
-        private SendGrid.Helpers.Mail.EmailAddress CreateEmailAddress(string address)
-        {
-            return new SendGrid.Helpers.Mail.EmailAddress(address);
-        }
+        private static SendGridEmailAddress CreateEmailAddress(string address) 
+            => new SendGridEmailAddress(address);
 
-        private bool IsValidEmail(string email)
+        private static bool IsValidEmail(string email)
         {
             try
             {

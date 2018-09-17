@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
+    <ProjectGuid>577FBDBA-2E9C-40E3-A81C-0338BBB49B53</ProjectGuid>              
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -13,23 +14,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Api\**" />
-    <Compile Remove="Validation\**" />
-    <EmbeddedResource Remove="Api\**" />
-    <EmbeddedResource Remove="Validation\**" />
-    <None Remove="Api\**" />
-    <None Remove="Validation\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Sendgrid" Version="9.9.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="2.1.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="2.1.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="2.1.0" />
+    <PackageReference Include="Sendgrid" Version="9.10.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\NLIP.iShare.Abstractions\NLIP.iShare.Abstractions.csproj" />
+    <ProjectReference Include="..\NLIP.iShare.Configuration\NLIP.iShare.Configuration.csproj" />
   </ItemGroup>
 
 </Project>

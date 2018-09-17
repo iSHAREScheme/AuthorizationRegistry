@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css?family=Lato:400,700');
+@import './assets/_bootstrap_reset.scss';
 @import './assets/_buttons.scss';
 @import './assets/_inputs.scss';
 @import './assets/_alrtifyjs_overrides.scss';
@@ -81,7 +82,7 @@ fieldset {
     display: block;
     color: #aaa;
     text-transform: uppercase;
-    margin: 5px 0;
+    margin: 5px 0 0 0;
     &.inline {
       display: inline;
     }

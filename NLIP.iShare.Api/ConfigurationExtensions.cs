@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
@@ -6,16 +6,20 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using NLIP.iShare.Configuration.Configurations;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text;
-using Newtonsoft.Json.Converters;
 
 namespace NLIP.iShare.Api
 {
@@ -79,8 +83,9 @@ namespace NLIP.iShare.Api
                 })
                 .AddJwtBearer(options =>
                 {
+                    var partyDetailsOptions = services.BuildServiceProvider().GetRequiredService<PartyDetailsOptions>();
                     // base-address of your identityserver
-                    options.Authority = configuration["OAuth2:AuthServerUrl"];
+                    options.Authority = partyDetailsOptions.BaseUri;
 
                     // name of the API resource
                     options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
@@ -92,7 +97,7 @@ namespace NLIP.iShare.Api
                     options.IncludeErrorDetails = !hostingEnvironment.IsDevelopment();
 
                     var handler = new SocketsHttpHandler();
-                    var authServerCertificateThumbprint = configuration["OAuth2:AuthServerCertificateThumbprint"];
+                    var authServerCertificateThumbprint = partyDetailsOptions.Thumbprint;
                     if (!string.IsNullOrEmpty(authServerCertificateThumbprint))
                     {
                         handler.SslOptions.RemoteCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors)
@@ -112,7 +117,16 @@ namespace NLIP.iShare.Api
             {
                 if (!string.IsNullOrWhiteSpace(context.Request.Query["date_time"]))
                 {
-                    context.Response.Headers.Add("Cache-Control", "max-age=31536000");
+                    if (DateTime.TryParse(context.Request.Query["date_time"], CultureInfo.CurrentCulture, DateTimeStyles.None, out _))
+                    {
+                        context.Response.Headers.Add("Cache-Control", "max-age=31536000");
+                    }
+                    else
+                    {
+                        context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                        await context.Response.WriteJsonAsync(new { error = "Incorrect date/time format." });
+                        return;
+                    }
                 }
                 else
                 {
@@ -124,8 +138,15 @@ namespace NLIP.iShare.Api
             });
         }
 
+        public static void AddLoggers(this ILoggerFactory loggerFactory, IConfiguration configuration)
+        {
+            loggerFactory.AddFile("App_Data/Logs/iSHARE-{Date}.log");
+            loggerFactory.AddConsole(configuration.GetSection("Logging"));
+            loggerFactory.AddDebug();
+        }
+
         public static bool IsQa(this IHostingEnvironment hostingEnvironment) =>
-            hostingEnvironment.EnvironmentName == "QA";
+            string.Equals("qa", hostingEnvironment.EnvironmentName, StringComparison.OrdinalIgnoreCase);
 
         public static IMvcCoreBuilder AddCustomJsonSettings(this IMvcCoreBuilder mvcBuilder)
         {
@@ -140,5 +161,7 @@ namespace NLIP.iShare.Api
                         });
                 });
         }
+
+
     }
 }

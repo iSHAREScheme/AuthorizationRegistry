@@ -1,0 +1,35 @@
+﻿{
+  "ConnectionStrings": {
+    "Main": "<<SQL Server ConnectionString>>"
+  },
+  "Console": {
+    "LogLevel": {
+      "Default": "Debug"
+    }
+  },
+  "SchemeOwner": {
+    "BaseUri": "http://localhost:43782/"
+  },
+  "RunMigration": "true",
+  "PartyDetails": {
+    "PrivateKey": "<<<< RSA private key >>>>",
+    "PublicKeys": [
+      "<<<< Public key>>>>"
+    ],
+    "ClientId": "EU.EORI.NL000000004",
+    "BaseUri": "http://localhost:61433/"
+  },
+  "Email": {
+    "SendGridKey": "<<<< SEND GRID KEY>>>>",
+    "From": {
+      "Address": "<<<< sender@mail.com>>>>",
+      "DisplayName": "Dummy Name"
+    }
+  },
+  "ApplicationInsights": {
+    "InstrumentationKey": "00000000-0000-0000-0000-000000000000"
+  },
+  "Spa": {
+    "BaseUri": "http://localhost:4200/admin/"
+  }
+}

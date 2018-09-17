@@ -322,7 +322,7 @@ namespace NLIP.iShare.AuthorizationRegistry.Core.Tests
 
             var delegationServiceMock = new Mock<IDelegationService>();
             delegationServiceMock
-                .Setup(c => c.GetByARId(arId, claimsPrincipal.GetPartyId()))
+                .Setup(c => c.GetByArId(arId, claimsPrincipal.GetPartyId()))
                 .ReturnsAsync(new Delegation
                 {
                     PolicyIssuer = "EU.EORI.NL812972715",
@@ -361,7 +361,7 @@ namespace NLIP.iShare.AuthorizationRegistry.Core.Tests
 
             var delegationServiceMock = new Mock<IDelegationService>();
             delegationServiceMock
-                .Setup(c => c.GetByARId(arId, claimsPrincipal.GetPartyId()))
+                .Setup(c => c.GetByArId(arId, claimsPrincipal.GetPartyId()))
                 .ReturnsAsync(new Delegation
                 {
                     PolicyIssuer = "EU.EORI.NL812972715",

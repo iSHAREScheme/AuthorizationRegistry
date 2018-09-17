@@ -21,7 +21,12 @@ export class EditUserComponent implements OnInit, OnDestroy {
   isPartyHidden = false;
   passwordResetEnabled = true;
 
-  constructor(private api: UsersApiService, private router: Router, private route: ActivatedRoute, private alert: AlertService) {
+  constructor(
+    private api: UsersApiService,
+    private router: Router,
+    private route: ActivatedRoute,
+    private alert: AlertService
+  ) {
     this.initModel();
     this.buildForm();
     this.initRoles();
@@ -94,9 +99,15 @@ export class EditUserComponent implements OnInit, OnDestroy {
   }
 
   resetUserPassword() {
-    this.api.resetPassword(this.model).subscribe(() => {
-      this.alert.success('user password has been reset');
-    });
+    this.api.resetPassword(this.model).subscribe(
+      () => {
+        this.alert.success('user password has been reset');
+        this.load(this.model.id);
+      },
+      err => {
+        this.serverError = err;
+      }
+    );
   }
 
   back() {

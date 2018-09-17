@@ -1,5 +1,7 @@
 ﻿using NLIP.iShare.AuthorizationRegistry.Data.Models;
 using System;
+using NLIP.iShare.AuthorizationRegistry.IdentityServer.Models;
+using NLIP.iShare.Models;
 
 namespace NLIP.iShare.AuthorizationRegistry.Core.Responses
 {

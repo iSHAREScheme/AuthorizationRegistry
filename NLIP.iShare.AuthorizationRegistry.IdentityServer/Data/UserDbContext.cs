@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using NLIP.iShare.AuthorizationRegistry.IdentityServer.Configurations;
+using NLIP.iShare.AuthorizationRegistry.IdentityServer.Models;
 
 namespace NLIP.iShare.AuthorizationRegistry.IdentityServer.Data
 {

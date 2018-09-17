@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
+    <ProjectGuid>6444D52F-AFC0-49B7-9EFE-044F4BABA9E6</ProjectGuid>          
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -13,6 +14,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\NLIP.iShare.Configuration\NLIP.iShare.Configuration.csproj" />
     <ProjectReference Include="..\NLIP.iShare.IdentityServer\NLIP.iShare.IdentityServer.csproj" />
     <ProjectReference Include="..\NLIP.iShare.TokenClient\NLIP.iShare.TokenClient.csproj" />
   </ItemGroup>
