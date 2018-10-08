@@ -3,6 +3,7 @@ import { AuthService, ProfileService, Profile } from '@common/index';
 import { AppInsightsService } from 'common';
 import { Router } from '@angular/router';
 import { RuntimeConfigurationService, ConfigurationModel } from '@generic/services/runtime-configuration.service';
+import { MENU_ITEMS } from '@app-ar/menu/menu-items';
 
 @Component({
   selector: 'app-root',
@@ -11,6 +12,7 @@ import { RuntimeConfigurationService, ConfigurationModel } from '@generic/servic
 })
 export class AppComponent implements OnInit {
   profile: Profile;
+  menuItems = MENU_ITEMS;
 
   constructor(
     private auth: AuthService,

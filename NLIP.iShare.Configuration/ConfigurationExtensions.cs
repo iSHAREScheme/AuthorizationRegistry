@@ -11,7 +11,7 @@ namespace NLIP.iShare.Configuration
             IConfiguration configuration,
             string sectionKey,
             ConfigurationOptionsValidator validateConfigurationOptions = null)
-            where TOptions : class, IValidatableOptions
+            where TOptions : class, IValidateOptions
         {
             var section = configuration.GetSection(sectionKey);
             var options = section.Get<TOptions>();

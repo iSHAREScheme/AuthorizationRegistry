@@ -11,10 +11,11 @@ import { Router } from '@angular/router';
 import { catchError } from 'rxjs/operators';
 import { Observable, throwError } from 'rxjs';
 import { AlertService } from '../services/alert.service';
+import { AuthService } from '@common/generic/services/auth.service';
 
 @Injectable()
 export class HttpErrorInterceptor implements HttpInterceptor {
-  constructor(private router: Router, private alert: AlertService) {}
+  constructor(private router: Router, private alert: AlertService, private auth: AuthService) {}
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     return next.handle(req).pipe(
@@ -25,10 +26,7 @@ export class HttpErrorInterceptor implements HttpInterceptor {
           result.data = response.error;
 
           if (response.status === 401) {
-            this.router.navigate(['account/login']);
-          } else if (response.status === 404) {
-            result.message = 'Inexistent resource.';
-            result.alert = this.alert.error(result.message);
+            this.auth.logout();
           } else if (response.status >= 400) {
           } else if (response.status >= 500) {
             result.message = 'Server error. Please contact administrator.';

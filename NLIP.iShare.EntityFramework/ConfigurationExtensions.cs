@@ -4,15 +4,21 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System;
+using System.Linq;
+using System.Reflection;
+using Microsoft.Extensions.Logging;
+using NLIP.iShare.EntityFramework.Migrations.Seed;
 
 namespace NLIP.iShare.EntityFramework
 {
     public static class ConfigurationExtensions
     {
-        public static bool RunMigration(this IConfiguration configuration) => configuration["RunMigration"] == "true";       
+        public static bool RunMigration(this IConfiguration configuration) => configuration["RunMigration"] == "true";
 
-        public static void UseMigrations<TContext>(this IApplicationBuilder app,
-                            IConfiguration configuration, IHostingEnvironment environment)
+        public static IApplicationBuilder UseMigrations<TContext>(this IApplicationBuilder app,
+            IConfiguration configuration,
+            IHostingEnvironment environment)
             where TContext : DbContext
         {
             if (configuration.RunMigration())
@@ -22,55 +28,85 @@ namespace NLIP.iShare.EntityFramework
                     // Automatically perform database migration
                     var context = serviceScope.ServiceProvider.GetRequiredService<TContext>();
                     context.Database.Migrate();
-
-                    var seeder = serviceScope.ServiceProvider.GetService<IDatabaseSeeder<TContext>>();
-
-                    if (seeder == null)
-                    {
-                        throw new DatabaseSeedException(
-                            $"A database seeder for {environment.EnvironmentName} could not be found." +
-                            $"Make sure a {nameof(IDatabaseSeeder<TContext>)} implementation is registered for this enviroment.");
-                    }
-                    seeder.Seed();
                 }
             }
+            return app;
         }
-        public static IServiceCollection AddSeed<TDatabaseSeederQa, TDatabaseSeederProd, TDatabaseSeederAcc, TDatabaseSeederDev>(this IServiceCollection services, IHostingEnvironment environment)
-            where TDatabaseSeederQa : class, IDatabaseSeeder<ConfigurationDbContext>
-            where TDatabaseSeederProd : class, IDatabaseSeeder<ConfigurationDbContext>
-            where TDatabaseSeederAcc : class, IDatabaseSeeder<ConfigurationDbContext>
-            where TDatabaseSeederDev : class, IDatabaseSeeder<ConfigurationDbContext>
+
+        public static IApplicationBuilder UseSeed<TContext>(this IApplicationBuilder app,
+            IHostingEnvironment environment)
         {
-            services.AddScoped<TDatabaseSeederQa>();
-            services.AddScoped<TDatabaseSeederProd>();
-            services.AddScoped<TDatabaseSeederAcc>();
-            services.AddScoped<TDatabaseSeederDev>();
-
-
-            services.AddScoped(opts =>
+            using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
             {
-                var environmentName = environment.EnvironmentName;
-                IDatabaseSeeder<ConfigurationDbContext> databaseSeeder;
-                switch (environmentName)
+                var seederFactory = serviceScope.ServiceProvider.GetService<Func<IDatabaseSeeder<TContext>>>();
+                var seeder = seederFactory?.Invoke();
+                if (seeder == null)
                 {
-                    case Environments.Qa:
-                        databaseSeeder = opts.GetService<TDatabaseSeederQa>();
-                        break;
-                    case Environments.Prod:
-                        databaseSeeder = opts.GetService<TDatabaseSeederProd>();
-                        break;
-                    case Environments.Acc:
-                        databaseSeeder = opts.GetService<TDatabaseSeederAcc>();
-                        break;
-                    case Environments.Development:
-                        databaseSeeder = opts.GetService<TDatabaseSeederDev>();
-                        break;
-                    default:
-                        throw new DatabaseSeedException($"{environmentName} is not registered.");
+                    throw new DatabaseSeedException(
+                        $"A database seeder for {environment.EnvironmentName} could not be found in the requested namespace {typeof(IDatabaseSeeder<TContext>).Namespace}. " +
+                        $"Make sure a {nameof(IDatabaseSeeder<TContext>)} implementation is registered for this environment.");
                 }
 
-                return databaseSeeder;
-            });
+                seeder.Seed();
+            }
+            return app;
+        }
+
+        public static IServiceCollection AddIdentityServerSeedServices(this IServiceCollection services,
+            IHostingEnvironment environment,
+            string @namespace,
+            Assembly sourcesAssembly)
+        {
+            services.AddIdentityServerSeedServices(environment, @namespace, sourcesAssembly, ClientsDatabaseSeeder.CreateSeeder);
+
+            return services;
+        }
+
+        public static IServiceCollection AddIdentityServerSeedServices(this IServiceCollection services,
+            IHostingEnvironment environment,
+            string @namespace,
+            Assembly sourcesAssembly,
+            Func<IServiceProvider, string, IDatabaseSeeder<ConfigurationDbContext>> seederFactory)
+        {
+            services.AddSeedServices(environment, @namespace, sourcesAssembly, seederFactory);
+
+            return services;
+        }
+
+        public static IServiceCollection AddSeedServices<TContext>(this IServiceCollection services,
+            IHostingEnvironment environment,
+            string @namespace,
+            Assembly sourcesAssembly,
+            Func<IServiceProvider, string, IDatabaseSeeder<TContext>> seederFactory)
+            where TContext : DbContext
+        {
+            services.AddScoped<ISeedDataProvider<TContext>>(opts =>
+                new SeedDataProvider<TContext>(
+                    opts.GetService<ILogger<SeedDataProvider<TContext>>>(),
+                    @namespace,
+                    sourcesAssembly)
+            );
+
+            services.AddScoped(srv => seederFactory(srv, Environments.Development));
+            services.AddScoped(srv => seederFactory(srv, Environments.QaLive));
+            services.AddScoped(srv => seederFactory(srv, Environments.QaTest));
+            services.AddScoped(srv => seederFactory(srv, Environments.Test));
+            services.AddScoped(srv => seederFactory(srv, Environments.Live));
+
+            services.AddSeed<TContext>(environment);
+
+            return services;
+        }
+        public static IServiceCollection AddSeed<TContext>(this IServiceCollection services, IHostingEnvironment environment)
+        {
+            services.AddScoped((Func<IServiceProvider, Func<IDatabaseSeeder<TContext>>>)(opts => () =>
+                {
+                    var environmentName = environment.EnvironmentName;
+
+                    return opts.GetServices<IDatabaseSeeder<TContext>>()
+                        .LastOrDefault(c => c.EnvironmentName == environmentName);
+                })
+            );
             return services;
         }
     }

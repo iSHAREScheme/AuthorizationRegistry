@@ -11,9 +11,8 @@ namespace NLIP.iShare.Api
             var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 
             var showDetailedErrors =
-                !string.Equals(env, "prod", StringComparison.OrdinalIgnoreCase)
-                && !string.Equals(env, "live", StringComparison.OrdinalIgnoreCase)
-                && !string.Equals(env, "test", StringComparison.OrdinalIgnoreCase)
+                !string.Equals(env, "Live", StringComparison.OrdinalIgnoreCase)                
+                && !string.Equals(env, "Test", StringComparison.OrdinalIgnoreCase)
                 ? "true" : "false";
 
             return builder

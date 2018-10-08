@@ -2,163 +2,64 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NLIP.iShare.IdentityServer.Validation;
+using System;
+using System.Linq;
+using Microsoft.Extensions.Configuration;
+using NLIP.iShare.Configuration.Configurations;
+using NLIP.iShare.IdentityServer.Configuration;
+using NLIP.iShare.IdentityServer.Services;
+using NLIP.iShare.Configuration;
 
 namespace NLIP.iShare.IdentityServer
 {
     public static class ConfigurationExtensions
     {
-        public static IServiceCollection AddSecretValidators<TCustomValidator1>(this IServiceCollection services)
-            where TCustomValidator1 : class, ISecretValidator
+        public static IIdentityServerBuilder AddSecretValidators(this IIdentityServerBuilder builder, params Type[] validators)
         {
+            var types = validators.ToList();
 
-            services.AddTransient<TCustomValidator1>();
-            services.AddTransient<ISecretValidator>(srv => new SecretValidators(new[]
+            types.ForEach(t => builder.Services.AddTransient(t));
+
+            builder.Services.AddTransient<ISecretValidator>(provider =>
             {
-                (ISecretValidator)srv.GetService<TCustomValidator1>(),
-            }, srv.GetService<ILogger<SecretValidators>>()));
+                var resolved = types.Select(t => provider.GetService(t) as ISecretValidator).ToList();
 
-            return services;
+                return new SecretValidators(resolved, provider.GetService<ILogger<SecretValidators>>());
+            });
+            return builder;
         }
 
-        public static IServiceCollection AddSecretValidators<TCustomValidator1, TCustomValidator2>(this IServiceCollection services)
-            where TCustomValidator1 : class, ISecretValidator
-            where TCustomValidator2 : class, ISecretValidator
+        public static IIdentityServerBuilder AddCustomTokenRequestValidators(this IIdentityServerBuilder builder, params Type[] validators)
         {
-            services.AddTransient<TCustomValidator1>();
-            services.AddTransient<TCustomValidator2>();
-            services.AddTransient<ISecretValidator>(srv => new SecretValidators(new[]
+            var types = validators.ToList();
+            types.ForEach(t => builder.Services.AddTransient(t));
+
+            builder.Services.AddTransient<ICustomTokenRequestValidator>(provider =>
             {
-                (ISecretValidator)srv.GetService<TCustomValidator1>(),
-                (ISecretValidator)srv.GetService<TCustomValidator2>()
-            }, srv.GetService<ILogger<SecretValidators>>()));
+                var resolved = types.Select(t => provider.GetService(t) as ICustomTokenRequestValidator).ToList();
 
-            return services;
+                return new AllOrNothingTokenRequestValidator(resolved, provider.GetService<ILogger<AllOrNothingTokenRequestValidator>>());
+            });
+            return builder;
         }
 
-        public static IServiceCollection AddSecretValidators<TCustomValidator1, TCustomValidator2, TCustomValidator3>(this IServiceCollection services)
-            where TCustomValidator1 : class, ISecretValidator
-            where TCustomValidator2 : class, ISecretValidator
-            where TCustomValidator3 : class, ISecretValidator
+        public static IIdentityServerBuilder AddPki(this IIdentityServerBuilder builder, 
+            IConfiguration configuration, 
+            bool useStoreless,
+            ConfigurationOptionsValidator configurationOptionsValidator)
         {
-            services.AddTransient<TCustomValidator1>();
-            services.AddTransient<TCustomValidator2>();
-            services.AddTransient<TCustomValidator3>();
-            services.AddTransient<ISecretValidator>(srv => new SecretValidators(new[]
+            var services = builder.Services;
+            services.AddTransient<ICertificateManager, CertificateManager>();
+            if (useStoreless)
             {
-                (ISecretValidator)srv.GetService<TCustomValidator1>(),
-                (ISecretValidator)srv.GetService<TCustomValidator2>(),
-                (ISecretValidator)srv.GetService<TCustomValidator3>(),
-            }, srv.GetService<ILogger<SecretValidators>>()));
+                services.AddTransient<ICertificateManager, StorelessCertificateManager>();
+            }
 
-            return services;
-        }
+            services.AddTransient<iShare.IdentityServer.ICertificateRepository, CertificateRepository>();
+            services.AddTransient<ICertificateValidationService, CertificateValidationService>();
+            services.ConfigureOptions<PkiOptions>(configuration, "Pki", configurationOptionsValidator);
 
-        public static IIdentityServerBuilder AddSecretValidators<TCustomValidator1>
-            (this IIdentityServerBuilder identityServerBuilder)
-            where TCustomValidator1 : class, ISecretValidator
-        {
-
-            identityServerBuilder.Services.AddSecretValidators<TCustomValidator1>();
-            return identityServerBuilder;
-        }
-
-        public static IIdentityServerBuilder AddSecretValidators<TCustomValidator1, TCustomValidator2>
-            (this IIdentityServerBuilder identityServerBuilder)
-            where TCustomValidator1 : class, ISecretValidator
-            where TCustomValidator2 : class, ISecretValidator
-        {
-
-            identityServerBuilder.Services.AddSecretValidators<TCustomValidator1, TCustomValidator2>();
-            return identityServerBuilder;
-        }
-
-        public static IIdentityServerBuilder AddSecretValidators<TCustomValidator1, TCustomValidator2, TCustomValidator3>
-          (this IIdentityServerBuilder identityServerBuilder)
-          where TCustomValidator1 : class, ISecretValidator
-          where TCustomValidator2 : class, ISecretValidator
-          where TCustomValidator3 : class, ISecretValidator
-        {
-
-            identityServerBuilder.Services.AddSecretValidators<TCustomValidator1, TCustomValidator2, TCustomValidator3>();
-            return identityServerBuilder;
-        }
-
-        public static IServiceCollection AddCustomTokenRequestValidators<TCustomValidator1>(this IServiceCollection services)
-            where TCustomValidator1 : class, ICustomTokenRequestValidator
-        {
-
-            services.AddTransient<TCustomValidator1>();
-            services.AddTransient<ICustomTokenRequestValidator>(srv => new AllOrNothingTokenRequestValidator(new[]
-            {
-                (ICustomTokenRequestValidator)srv.GetService<TCustomValidator1>(),
-            }, srv.GetService<ILogger<AllOrNothingTokenRequestValidator>>()));
-
-            return services;
-        }
-
-        public static IServiceCollection AddCustomTokenRequestValidators<TCustomValidator1, TCustomValidator2>(this IServiceCollection services)
-            where TCustomValidator1 : class, ICustomTokenRequestValidator
-            where TCustomValidator2 : class, ICustomTokenRequestValidator
-        {
-
-            services.AddTransient<TCustomValidator1>();
-            services.AddTransient<TCustomValidator2>();
-            services.AddTransient<ICustomTokenRequestValidator>(srv => new AllOrNothingTokenRequestValidator(new[]
-            {
-                (ICustomTokenRequestValidator)srv.GetService<TCustomValidator1>(),
-                (ICustomTokenRequestValidator)srv.GetService<TCustomValidator2>()
-            }, srv.GetService<ILogger<AllOrNothingTokenRequestValidator>>()));
-
-            return services;
-        }
-
-        public static IServiceCollection AddCustomTokenRequestValidators<TCustomValidator1, TCustomValidator2, TCustomValidator3>(this IServiceCollection services)
-          where TCustomValidator1 : class, ICustomTokenRequestValidator
-          where TCustomValidator2 : class, ICustomTokenRequestValidator
-          where TCustomValidator3 : class, ICustomTokenRequestValidator
-        {
-
-            services.AddTransient<TCustomValidator1>();
-            services.AddTransient<TCustomValidator2>();
-            services.AddTransient<TCustomValidator3>();
-            services.AddTransient<ICustomTokenRequestValidator>(srv => new AllOrNothingTokenRequestValidator(new[]
-            {
-                (ICustomTokenRequestValidator)srv.GetService<TCustomValidator1>(),
-                (ICustomTokenRequestValidator)srv.GetService<TCustomValidator2>(),
-                (ICustomTokenRequestValidator)srv.GetService<TCustomValidator3>()
-            }, srv.GetService<ILogger<AllOrNothingTokenRequestValidator>>()));
-
-            return services;
-        }
-
-        public static IIdentityServerBuilder AddCustomTokenRequestValidators<TCustomValidator1>
-            (this IIdentityServerBuilder identityServerBuilder)
-            where TCustomValidator1 : class, ICustomTokenRequestValidator
-        {
-
-            identityServerBuilder.Services.AddCustomTokenRequestValidators<TCustomValidator1>();
-            return identityServerBuilder;
-        }
-
-        public static IIdentityServerBuilder AddCustomTokenRequestValidators<TCustomValidator1, TCustomValidator2>
-            (this IIdentityServerBuilder identityServerBuilder)
-            where TCustomValidator1 : class, ICustomTokenRequestValidator
-            where TCustomValidator2 : class, ICustomTokenRequestValidator
-        {
-
-            identityServerBuilder.Services.AddCustomTokenRequestValidators<TCustomValidator1, TCustomValidator2>();
-            return identityServerBuilder;
-        }
-
-        public static IIdentityServerBuilder AddCustomTokenRequestValidators<TCustomValidator1, TCustomValidator2, TCustomValidator3>
-           (this IIdentityServerBuilder identityServerBuilder)
-           where TCustomValidator1 : class, ICustomTokenRequestValidator
-           where TCustomValidator2 : class, ICustomTokenRequestValidator
-           where TCustomValidator3 : class, ICustomTokenRequestValidator
-        {
-
-            identityServerBuilder.Services.AddCustomTokenRequestValidators<TCustomValidator1, TCustomValidator2, TCustomValidator3>();
-            return identityServerBuilder;
+            return builder;
         }
     }
 }

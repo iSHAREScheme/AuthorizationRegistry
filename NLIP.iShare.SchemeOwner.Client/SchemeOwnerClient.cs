@@ -2,8 +2,6 @@
 using Flurl.Http;
 using Microsoft.Extensions.Logging;
 using NLIP.iShare.IdentityServer;
-using NLIP.iShare.IdentityServer.Models;
-using NLIP.iShare.IdentityServer.Validation;
 using NLIP.iShare.TokenClient;
 using System.Threading.Tasks;
 using NLIP.iShare.Configuration.Configurations;
@@ -11,11 +9,10 @@ using ClientAssertion = NLIP.iShare.IdentityServer.ClientAssertion;
 
 namespace NLIP.iShare.SchemeOwner.Client
 {
-    public class SchemeOwnerClient : ISchemeOwnerClient
+    public class SchemeOwnerClient
     {
         private readonly ILogger _logger;
         private readonly ITokenClient _tokenClient;
-
         private readonly SchemeOwnerClientOptions _schemeOwnerClientOptions;
         private readonly PartyDetailsOptions _partyDetailsOptions;
 
@@ -63,30 +60,6 @@ namespace NLIP.iShare.SchemeOwner.Client
             _logger.LogInformation("Certificates status : {status}", certificateStatus?.IsCertified);
 
             return certificateStatus;
-        }
-
-        public async Task<CertificateValidationStatus> ValidateCertificate(IdentityServer.ClientAssertion clientAssertion, string[] chain)
-        {
-            _logger.LogInformation("ValidateCertificate: {certificatesCount}", chain?.Length);
-
-            var accessToken = await GetAccessToken(clientAssertion).ConfigureAwait(false);
-
-            var status = await _schemeOwnerClientOptions.BaseUri
-               .AppendPathSegment("certificates/certificate_validation")
-               .WithOAuthBearerToken(accessToken)
-               .PostJsonAsync(chain)
-               .ReceiveJson<CertificateValidationStatus>()
-               .ConfigureAwait(false);
-
-            _logger.LogInformation("CertificateValidationStatus : {status}", status?.Validity);
-
-            if (status == null)
-            {
-                _logger.LogInformation("Scheme owner communication failed");
-                status = new CertificateValidationStatus { Validity = false };
-            }
-
-            return status;
         }
 
         private async Task<string> GetAccessToken(ClientAssertion clientAssertion)

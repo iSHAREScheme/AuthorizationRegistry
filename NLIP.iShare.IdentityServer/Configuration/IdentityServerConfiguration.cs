@@ -4,6 +4,7 @@ using IdentityServer4.Validation;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NLIP.iShare.IdentityServer.Services;
+using NLIP.iShare.IdentityServer.Validation;
 
 namespace NLIP.iShare.IdentityServer
 {
@@ -27,7 +28,7 @@ namespace NLIP.iShare.IdentityServer
 
         public static IIdentityServerBuilder AddServiceConsumerSecretValidator(this IIdentityServerBuilder identityServerBuilder)
         {
-            identityServerBuilder.Services.AddTransient<IAssertionParser, AssertionParser>();            
+            identityServerBuilder.Services.AddTransient<IAssertionManager, ClientAssertionManager>();            
             identityServerBuilder.Services.AddTransientDecorator<ISecretValidator, ServiceConsumerSecretValidator>();
             return identityServerBuilder;
         }

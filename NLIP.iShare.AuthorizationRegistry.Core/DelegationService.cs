@@ -1,14 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using NLIP.iShare.Abstractions;
 using NLIP.iShare.AuthorizationRegistry.Core.Api;
 using NLIP.iShare.AuthorizationRegistry.Core.Requests;
 using NLIP.iShare.AuthorizationRegistry.Data;
 using NLIP.iShare.AuthorizationRegistry.Data.Models;
+using NLIP.iShare.EntityFramework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using NLIP.iShare.Abstractions;
-using NLIP.iShare.EntityFramework;
 
 
 namespace NLIP.iShare.AuthorizationRegistry.Core
@@ -44,10 +44,13 @@ namespace NLIP.iShare.AuthorizationRegistry.Core
                                      && (partyId == null || d.PolicyIssuer == partyId)
                                      && !d.Deleted)
                 .ConfigureAwait(false);
+            if (delegation != null)
+            {
+                delegation.DelegationHistory = await GetDelegationHistoryByDelegationARId(arId, partyId).ConfigureAwait(false);
+                return delegation;
+            }
 
-            delegation.DelegationHistory = await GetDelegationHistoryByDelegationARId(arId, partyId).ConfigureAwait(false);
-
-            return delegation;
+            return null;
         }
 
         public async Task<Delegation> GetBySubject(string subject, string partyId)

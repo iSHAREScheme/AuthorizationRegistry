@@ -2,7 +2,6 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using NLIP.iShare.Configuration;
-using NLIP.iShare.IdentityServer.Validation;
 using NLIP.iShare.TokenClient;
 using System;
 using NLIP.iShare.Configuration.Configurations;
@@ -26,7 +25,7 @@ namespace NLIP.iShare.SchemeOwner.Client
                 Thumbprint = options.Thumbprint
             });
 
-            services.AddTransient<ISchemeOwnerClient, SchemeOwnerClient>();
+            services.AddTransient<SchemeOwnerClient>();            
         }
     }
 }

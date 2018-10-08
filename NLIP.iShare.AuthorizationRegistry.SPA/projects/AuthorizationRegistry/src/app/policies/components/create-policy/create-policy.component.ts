@@ -54,6 +54,11 @@ export class CreatePolicyComponent implements OnInit {
         target: { accessSubject: '' },
         policySets: [
           {
+            target: {
+              environment: {
+                licenses: ['ISHARE.0001']
+              }
+            },
             policies: [
               {
                 target: {

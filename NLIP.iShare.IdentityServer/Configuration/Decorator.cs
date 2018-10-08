@@ -2,13 +2,13 @@
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
 
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Linq;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace NLIP.iShare.IdentityServer
 {
-    internal class Decorator<TService>
+    public class Decorator<TService>
     {
         public TService Instance { get; set; }
 
@@ -18,7 +18,7 @@ namespace NLIP.iShare.IdentityServer
         }
     }
 
-    internal class Decorator<TService, TImpl> : Decorator<TService>
+    public class Decorator<TService, TImpl> : Decorator<TService>
         where TImpl : class, TService
     {
         public Decorator(TImpl instance) : base(instance)
@@ -26,7 +26,7 @@ namespace NLIP.iShare.IdentityServer
         }
     }
 
-    internal sealed class DisposableDecorator<TService> : Decorator<TService>, IDisposable
+    public sealed class DisposableDecorator<TService> : Decorator<TService>, IDisposable
     {
         public DisposableDecorator(TService instance) : base(instance)
         {
@@ -38,9 +38,9 @@ namespace NLIP.iShare.IdentityServer
         }
     }
 
-    internal static class ServicesConfiguration
+    public static class ServicesConfiguration
     {
-        internal static void AddTransientDecorator<TService, TImplementation>(this IServiceCollection services)
+        public static void AddTransientDecorator<TService, TImplementation>(this IServiceCollection services)
            where TService : class
            where TImplementation : class, TService
         {
@@ -48,7 +48,7 @@ namespace NLIP.iShare.IdentityServer
             services.AddTransient<TService, TImplementation>();
         }
 
-        internal static void AddDecorator<TService>(this IServiceCollection services)
+        public static void AddDecorator<TService>(this IServiceCollection services)
         {
             var registration = services.LastOrDefault(x => x.ServiceType == typeof(TService));
             if (registration == null)

@@ -2,7 +2,7 @@
 
 namespace NLIP.iShare.Configuration.Configurations
 {
-    public class PartyDetailsOptions : IValidatableOptions
+    public class PartyDetailsOptions : IValidateOptions
     {
         public string PrivateKey { get; set; }
         public string ClientId { get; set; }
@@ -11,7 +11,7 @@ namespace NLIP.iShare.Configuration.Configurations
         public string[] PublicKeys { get; set; }
         public void Validate(ConfigurationOptionsValidator validateConfigurationOptions)
         {
-            var required = validateConfigurationOptions?.Environment == "Prod";
+            var required = validateConfigurationOptions?.Environment == "Live";
             ConfigurationException.AssertNotNull(PrivateKey, nameof(PrivateKey));
             ConfigurationException.AssertNotNull(ClientId, nameof(ClientId));
             ConfigurationException.AssertThumbprint(Thumbprint, nameof(Thumbprint), required);

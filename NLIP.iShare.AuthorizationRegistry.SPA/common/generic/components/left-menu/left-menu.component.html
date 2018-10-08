@@ -1,32 +1,15 @@
 <div *ngIf="visible">
-  <div id="menu-toggler" (click)="active = !active">menu</div>
+  <div id="menu-toggler" (click)="toggleActive()">menu</div>
   <ul id="menu-items">
-    <li class="menu-item" 
-        [routerLink]="['policies']" 
-        routerLinkActive="active" 
-        title="Navigate to policies overview" 
-        *appAllowedForRoles="[roles.SchemeOwner, roles.EntitledPartyViewer, roles.EntitledPartyCreator]"
-        (click)="active = !active">
-      <i class="fa fa-file-text" aria-hidden="true"></i>
-      <span class="menu-item-title">Policies</span>
-    </li>
-    <li class="menu-item" 
-        [routerLink]="['users']" 
-        routerLinkActive="active" 
-        title="Navigate to users overview" 
-        *appAllowedForRoles="[roles.SchemeOwner]"
-        (click)="active = !active">
-      <i class="fa fa-users" aria-hidden="true"></i>
-      <span class="menu-item-title">Users</span>
-    </li>
-    <li class="menu-item" 
-        [routerLink]="['test']" 
-        routerLinkActive="active" 
-        title="Navigate to test delegation mask" 
-        *appAllowedForRoles="[roles.SchemeOwner, roles.EntitledPartyViewer, roles.EntitledPartyCreator]"
-        (click)="active = !active">
-      <i class="fa fa-play-circle" aria-hidden="true"></i>
-      <span class="menu-item-title">Test</span>
-    </li>
+      <li *ngFor="let menuItem of activeMenuItems"
+          class="menu-item"
+          [routerLink]="menuItem.links"
+          routerLinkActive="active"
+          title="{{'Navigate to ' + menuItem.text}}"
+          (click)="toggleActive()"
+          >
+            <i class="{{menuItem.class}}" aria-hidden="true"></i>
+            <span class="menu-item-title">{{menuItem.text}}</span>
+      </li>
   </ul>
 </div>

@@ -2,9 +2,10 @@
 {
     public static class Environments
     {
-        public const string Acc = "Acc";
-        public const string Prod = "Prod";
-        public const string Qa = "Qa";
+        public const string Test = "Test";
+        public const string Live = "Live";
+        public const string QaLive = "QaLive";
+        public const string QaTest = "QaTest";
         public const string Development = "Development";
     }
 }

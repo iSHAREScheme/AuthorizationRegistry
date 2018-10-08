@@ -8,8 +8,10 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "build-prod": "ng build --configuration=production",
-    "build-qa": "ng build --configuration=qa"
+    "build-live": "ng build --configuration=live",
+    "build-test": "ng build --configuration=test",
+    "build-qalive": "ng build --configuration=qa-live",
+    "build-qatest": "ng build --configuration=qa-test"
   },
   "private": true,
   "dependencies": {

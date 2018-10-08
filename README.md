@@ -37,7 +37,10 @@ Navigate to the local Authorization Registry repository and run `dotnet build`
 ## Setup the database
 
 Authorization Registry is using a SQL database that is created at runtime.
-Various test records are inserted from JSON files present in the _NLIP.iShare.AuthorizationRegistry.Data\Migrations\Seed_ and _NLIP.iShare.AuthorizationRegistry.IdentityServer\Data\Migrations\Seed_ folders.
+Various test records are inserted from JSON files present here
+
+- `NLIP.iShare.AuthorizationRegistry.Data\Migrations\Seed`
+- `NLIP.iShare.AuthorizationRegistry.IdentityServer\Migrations\Seed`
 
 ## Run process
 

@@ -10,10 +10,10 @@ namespace NLIP.iShare.EntityFramework
         protected readonly string Environment;
         protected readonly DbContext Context;
 
-        protected ReplaceCollectionDatabaseSeeder(ILogger<ReplaceCollectionDatabaseSeeder<TContext>> logger,
-            ISeedDataProvider<TContext> seedDataProvider,
+        protected ReplaceCollectionDatabaseSeeder(ISeedDataProvider<TContext> seedDataProvider,
+            DbContext context,
             string environment,
-            DbContext context)
+            ILogger<ReplaceCollectionDatabaseSeeder<TContext>> logger)
         {
             Context = context;
             SeedDataProvider = seedDataProvider;
