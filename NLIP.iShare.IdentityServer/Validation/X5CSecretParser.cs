@@ -1,10 +1,10 @@
-﻿using System;
-using System.IdentityModel.Tokens.Jwt;
-using System.Threading.Tasks;
-using IdentityServer4.Models;
+﻿using IdentityServer4.Models;
 using IdentityServer4.Validation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using System;
+using System.IdentityModel.Tokens.Jwt;
+using System.Threading.Tasks;
 
 namespace NLIP.iShare.IdentityServer.Validation
 {
@@ -20,7 +20,6 @@ namespace NLIP.iShare.IdentityServer.Validation
             ILogger<X5CSecretParser> logger)
         {
             _secretParser = secretParser;
-            _logger = logger;
             _logger = logger;
         }
 

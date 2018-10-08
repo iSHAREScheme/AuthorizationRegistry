@@ -15,6 +15,8 @@ export class ViewPolicyComponent implements OnInit, OnDestroy {
   id: string;
   parsedForViewer: any;
   historyVisible = false;
+  loading = true;
+
   constructor(
     private route: ActivatedRoute,
     private api: PoliciesApiService,
@@ -43,6 +45,12 @@ export class ViewPolicyComponent implements OnInit, OnDestroy {
         .sortBy(this.model.history, item => new Date(item.createdDate))
         .reverse();
       this.parsedForViewer = JSON.parse(response.policy);
+      this.loading = false;
+    }, err => {
+      this.loading = false;
+      if (err.status === 404) {
+        this.router.navigate(['not-found'], { skipLocationChange: true });
+      }
     });
   }
 }

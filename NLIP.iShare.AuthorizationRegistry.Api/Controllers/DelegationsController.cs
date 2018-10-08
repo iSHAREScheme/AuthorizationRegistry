@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using NLIP.iShare.Abstractions;
 using NLIP.iShare.Api;
 using NLIP.iShare.AuthorizationRegistry.Api.ViewModels;
 using NLIP.iShare.AuthorizationRegistry.Core;
@@ -10,7 +11,6 @@ using System.IO;
 using System.Linq;
 using System.Net.Mime;
 using System.Threading.Tasks;
-using NLIP.iShare.Abstractions;
 
 namespace NLIP.iShare.AuthorizationRegistry.Api.Controllers
 {

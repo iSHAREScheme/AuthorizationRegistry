@@ -1,6 +1,5 @@
 ﻿using IdentityServer4.EntityFramework.DbContexts;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,23 +20,6 @@ namespace NLIP.iShare.EntityFramework
                 persistedGrantDbContext.Database.Migrate();
             }
 
-            return app;
-        }
-
-        public static IApplicationBuilder UseIdentityServerSeed<TConfigurationDbContext>(this IApplicationBuilder app,
-                IHostingEnvironment environment)
-        {
-            using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
-            {
-                var seeder = serviceScope.ServiceProvider.GetService<IDatabaseSeeder<TConfigurationDbContext>>();
-                if (seeder == null)
-                {
-                    throw new DatabaseSeedException(
-                        $"A database seeder for {environment.EnvironmentName} could not be found in the requested namespace {typeof(IDatabaseSeeder<TConfigurationDbContext>).Namespace}. " +
-                        $"Make sure a {nameof(IDatabaseSeeder<TConfigurationDbContext>)} implementation is registered for this enviroment.");
-                }
-                seeder.Seed();
-            }
             return app;
         }
 

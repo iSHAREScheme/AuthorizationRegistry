@@ -1,4 +1,4 @@
-﻿using NLIP.iShare.Api.Responses;
+﻿using NLIP.iShare.Models.Responses;
 
 namespace NLIP.iShare.AuthorizationRegistry.Core.Responses
 {

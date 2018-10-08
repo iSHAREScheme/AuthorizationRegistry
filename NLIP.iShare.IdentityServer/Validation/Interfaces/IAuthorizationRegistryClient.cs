@@ -9,6 +9,6 @@ namespace NLIP.iShare.IdentityServer.Validation.Interfaces
     /// </summary>
     public interface IAuthorizationRegistryClient
     {
-        Task<DelegationClientTranslationResponse> GetDelegation(DelegationMask mask);
+        Task<DelegationEvidence> GetDelegation(DelegationMask mask, string client_assertion);
     }
 }

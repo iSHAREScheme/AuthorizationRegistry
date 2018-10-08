@@ -1,72 +1,51 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using IdentityServer4;
+﻿using IdentityServer4;
 using IdentityServer4.Models;
 using IdentityServer4.Validation;
 using Microsoft.Extensions.Logging;
 using NLIP.iShare.IdentityServer.Services;
-using NLIP.iShare.IdentityServer.Validation;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
-namespace NLIP.iShare.IdentityServer
+namespace NLIP.iShare.IdentityServer.Validation
 {
     /// <summary>
     /// Checks if the certificate chain is in the iSHARE scheme making use of the iSHARE Scheme Owner CA
     /// </summary>
-    internal class ServiceConsumerSecretValidator : ISecretValidator
+    public class ServiceConsumerSecretValidator : ISecretValidator
     {
-        private readonly Decorator<ISecretValidator> _innerValidator;
-        private readonly ISchemeOwnerClient _schemeOwnerClient;
+        private readonly Decorator<ISecretValidator> _inner;
         private readonly ILogger _logger;
-        private readonly IAssertionParser _assertionParser;
+        private readonly IAssertionManager _assertionManager;
 
         public ServiceConsumerSecretValidator(Decorator<ISecretValidator> innerValidator,
-            ISchemeOwnerClient schemeOwnerClient,            
-            IAssertionParser assertionParser,
+            IAssertionManager assertionParser,
             ILogger<ServiceConsumerSecretValidator> logger)
         {
-            _innerValidator = innerValidator;
-            _schemeOwnerClient = schemeOwnerClient;
+            _inner = innerValidator;
             _logger = logger;
-            _assertionParser = assertionParser;
+            _assertionManager = assertionParser;
         }
 
         public async Task<SecretValidationResult> ValidateAsync(IEnumerable<Secret> secrets, ParsedSecret parsedSecret)
         {
-            var fail = new SecretValidationResult { Success = false };
+            var assertion = _assertionManager.Parse(parsedSecret.Credential as string);
 
-            var assertion = parsedSecret.Credential as string;
-            if (assertion == null)
+            var result = await _assertionManager.ValidateAsync(assertion);
+
+            if (!result.Success)
             {
-                _logger.LogInformation("The client assertion is not provided.");
-                return fail;
+                return result;
             }
 
-            var certificates = _assertionParser.GetCertificatesData(assertion);
-            if (!certificates.Any())
-            {
-                _logger.LogInformation("The x5c certificates chain is not provided.");
-                return fail;
-            }
-
-            var validateCertificateResult = await _schemeOwnerClient.ValidateCertificate(new ClientAssertion(), certificates.ToArray()).ConfigureAwait(false);
-
-            if (!validateCertificateResult.Validity)
-            {
-                _logger.LogError("Scheme Owner didn't validate the certificates.");
-                return fail;
-            }
-
-            var secretsIncludingCertificates = secrets.ToList();
-            secretsIncludingCertificates.AddRange(certificates.Select(c => new Secret
+            var allSecrets = secrets.ToList();
+            allSecrets.AddRange(assertion.Certificates.Select(c => new Secret
             {
                 Type = IdentityServerConstants.SecretTypes.X509CertificateBase64,
                 Value = c
             }));
 
-            var result = await _innerValidator.Instance.ValidateAsync(secretsIncludingCertificates, parsedSecret);
-
-            return result;
+            return await _inner.Instance.ValidateAsync(allSecrets, parsedSecret);
         }
     }
 }

@@ -20,6 +20,7 @@ export class EditUserComponent implements OnInit, OnDestroy {
   model: { id: string; username: string; email: string; active: string };
   isPartyHidden = false;
   passwordResetEnabled = true;
+  loading = true;
 
   constructor(
     private api: UsersApiService,
@@ -39,7 +40,18 @@ export class EditUserComponent implements OnInit, OnDestroy {
   }
 
   private load(id: string): void {
-    this.api.get(id).subscribe(response => this.bindUser(response));
+    this.api.get(id).subscribe(
+      response => {
+        this.bindUser(response);
+        this.loading = false;
+      },
+      err => {
+        this.loading = false;
+        if (err.status === 404) {
+          this.router.navigate(['not-found'], { skipLocationChange: true });
+        }
+      }
+    );
   }
 
   save() {

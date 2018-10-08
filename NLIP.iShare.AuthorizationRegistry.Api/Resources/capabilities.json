@@ -1,0 +1,30 @@
+{
+  "party_id": "EU.EORI.NL000000004",
+  "ishare_roles": [
+    {
+      "role": "Authorization Registry"
+    }
+  ],
+  "supported_versions": [
+    {
+      "version": "1.7",
+      "supported_features": [
+        {
+          "feature": "capabilities",
+          "description": "Retrieves iSHARE capabilities",
+          "url": "https://ar.isharetest.net/capabilities"
+        },
+        {
+          "feature": "access token",
+          "description": "Obtains access token",
+          "url": "https://ar.isharetest.net/connect/token"
+        },
+        {
+          "feature": "delegation",
+          "description": "Obtains delegation evidence",
+          "url": "https://ar.isharetest.net/delegation"
+        }
+      ]
+    }
+  ]
+}

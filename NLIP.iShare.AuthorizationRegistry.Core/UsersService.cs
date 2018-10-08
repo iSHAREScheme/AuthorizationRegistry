@@ -4,20 +4,19 @@ using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Logging;
 using NLIP.iShare.Abstractions;
 using NLIP.iShare.Abstractions.Email;
-using NLIP.iShare.Api.Responses;
 using NLIP.iShare.AuthorizationRegistry.Core.Api;
 using NLIP.iShare.AuthorizationRegistry.Core.Requests;
 using NLIP.iShare.AuthorizationRegistry.Core.Responses;
 using NLIP.iShare.AuthorizationRegistry.Data;
 using NLIP.iShare.AuthorizationRegistry.Data.Models;
+using NLIP.iShare.AuthorizationRegistry.IdentityServer.Models;
 using NLIP.iShare.Configuration.Configurations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
-using NLIP.iShare.AuthorizationRegistry.IdentityServer.Models;
-using NLIP.iShare.Models;
+using NLIP.iShare.Models.Responses;
 
 
 namespace NLIP.iShare.AuthorizationRegistry.Core
@@ -37,7 +36,7 @@ namespace NLIP.iShare.AuthorizationRegistry.Core
             ITemplateService templateService,
             IEmailClient emailClient,
             EmailTemplatesData templateData,
-            ILogger<UsersService> logger, 
+            ILogger<UsersService> logger,
             SpaOptions spaOptions)
         {
             _templateData = templateData;
@@ -87,11 +86,17 @@ namespace NLIP.iShare.AuthorizationRegistry.Core
 
         public async Task<UserModel> Get(Guid id)
         {
-            var user = await _db.Users.FirstAsync(u => u.Id == id).ConfigureAwait(false);
-            var identity = await _userManager.Users.FirstAsync(u => u.Id == user.AspNetUserId).ConfigureAwait(false);
-            var roles = await _userManager.GetRolesAsync(identity).ConfigureAwait(false);
+            var user = await _db.Users.FirstOrDefaultAsync(u => u.Id == id).ConfigureAwait(false);
+            if (user != null)
+            {
+                var identity = await _userManager.Users.FirstAsync(u => u.Id == user.AspNetUserId).ConfigureAwait(false);
+                var roles = await _userManager.GetRolesAsync(identity).ConfigureAwait(false);
 
-            return UserModel.Create(identity, user, roles.ToArray());
+                return UserModel.Create(identity, user, roles.ToArray());
+            }
+
+            return null;
+
         }
 
 
@@ -398,7 +403,7 @@ namespace NLIP.iShare.AuthorizationRegistry.Core
             var results = await Task
                 .WhenAll(_userManager.PasswordValidators.Select(v =>
                     v.ValidateAsync(_userManager, identity, password)));
-            
+
             var errorMessages = results.SelectMany(r => r.Errors).Select(i => i.Description).ToArray();
             if (errorMessages.Any())
             {

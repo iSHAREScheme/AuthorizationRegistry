@@ -1,13 +1,11 @@
-﻿using Manatee.Json;
-using Manatee.Json.Schema;
-using Manatee.Json.Serialization;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NLIP.iShare.Api;
 using NLIP.iShare.Api.ApplicationInsights;
+using NLIP.iShare.Api.Configurations;
 using NLIP.iShare.Api.Filters;
 using NLIP.iShare.AuthorizationRegistry.Core;
 using NLIP.iShare.AuthorizationRegistry.Data;
@@ -16,7 +14,6 @@ using NLIP.iShare.Configuration;
 using NLIP.iShare.Configuration.Configurations;
 using NLIP.iShare.EmailClient;
 using NLIP.iShare.SchemeOwner.Client;
-using System.IO;
 
 namespace NLIP.iShare.AuthorizationRegistry
 {
@@ -53,22 +50,19 @@ namespace NLIP.iShare.AuthorizationRegistry
 
             services.AddMvcCore()
                 .AddApiExplorer() //see https://github.com/domaindrivendev/Swashbuckle.AspNetCore#swashbuckle--apiexplorer
-                .AddCustomJsonSettings()
+                .AddJsonSettings()
                 .AddAuthorization()
                 .AddDataAnnotations()
                 ;
 
-            services.AddJwtAuthentication(Configuration, HostingEnvironment, new[] { "ar.api", "iSHARE" });
+            services.AddJwtAuthentication(HostingEnvironment, new[] { "ar.api", "iSHARE" });
 
             services.AddSwagger("Authorization Registry");
             services.AddEmailClient(Configuration);
             services.AddSigning();
 
-            services.AddSingleton<IJsonSchema>(srv =>
-            {
-                var schemaJson = JsonValue.Parse(File.ReadAllText("delegationMaskSchema.json"));
-                return new JsonSerializer().Deserialize<IJsonSchema>(schemaJson);
-            });
+            services.AddJsonSchema();
+            services.AddFileProvider();
 
             services.AddApplicationInsights("ar.api", HostingEnvironment);
         }
@@ -82,9 +76,9 @@ namespace NLIP.iShare.AuthorizationRegistry
                     .AllowAnyHeader()
                     .AllowAnyMethod()
                 );
-            app.UseCustomResponseCaching(Configuration, HostingEnvironment);
+            app.UseClientCaching();
             loggerFactory.AddLoggers(Configuration);
-            app.UseCustomExceptionHandler(HostingEnvironment);
+            app.UseExceptionHandler(HostingEnvironment);
             app.UseSwagger("Authorization Registry");
             app.UseIdentityServer(Configuration, HostingEnvironment);
             app.UseMigrations(Configuration, HostingEnvironment);
@@ -92,7 +86,7 @@ namespace NLIP.iShare.AuthorizationRegistry
             app.UseStaticFiles();
             app.UseSpaStaticFiles();
             app.UseMvc();
-            
+
             app.Map("/admin", admin =>
             {
                 admin.UseSpa(spa =>
@@ -100,7 +94,7 @@ namespace NLIP.iShare.AuthorizationRegistry
                     spa.Options.SourcePath = "wwwroot/dist";
                 });
             });
-            
+
         }
     }
 }

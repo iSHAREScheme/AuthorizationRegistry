@@ -1,5 +1,6 @@
 ﻿using NLIP.iShare.Models.DelegationEvidence;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace NLIP.iShare.Models.DelegationMask
 {
@@ -10,20 +11,19 @@ namespace NLIP.iShare.Models.DelegationMask
         {
         }
 
-        public DelegationMask(string containerId, string policyIssuer, string accessSubject, string attribute, string action)
+        public DelegationMask(string containerId, string policyIssuer, string accessSubject, string[] attributes, string action, string resourceType = "CONTAINER.DATA")
         {
-            var type = "CONTAINER.DATA";
             var policy = new Policy
             {
                 Target = new PolicyTarget
                 {
                     Resource = new PolicyTargetResource
                     {
-                        Type = type,
+                        Type = resourceType,
                         Identifiers = new List<string>() { containerId.ToUpper() },
-                        Attributes = new List<string>() { type + ".ATTRIBUTE." + attribute?.ToUpper() }
+                        Attributes = attributes.ToList()
                     },
-                    Actions = new List<string>() { "ISHARE." + action.ToUpper() },
+                    Actions = new List<string>() { action.ToUpper() },
                 },
                 Rules = new List<PolicyRule>() { PolicyRule.Permit() }
             };

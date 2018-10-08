@@ -13,4 +13,8 @@
     <CodeAnalysisRuleSet>NLIP.iShare.Abstractions.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
+  </ItemGroup>
+
 </Project>

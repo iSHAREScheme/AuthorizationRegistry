@@ -11,6 +11,7 @@ import { AuthService } from './services/auth.service';
 import { AuthGuard } from './guards/auth.guard';
 import { JwtHttpInterceptorProvider } from './interceptors/JwtHttp.interceptor';
 import { ErrorInterceptorProvider } from './interceptors/HttpError.interceptor';
+import { LoaderInterceptorProvider } from './interceptors/Loader.interceptor';
 import { ProfileService } from './services/profile.service';
 import { AuthorizedDirective } from './directives/authorized.directive';
 import { RoleGuard } from './guards/role.guard';
@@ -24,6 +25,7 @@ import { EnvironmentModel } from './models/EnvironmentModel';
 import { NotFoundPageComponent } from './components/not-found-page/not-found-page.component';
 import { LeftMenuComponent } from './components/left-menu/left-menu.component';
 import { DropdownComponent } from './components/dropdown/dropdown.component';
+import { LoaderComponent } from './components/loader/loader.component';
 
 import { DisplayErrorsComponent } from './components/display-errors.component';
 import { ValidationMessageComponent } from './components/validation-message.component';
@@ -38,6 +40,7 @@ import { MinUppercaseValidatorDirective } from './directives/min-uppercase.direc
     AuthorizedDirective,
     ForbiddenPageComponent,
     LeftMenuComponent,
+    LoaderComponent,
     HumanizePipe,
     NotFoundPageComponent,
     DropdownComponent,
@@ -52,6 +55,7 @@ import { MinUppercaseValidatorDirective } from './directives/min-uppercase.direc
     AuthorizedDirective,
     ForbiddenPageComponent,
     LeftMenuComponent,
+    LoaderComponent,
     HumanizePipe,
     NotFoundPageComponent,
     DropdownComponent,
@@ -78,6 +82,7 @@ export class GenericModule {
         AppInsightsInterceptor,
         JwtHttpInterceptorProvider,
         ErrorInterceptorProvider,
+        LoaderInterceptorProvider,
         AlertService,
         AppInsightsService,
         { provide: 'environmentProvider', useValue: env }

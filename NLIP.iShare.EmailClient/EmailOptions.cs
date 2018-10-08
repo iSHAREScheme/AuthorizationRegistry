@@ -5,7 +5,7 @@ using NLIP.iShare.Configuration.Configurations;
 
 namespace NLIP.iShare.EmailClient
 {
-    public class EmailOptions : IValidatableOptions
+    public class EmailOptions : IValidateOptions
     {
         public string SendGridKey { get; set; }
         public EmailAddress From { get; set; }

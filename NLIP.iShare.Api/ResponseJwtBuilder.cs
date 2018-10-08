@@ -1,8 +1,12 @@
 ﻿using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
 using NLIP.iShare.Abstractions;
 using NLIP.iShare.Configuration.Configurations;
 using OpenSSL.PrivateKeyDecoder;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -19,26 +23,28 @@ namespace NLIP.iShare.Api
             _partyDetailsOptions = partyDetailsOptions;
         }
 
-        public string Create(object signedObject, string subject, string signedObjectClaim) 
-            => Create(signedObject, subject, _partyDetailsOptions.ClientId, _partyDetailsOptions.ClientId, signedObjectClaim);
-
-        public string Create(object signedObject, string subject, string issuer, string audience, string signedObjectClaim)
+        public string Create(object payloadObject, string subject, string issuer, string audience, string payloadObjectClaim, IContractResolver contractResolver = null)
         {
-            var payload = BuildJwtPayload(signedObject, issuer, subject, audience, signedObjectClaim);
+            var payload = BuildJwtPayload(payloadObject, issuer, subject, audience, payloadObjectClaim, contractResolver);
 
             var decoder = new OpenSSLPrivateKeyDecoder();
             var rsaParams = decoder.DecodeParameters(_partyDetailsOptions.PrivateKey);
-            var rsa = RSA.Create();
-            rsa.ImportParameters(rsaParams);
+            using (var rsa = RSA.Create())
+            {
+                rsa.ImportParameters(rsaParams);
 
-            var signingCredentials = new SigningCredentials(new RsaSecurityKey(rsa), SecurityAlgorithms.RsaSha256);
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var jwtToken = new JwtSecurityToken(new JwtHeader(signingCredentials), payload);
-            jwtToken.Header.Add("x5c", _partyDetailsOptions.PublicKeys);
-            return tokenHandler.WriteToken(jwtToken);
+                var signingCredentials = new SigningCredentials(new RsaSecurityKey(rsa), SecurityAlgorithms.RsaSha256);
+                var tokenHandler = new JwtSecurityTokenHandler();
+
+                var jwtToken = new JwtSecurityToken(new JwtHeader(signingCredentials), payload);
+
+                jwtToken.Header.Add("x5c", _partyDetailsOptions.PublicKeys);
+                var signedToken = tokenHandler.WriteToken(jwtToken);
+                return signedToken;
+            }
         }
 
-        private JwtPayload BuildJwtPayload(object signedObject, string issuer, string subject, string audience, string signedObjectClaim)
+        private JwtPayload BuildJwtPayload(object payloadObject, string issuer, string subject, string audience, string payloadObjectClaim, IContractResolver jsonResolver = null)
         {
             var authorityAudience = $"{_partyDetailsOptions.BaseUri}connect/token";
 
@@ -53,11 +59,50 @@ namespace NLIP.iShare.Api
                 new Claim("exp", ConvertDateTimeToTimestamp(DateTime.UtcNow.AddSeconds(30)))
             };
 
-            var payload = new JwtPayload(claims) {
-                {signedObjectClaim, signedObject}
+            if (payloadObject is IEnumerable)
+            {
+                if (payloadObject is string)
+                {
+                    var internalPayload = JsonConvert.DeserializeObject<JObject>((string)payloadObject).ToDictionary();
+
+                    return new JwtPayload(claims) {
+                        {payloadObjectClaim, CreateCustomPayload(internalPayload, jsonResolver)}
+                    };
+                }
+
+                var internalPayloads = new List<IDictionary<string, object>>();
+                foreach (var item in payloadObject as IEnumerable)
+                {
+                    internalPayloads.Add(CreateCustomPayload(item, jsonResolver));
+                }
+
+                return new JwtPayload(claims) {
+                    {payloadObjectClaim, internalPayloads }
+                };
+            }
+
+            return new JwtPayload(claims) {
+                {payloadObjectClaim, CreateCustomPayload(payloadObject, jsonResolver)}
             };
-            return payload;
         }
+
+        private static IDictionary<string, object> CreateCustomPayload(object payloadObject, IContractResolver jsonResolver)
+        {
+            var jsonSettings = new JsonSerializerSettings {
+                Formatting = Formatting.None,
+                NullValueHandling = NullValueHandling.Ignore
+            };
+            if (jsonResolver != null)
+            {
+                jsonSettings.ContractResolver = jsonResolver;
+            }
+
+            var internalJson = JsonConvert.SerializeObject(payloadObject, jsonSettings);
+
+            var internalPayload = JsonConvert.DeserializeObject<JObject>(internalJson).ToDictionary();
+            return internalPayload;
+        }
+
 
         private static string ConvertDateTimeToTimestamp(DateTime value)
         {

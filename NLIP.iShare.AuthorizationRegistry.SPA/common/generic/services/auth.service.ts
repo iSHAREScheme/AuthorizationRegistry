@@ -89,15 +89,31 @@ export class AuthService {
 
   authorize(roles: string[]): Observable<boolean> {
     const subject = new ReplaySubject<boolean>(1);
+    subject.next(this.isInRole(roles));
+    subject.complete();
+    return subject.asObservable();
+  }
+
+  inRole(roles: string[]): boolean {
+     return this.isInRole(roles);
+  }
+
+  private isInRole(roles: string[]): boolean {
     const profile = this.profileService.get();
 
-    const authorized =
+    if (profile == null) {
+      return false;
+    }
+
+    if (roles == null || roles.length === 0) {
+      return true; // return true if no particular role is requested
+    }
+
+    const hasRole =
       typeof profile.role === 'string'
         ? _.some(roles, role => profile.role === role)
         : _.some(roles, role => _.some(profile.role, profileRole => profileRole === role));
 
-    subject.next(authorized);
-    subject.complete();
-    return subject.asObservable();
+    return hasRole;
   }
 }

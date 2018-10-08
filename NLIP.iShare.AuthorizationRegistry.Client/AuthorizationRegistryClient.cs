@@ -36,7 +36,7 @@ namespace NLIP.iShare.AuthorizationRegistry.Client
             _partyDetailsOptions = partyDetailsOptions;
         }
 
-        public async Task<DelegationClientTranslationResponse> GetDelegation(DelegationMask mask)
+        public async Task<DelegationEvidence> GetDelegation(DelegationMask mask, string client_assertion)
         {
             _logger.LogInformation("Get delegation for {policyIssuer} and {target}", mask?.DelegationRequest?.PolicyIssuer, mask?.DelegationRequest?.Target?.AccessSubject);
             var jObjectMask = TransformToJObject(mask);
@@ -46,29 +46,24 @@ namespace NLIP.iShare.AuthorizationRegistry.Client
                     $"{_authorizationRegistryClientOptions.BaseUri}connect/token"))
                 .ConfigureAwait(false);
 
-            var response = await _authorizationRegistryClientOptions.BaseUri
-                .AppendPathSegment("delegation")
-                .WithOAuthBearerToken(accessToken)
-                .PostJsonAsync(jObjectMask)
-                .ReceiveJson<JObject>()
-                .ConfigureAwait(false);
-
-            if (response == null)
+            JObject response;
+            try
             {
-                _logger.LogInformation("Get delegation returns {delegationResponse}", "not found");
+                response = await _authorizationRegistryClientOptions.BaseUri
+                    .AppendPathSegment("delegation")
+                    .WithHeader("previous_steps", JsonConvert.SerializeObject(new[] { client_assertion }))
+                    .WithOAuthBearerToken(accessToken)
+                    .PostJsonAsync(jObjectMask)
+                    .ReceiveJson<JObject>()
+                    .ConfigureAwait(false);
+
+                return GetDelegationEvidenceFromResponse(response);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInformation("Get delegation returns {delegationResponse}", ex.Message);
                 return null;
             }
-
-            var delegationEvidence = GetDelegationEvidenceFromResponse(response);
-
-            if (!IsPermitRule(delegationEvidence))
-            {
-                _logger.LogInformation("Get delegation returns {delegationResponse}", "deny");
-                return DelegationClientTranslationResponse.Deny();
-            }
-
-            _logger.LogInformation("Get delegation returns {delegationResponse}", "permit");
-            return DelegationClientTranslationResponse.Permit(delegationEvidence);
         }
 
         private static DelegationEvidence GetDelegationEvidenceFromResponse(JObject response)

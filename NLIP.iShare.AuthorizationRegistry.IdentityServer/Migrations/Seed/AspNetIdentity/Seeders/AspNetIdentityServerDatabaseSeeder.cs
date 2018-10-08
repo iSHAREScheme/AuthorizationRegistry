@@ -4,7 +4,6 @@ using NLIP.iShare.AuthorizationRegistry.IdentityServer.Data;
 using NLIP.iShare.EntityFramework;
 using System.Threading.Tasks;
 using NLIP.iShare.AuthorizationRegistry.IdentityServer.Models;
-using NLIP.iShare.Models;
 
 namespace NLIP.iShare.AuthorizationRegistry.IdentityServer.Migrations.Seed.AspNetIdentity.Seeders
 {

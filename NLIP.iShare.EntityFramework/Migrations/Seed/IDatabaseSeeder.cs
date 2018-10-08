@@ -7,5 +7,6 @@
     public interface IDatabaseSeeder<TContext>
     {
         void Seed();
+        string EnvironmentName { get; }
     }
 }

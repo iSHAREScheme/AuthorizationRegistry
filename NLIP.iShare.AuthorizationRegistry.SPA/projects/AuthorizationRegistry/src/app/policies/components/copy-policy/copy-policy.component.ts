@@ -15,6 +15,7 @@ export class CopyPolicyComponent implements OnInit, OnDestroy {
   editorText: string;
   id: string;
   serverError: string;
+  loading = true;
 
   constructor(
     private route: ActivatedRoute,
@@ -51,7 +52,13 @@ export class CopyPolicyComponent implements OnInit, OnDestroy {
         this.alert.success('Copy performed successfully');
         this.router.navigate(['policies']);
       },
-      error => (this.serverError = error.message)
+      error => {
+        if (error.data && error.data.length > 0) {
+          this.serverError = error.data;
+        } else {
+          this.serverError = error.message;
+        }
+      }
     );
   }
 
@@ -59,6 +66,12 @@ export class CopyPolicyComponent implements OnInit, OnDestroy {
     this.api.get(id).subscribe(response => {
       const parsed = JSON.parse(response.policy);
       this.editorText = JSON.stringify(parsed, null, '\t');
+      this.loading = false;
+    }, err => {
+      this.loading = false;
+      if (err.status === 404) {
+        this.router.navigate(['not-found'], { skipLocationChange: true });
+      }
     });
   }
 }

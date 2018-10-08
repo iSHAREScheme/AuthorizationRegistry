@@ -1,10 +1,10 @@
-﻿using NLIP.iShare.Api.Responses;
-using NLIP.iShare.AuthorizationRegistry.Core.Requests;
+﻿using NLIP.iShare.AuthorizationRegistry.Core.Requests;
 using NLIP.iShare.AuthorizationRegistry.Core.Responses;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using NLIP.iShare.Abstractions;
+using NLIP.iShare.Models.Responses;
 
 namespace NLIP.iShare.AuthorizationRegistry.Core.Api
 {
