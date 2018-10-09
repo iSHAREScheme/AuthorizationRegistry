@@ -1,6 +1,6 @@
 ﻿{
   "ConnectionStrings": {
-    "Main": "<<SQL Server ConnectionString>>"
+    "Main": "<<<< SQL Server ConnectionString >>>>"
   },
   "Console": {
     "LogLevel": {
@@ -14,15 +14,19 @@
   "PartyDetails": {
     "PrivateKey": "<<<< RSA private key >>>>",
     "PublicKeys": [
-      "<<<< Public key>>>>"
+      "<<<< Public key >>>>"
     ],
     "ClientId": "EU.EORI.NL000000004",
     "BaseUri": "http://localhost:61433/"
   },
+  "Pki": {
+    "CARootThumbprint": "<<<< CA root thumbprint >>>>",
+    "IAThumbprint": "<<<< Intermediary root thumbprint >>>>"
+  },
   "Email": {
-    "SendGridKey": "<<<< SEND GRID KEY>>>>",
+    "SendGridKey": "<<<< SEND GRID KEY >>>>",
     "From": {
-      "Address": "<<<< sender@mail.com>>>>",
+      "Address": "<<<< sender@mail.com >>>>",
       "DisplayName": "Dummy Name"
     }
   },
