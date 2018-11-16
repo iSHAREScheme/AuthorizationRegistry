@@ -1,4 +1,4 @@
-﻿namespace NLIP.iShare.EntityFramework
+﻿namespace NLIP.iShare.EntityFramework.Migrations.Seed
 {
     /// <summary>
     /// Defines a seeding strategy from one database migration to another

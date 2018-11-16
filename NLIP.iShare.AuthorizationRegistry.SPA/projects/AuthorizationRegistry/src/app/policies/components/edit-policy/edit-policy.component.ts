@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { PoliciesApiService } from '@app-ar/policies/services/policies-api.service';
 import { JSONService, AlertService } from 'common';
+import { PoliciesApiService } from '../../services/policies-api.service';
 
 @Component({
   selector: 'app-edit-policy',
@@ -63,15 +63,18 @@ export class EditPolicyComponent implements OnInit, OnDestroy {
   }
 
   private load(id: string): void {
-    this.api.get(id).subscribe(response => {
-      const parsed = JSON.parse(response.policy);
-      this.editorText = JSON.stringify(parsed, null, '\t');
-      this.loading = false;
-    }, err => {
-      this.loading = false;
-      if (err.status === 404) {
-        this.router.navigate(['not-found'], { skipLocationChange: true });
+    this.api.get(id).subscribe(
+      response => {
+        const parsed = JSON.parse(response.policy);
+        this.editorText = JSON.stringify(parsed, null, '\t');
+        this.loading = false;
+      },
+      err => {
+        this.loading = false;
+        if (err.status === 404) {
+          this.router.navigate(['not-found'], { skipLocationChange: true });
+        }
       }
-    });
+    );
   }
 }

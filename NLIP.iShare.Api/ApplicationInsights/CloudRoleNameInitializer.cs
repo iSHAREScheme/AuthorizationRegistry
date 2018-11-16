@@ -4,7 +4,7 @@ using System.Diagnostics;
 
 namespace NLIP.iShare.Api.ApplicationInsights
 {
-    public class CloudRoleNameInitializer : ITelemetryInitializer
+    internal class CloudRoleNameInitializer : ITelemetryInitializer
     {
         private readonly string _roleName;        
         public CloudRoleNameInitializer(string roleName)

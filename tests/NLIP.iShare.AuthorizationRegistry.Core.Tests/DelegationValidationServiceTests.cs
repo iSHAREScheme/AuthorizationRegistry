@@ -1,10 +1,10 @@
 ﻿using Moq;
-using NLIP.iShare.Api;
 using NLIP.iShare.AuthorizationRegistry.Core.Api;
 using NLIP.iShare.AuthorizationRegistry.Data.Models;
 using Shouldly;
 using System.Collections.Generic;
 using System.Security.Claims;
+using NLIP.iShare.IdentityServer;
 using Xunit;
 
 namespace NLIP.iShare.AuthorizationRegistry.Core.Tests
@@ -30,7 +30,6 @@ namespace NLIP.iShare.AuthorizationRegistry.Core.Tests
             }";
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Role, Constants.Roles.EntitledPartyCreator),
                 new Claim("partyId", "EU.EORI.NL812972715")
             };
             var identity = new ClaimsIdentity(claims, "TestAuthType");
@@ -65,7 +64,6 @@ namespace NLIP.iShare.AuthorizationRegistry.Core.Tests
             }";
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Role, Constants.Roles.EntitledPartyCreator),
                 new Claim("partyId", "EU.EORI.NL812972715")
             };
             var identity = new ClaimsIdentity(claims, "TestAuthType");
@@ -100,7 +98,6 @@ namespace NLIP.iShare.AuthorizationRegistry.Core.Tests
             }";
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Role, Constants.Roles.EntitledPartyCreator),
                 new Claim("partyId", "EU.EORI.NL812972715")
             };
             var identity = new ClaimsIdentity(claims, "TestAuthType");
@@ -135,7 +132,6 @@ namespace NLIP.iShare.AuthorizationRegistry.Core.Tests
             }";
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Role, Constants.Roles.EntitledPartyCreator),
                 new Claim("partyId", "EU.EORI.NL812972715")
             };
             var identity = new ClaimsIdentity(claims, "TestAuthType");
@@ -170,7 +166,6 @@ namespace NLIP.iShare.AuthorizationRegistry.Core.Tests
             }";
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Role, Constants.Roles.EntitledPartyCreator),
                 new Claim("partyId", "EU.EORI.NL812972715")
             };
             var identity = new ClaimsIdentity(claims, "TestAuthType");
@@ -205,7 +200,7 @@ namespace NLIP.iShare.AuthorizationRegistry.Core.Tests
             }";
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Role, Constants.Roles.SchemeOwner)
+                new Claim("partyId", "EU.EORI.NL812972715")
             };
             var identity = new ClaimsIdentity(claims, "TestAuthType");
             var claimsPrincipal = new ClaimsPrincipal(identity);
@@ -244,7 +239,6 @@ namespace NLIP.iShare.AuthorizationRegistry.Core.Tests
             }";
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Role, Constants.Roles.EntitledPartyCreator),
                 new Claim("partyId", "EU.EORI.NL812972715")
             };
             var identity = new ClaimsIdentity(claims, "TestAuthType");
@@ -261,7 +255,7 @@ namespace NLIP.iShare.AuthorizationRegistry.Core.Tests
         }
 
         [Fact]
-        public void ValidateEdit_WhenPartyIdAndAccessSubjectEmpty_ReturnsNotValid()
+        public void ValidateEdit_WhenPolicyIssuerAndAccessSubjectEmpty_ReturnsNotValid()
         {
             //Arrange
             var policyJson = @"
@@ -280,7 +274,7 @@ namespace NLIP.iShare.AuthorizationRegistry.Core.Tests
             var arId = "AR.1234567890";
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Role, Constants.Roles.SchemeOwner)
+                new Claim("partyId", "EU.EORI.NL812972715")
             };
             var identity = new ClaimsIdentity(claims, "TestAuthType");
             var claimsPrincipal = new ClaimsPrincipal(identity);
@@ -315,7 +309,7 @@ namespace NLIP.iShare.AuthorizationRegistry.Core.Tests
             var arId = "AR.1234567890";
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Role, Constants.Roles.SchemeOwner)
+                new Claim("partyId", "EU.EORI.NL812972711")
             };
             var identity = new ClaimsIdentity(claims, "TestAuthType");
             var claimsPrincipal = new ClaimsPrincipal(identity);

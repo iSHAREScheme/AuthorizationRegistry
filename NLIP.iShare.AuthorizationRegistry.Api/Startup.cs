@@ -4,96 +4,68 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NLIP.iShare.Api;
-using NLIP.iShare.Api.ApplicationInsights;
-using NLIP.iShare.Api.Configurations;
-using NLIP.iShare.Api.Filters;
+using NLIP.iShare.AuthorizationRegistry.Api.Attributes;
 using NLIP.iShare.AuthorizationRegistry.Core;
 using NLIP.iShare.AuthorizationRegistry.Data;
-using NLIP.iShare.AuthorizationRegistry.IdentityServer;
-using NLIP.iShare.Configuration;
-using NLIP.iShare.Configuration.Configurations;
+using NLIP.iShare.AuthorizationRegistry.Data.Models;
 using NLIP.iShare.EmailClient;
-using NLIP.iShare.SchemeOwner.Client;
+using NLIP.iShare.EntityFramework;
+using NLIP.iShare.Identity;
+using NLIP.iShare.Identity.Data;
+using NLIP.iShare.IdentityServer;
+using NLIP.iShare.IdentityServer.Data;
+using NLIP.iShare.TokenClient;
 
-namespace NLIP.iShare.AuthorizationRegistry
+namespace NLIP.iShare.AuthorizationRegistry.Api
 {
-    public class Startup
+    public class Startup : StartupSpa
     {
-        public Startup(IHostingEnvironment env, IConfiguration configuration, ILoggerFactory loggerFactory)
+        public IIdentityServerBuilder IdentityServerBuilder { get; private set; }
+        public Startup(IHostingEnvironment env, IConfiguration configuration, ILoggerFactory loggerFactory) : base(env, configuration, loggerFactory)
         {
-            Configuration = configuration;
-            HostingEnvironment = env;
-            LoggerFactory = loggerFactory;
+            SwaggerName = "Authorization Registry";
+            ApplicationInsightsName = "ar.api";
+            SpaScope = "ar.api";
         }
 
-        public IConfiguration Configuration { get; }
-        public IHostingEnvironment HostingEnvironment { get; }
-        public ILoggerFactory LoggerFactory { get; }
-
-        // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
+        public override void ConfigureServices(IServiceCollection services)
         {
-            services.AddSpaStaticFiles(configuration =>
-            {
-                configuration.RootPath = "wwwroot/dist";
-            });
 
-            services.ConfigurePartyDetailsOptions(Configuration, HostingEnvironment);
-            services.ConfigureOptions<SpaOptions>(Configuration, "Spa");
+            services.AddTokenClient();
+            services.AddCore(Configuration);
+            services.AddEmailClient(Configuration);
+            services.AddDb(Configuration, HostingEnvironment);
 
-            services.AddAuthorizationRegistryCore(Configuration);
-            services.AddCors();
-
-            services.AddSchemeOwnerClient(Configuration, HostingEnvironment);
-            services.AddAuthorizationRegistryUserDbContext(Configuration, HostingEnvironment);
-            services.AddIdentityServer(Configuration, HostingEnvironment, LoggerFactory);
-
-            services.AddMvcCore()
-                .AddApiExplorer() //see https://github.com/domaindrivendev/Swashbuckle.AspNetCore#swashbuckle--apiexplorer
-                .AddJsonSettings()
-                .AddAuthorization()
-                .AddDataAnnotations()
+            const string seedRoot = "NLIP.iShare.AuthorizationRegistry.Api.Seed.";
+            IdentityServerBuilder = services.AddIdentityServer(Configuration, HostingEnvironment, LoggerFactory)
+                .AddIdentityServerDb(Configuration, HostingEnvironment, $"{seedRoot}IdentityServer", typeof(Startup).Assembly)
+                .AddConsumer()
+                .AddIdentity<AspNetUser, AspNetUserDbContext>()
                 ;
 
-            services.AddJwtAuthentication(HostingEnvironment, new[] { "ar.api", "iSHARE" });
+            services.AddIdentityServices<AspNetUser, AspNetUserDbContext>(
+                Configuration,
+                HostingEnvironment,
+                $"{seedRoot}Identity",
+                typeof(Startup).Assembly
+            );
 
-            services.AddSwagger("Authorization Registry");
-            services.AddEmailClient(Configuration);
-            services.AddSigning();
+            services.ConfigureSwaggerGen(c => c.OperationFilter<SwaggerAuthorizeDelegationRequestFilter>());
 
-            services.AddJsonSchema();
-            services.AddFileProvider();
-
-            services.AddApplicationInsights("ar.api", HostingEnvironment);
+            base.ConfigureServices(services); // this needs to be called after .AddIdentity<TUser, TContext>
+                                              // since it configures the JwtAuth and will make that as the default challenge
+                                              // see https://stackoverflow.com/a/45853589/782754
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory)
+        public override void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory)
         {
-            app.UseCors(builder =>
-                builder
-                    .AllowAnyOrigin()
-                    .AllowAnyHeader()
-                    .AllowAnyMethod()
-                );
-            app.UseClientCaching();
-            loggerFactory.AddLoggers(Configuration);
-            app.UseExceptionHandler(HostingEnvironment);
-            app.UseSwagger("Authorization Registry");
-            app.UseIdentityServer(Configuration, HostingEnvironment);
-            app.UseMigrations(Configuration, HostingEnvironment);
-            app.UseAuthentication();
-            app.UseStaticFiles();
-            app.UseSpaStaticFiles();
-            app.UseMvc();
 
-            app.Map("/admin", admin =>
-            {
-                admin.UseSpa(spa =>
-                {
-                    spa.Options.SourcePath = "wwwroot/dist";
-                });
-            });
+            app.UseMigrations(Configuration, HostingEnvironment);
+            app.UseMigrations<AspNetUserDbContext>(Configuration).UseSeed<AspNetUserDbContext>(HostingEnvironment);
+            app.UseIdentityServer() // this calls UseAuth
+               .UseIdentityServerDb(Configuration, HostingEnvironment);
+
+            base.Configure(app, loggerFactory); // this calls UseMvc, the order needs to be UseAuth, then UseMvc
 
         }
     }

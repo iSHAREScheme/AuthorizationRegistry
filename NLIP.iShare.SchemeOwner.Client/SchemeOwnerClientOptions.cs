@@ -9,8 +9,8 @@ namespace NLIP.iShare.SchemeOwner.Client
         public void Validate(ConfigurationOptionsValidator validateConfigurationOptions)
         {
             var required = validateConfigurationOptions?.Environment == "Live";
-            ConfigurationException.AssertThumbprint(Thumbprint, nameof(Thumbprint), required: required);
-            ConfigurationException.AssertUri(BaseUri, nameof(BaseUri));
+            ConfigurationException.AssertThumbprint(Thumbprint, $"{nameof(SchemeOwnerClientOptions)}.{nameof(Thumbprint)}", required: required);
+            ConfigurationException.AssertUri(BaseUri, $"{nameof(SchemeOwnerClientOptions)}.{nameof(BaseUri)}");
         }
     }
 }

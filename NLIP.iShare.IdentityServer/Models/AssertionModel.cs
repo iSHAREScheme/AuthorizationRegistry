@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 
-namespace NLIP.iShare.IdentityServer
+namespace NLIP.iShare.IdentityServer.Models
 {
     public class AssertionModel
     {

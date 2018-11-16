@@ -1,10 +1,11 @@
 import * as _ from 'lodash';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { UsersApiService } from '@app-ar/users/services/users-api.service';
-import { User } from '@app-ar/users/models/User';
+
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { constants, AlertService } from 'common';
+import { UsersApiService } from '../../services/users-api.service';
+import { User } from '../../models/User';
 
 @Component({
   selector: 'app-edit-user',
@@ -22,12 +23,7 @@ export class EditUserComponent implements OnInit, OnDestroy {
   passwordResetEnabled = true;
   loading = true;
 
-  constructor(
-    private api: UsersApiService,
-    private router: Router,
-    private route: ActivatedRoute,
-    private alert: AlertService
-  ) {
+  constructor(private api: UsersApiService, private router: Router, private route: ActivatedRoute, private alert: AlertService) {
     this.initModel();
     this.buildForm();
     this.initRoles();

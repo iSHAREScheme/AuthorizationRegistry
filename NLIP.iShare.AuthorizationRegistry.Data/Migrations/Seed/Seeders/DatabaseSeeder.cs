@@ -2,9 +2,9 @@ using System;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NLIP.iShare.AuthorizationRegistry.Data.Models;
-using NLIP.iShare.EntityFramework;
+using NLIP.iShare.EntityFramework.Migrations.Seed;
 
-namespace NLIP.iShare.AuthorizationRegistry.Data.Migrations.Seed
+namespace NLIP.iShare.AuthorizationRegistry.Data.Migrations.Seed.Seeders
 {
     internal class DatabaseSeeder : ReplaceCollectionDatabaseSeeder<AuthorizationRegistryDbContext>, IDatabaseSeeder<AuthorizationRegistryDbContext>
     {

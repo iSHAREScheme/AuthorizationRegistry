@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace NLIP.iShare.IdentityServer
+namespace NLIP.iShare.IdentityServer.Models
 {
     public class CertificateStatus
     {

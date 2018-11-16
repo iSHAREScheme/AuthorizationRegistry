@@ -1,20 +1,32 @@
-import { Injectable } from '@angular/core';
-import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, Router } from '@angular/router';
+import { Injectable, Inject, OnDestroy } from '@angular/core';
+import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 import { Observable } from 'rxjs/internal/Observable';
 import { AuthService } from '../services/auth.service';
+import { constants } from '../../constants';
 
 @Injectable()
-export class AuthGuard implements CanActivate {
-  constructor(private authService: AuthService, private router: Router) {}
+export class AuthGuard implements CanActivate, OnDestroy {
+  authKey: string;
+  constructor(private authService: AuthService) {
+    this.authKey = constants.storage.keys.auth;
+    window.addEventListener('storage', this.storageEventListener.bind(this), false);
+  }
 
-  canActivate(
-    route: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot
-  ): Observable<boolean> | Promise<boolean> | boolean {
+  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
     if (this.authService.isLoggedIn()) {
       return true;
     }
-    this.router.navigate(['account/login'], { queryParams: { returnUrl: state.url } });
+    this.authService.goToLogin();
     return false;
+  }
+
+  storageEventListener(event: StorageEvent) {
+    if (event.storageArea === localStorage && event.key === this.authKey) {
+      window.location.reload();
+    }
+  }
+
+  ngOnDestroy(): void {
+    window.removeEventListener('storage', this.storageEventListener, false);
   }
 }

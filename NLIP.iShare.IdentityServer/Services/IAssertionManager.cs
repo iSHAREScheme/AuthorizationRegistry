@@ -1,5 +1,6 @@
 ﻿using IdentityServer4.Validation;
 using System.Threading.Tasks;
+using NLIP.iShare.IdentityServer.Models;
 
 namespace NLIP.iShare.IdentityServer.Services
 {

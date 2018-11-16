@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import * as _ from 'lodash';
-import { constants, AlertService } from 'common';
 import { Router } from '@angular/router';
-import { UsersApiService } from '@app-ar/users/services/users-api.service';
-import { User } from '@app-ar/users/models/User';
+import { constants, AlertService } from 'common';
+import { UsersApiService } from '../../services/users-api.service';
+import { User } from '../../models/User';
 
 @Component({
   selector: 'app-create-user',

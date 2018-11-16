@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace NLIP.iShare.EntityFramework
+namespace NLIP.iShare.EntityFramework.Migrations.Seed
 {
     [Serializable]
     public class DatabaseSeedException : Exception

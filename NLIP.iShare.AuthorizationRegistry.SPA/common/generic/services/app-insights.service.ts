@@ -1,18 +1,12 @@
-import { Injectable, Inject } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { EnvironmentModel } from '../models/EnvironmentModel';
 import { AppInsights } from 'applicationinsights-js';
+import { EnvironmentModel } from '../models/EnvironmentModel';
 
 @Injectable()
 export class AppInsightsService {
-  environment: EnvironmentModel;
-
-  constructor(
-    @Inject('environmentProvider') private environmentProvider: EnvironmentModel,
-    private router: Router
-  ) {
-    this.environment = environmentProvider;
+  constructor(private environment: EnvironmentModel, private router: Router) {
     const config: Microsoft.ApplicationInsights.IConfig = {
       instrumentationKey: this.environment.appInsights.instrumentationKey
     };
@@ -22,13 +16,7 @@ export class AppInsightsService {
     }
   }
 
-  logPageView(
-    name?: string,
-    url?: string,
-    properties?: any,
-    measurements?: any,
-    duration?: number
-  ) {
+  logPageView(name?: string, url?: string, properties?: any, measurements?: any, duration?: number) {
     AppInsights.trackPageView(name, url, properties, measurements, duration);
   }
 

@@ -1,8 +1,6 @@
-﻿using NLIP.iShare.Api.Swagger.Attributes;
-using Swashbuckle.AspNetCore.Swagger;
+﻿using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace NLIP.iShare.Api.Swagger
 {
@@ -15,26 +13,13 @@ namespace NLIP.iShare.Api.Swagger
                 operation.Parameters = new List<IParameter>();
             }
 
-            var attribute = context
-                .ApiDescription
-                .ControllerAttributes()
-                .Union(context.ApiDescription.ActionAttributes())
-                .FirstOrDefault(x => x is SwaggerDateTimeContentDescriptor) as SwaggerDateTimeContentDescriptor;
-
-            if (attribute == null)
+            operation.Parameters.Add(new Parameter
             {
-                return;
-            }
-
-            var parameter = new Parameter
-            {
-                Name = attribute.ParameterName,
+                Name = "date_time",
                 In = "query",
-                Required = attribute.Required,
-                Description = attribute.Description,
+                Description = "Date time for which the information is requested. If provided the result becomes final and therefore MUST be cacheable.",
                 Type = "string"
-            };
-            operation.Parameters.Add(parameter);
+            });
         }
     }
 }

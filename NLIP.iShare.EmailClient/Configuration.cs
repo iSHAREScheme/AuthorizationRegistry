@@ -11,11 +11,11 @@ namespace NLIP.iShare.EmailClient
     {
         public static void AddEmailClient(this IServiceCollection services, IConfiguration configuration)
         {
-            services.ConfigureOptions<EmailOptions>(configuration, "Email");
+            services.ConfigureOptions<EmailOptions>(configuration, "Email", ConfigurationOptionsValidator.NullValidator);
 
             services.AddSingleton<ITemplateService, TemplateService>();
             services.AddSingleton<IEmailClient, EmailClient>();
-            services.AddScoped(srv =>
+            services.AddTransient(srv =>
             {
                 var partyDetailsOptions = services
                     .BuildServiceProvider()

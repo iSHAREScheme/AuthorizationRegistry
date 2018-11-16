@@ -4,6 +4,8 @@ using System.Threading.Tasks;
 using Flurl;
 using Flurl.Http;
 using Microsoft.Extensions.Logging;
+using NLIP.iShare.TokenClient.Api;
+using NLIP.iShare.TokenClient.Models;
 
 namespace NLIP.iShare.TokenClient
 {

@@ -8,6 +8,7 @@ using OpenSSL.PrivateKeyDecoder;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -54,24 +55,26 @@ namespace NLIP.iShare.Api
                 new Claim("sub", subject),
                 new Claim("aud", authorityAudience),
                 new Claim("aud", audience),
-                new Claim("jti", Guid.NewGuid().ToString("N")),
+                new Claim("jti", Guid.NewGuid().ToString("N", CultureInfo.CurrentCulture)),
                 new Claim("iat", ConvertDateTimeToTimestamp(DateTime.UtcNow)),
                 new Claim("exp", ConvertDateTimeToTimestamp(DateTime.UtcNow.AddSeconds(30)))
             };
 
-            if (payloadObject is IEnumerable)
+
+
+            if (payloadObject is string stringPayload)
             {
-                if (payloadObject is string)
-                {
-                    var internalPayload = JsonConvert.DeserializeObject<JObject>((string)payloadObject).ToDictionary();
+                var internalPayload = JsonConvert.DeserializeObject<JObject>(stringPayload).ToDictionary();
 
-                    return new JwtPayload(claims) {
-                        {payloadObjectClaim, CreateCustomPayload(internalPayload, jsonResolver)}
-                    };
-                }
+                return new JwtPayload(claims) {
+                    {payloadObjectClaim, CreateCustomPayload(internalPayload, jsonResolver)}
+                };
+            }
 
+            if (payloadObject is IEnumerable enumerablePayload)
+            {
                 var internalPayloads = new List<IDictionary<string, object>>();
-                foreach (var item in payloadObject as IEnumerable)
+                foreach (var item in enumerablePayload)
                 {
                     internalPayloads.Add(CreateCustomPayload(item, jsonResolver));
                 }
@@ -88,7 +91,8 @@ namespace NLIP.iShare.Api
 
         private static IDictionary<string, object> CreateCustomPayload(object payloadObject, IContractResolver jsonResolver)
         {
-            var jsonSettings = new JsonSerializerSettings {
+            var jsonSettings = new JsonSerializerSettings
+            {
                 Formatting = Formatting.None,
                 NullValueHandling = NullValueHandling.Ignore
             };
@@ -108,7 +112,7 @@ namespace NLIP.iShare.Api
         {
             var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
             var elapsedTime = value - epoch;
-            return ((long)elapsedTime.TotalSeconds).ToString();
+            return ((long)elapsedTime.TotalSeconds).ToString(CultureInfo.CurrentCulture);
         }
     }
 }

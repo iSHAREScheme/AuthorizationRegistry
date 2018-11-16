@@ -5,6 +5,11 @@
     <ProjectGuid>1d7490c9-c5da-4444-b0ca-2ed85593be17</ProjectGuid>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);1591</NoWarn>
+  </PropertyGroup>
+
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <CodeAnalysisRuleSet>NLIP.iShare.Api.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
@@ -12,25 +17,24 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <CodeAnalysisRuleSet>NLIP.iShare.Api.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
-
+  
   <ItemGroup>
     <PackageReference Include="Manatee.Json" Version="9.9.5" />
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.1.4" />
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.4.1" />
-    <PackageReference Include="IdentityServer4" Version="2.2.0" />
+    <PackageReference Include="IdentityServer4" Version="2.2.0" />    
     <PackageReference Include="Swashbuckle.AspNetCore.MicrosoftExtensions" Version="0.4.0" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="3.0.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="3.0.0" />
     <PackageReference Include="Serilog.Extensions.Logging.File" Version="1.1.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\NLIP.iShare.Abstractions\NLIP.iShare.Abstractions.csproj" />
+    <ProjectReference Include="..\NLIP.iShare.Abstractions\NLIP.iShare.Abstractions.csproj" />    
     <ProjectReference Include="..\NLIP.iShare.Configuration\NLIP.iShare.Configuration.csproj" />
+    <ProjectReference Include="..\NLIP.iShare.IdentityServer\NLIP.iShare.IdentityServer.csproj" />
+    <ProjectReference Include="..\NLIP.iShare.Identity\NLIP.iShare.Identity.csproj" />
     <ProjectReference Include="..\NLIP.iShare.Models\NLIP.iShare.Models.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Responses\" />
   </ItemGroup>
 
 </Project>

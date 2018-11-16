@@ -7,6 +7,11 @@
 html body {
   font-family: Lato;
 }
+*,
+:after,
+:before {
+  box-sizing: border-box;
+}
 
 h2 {
   margin: 0;
@@ -34,9 +39,9 @@ h3 {
   font-weight: 700;
 }
 
-input[type="text"],
-input[type="password"],
-input[type="date"] {
+input[type='text'],
+input[type='password'],
+input[type='date'] {
   &[readonly],
   &[disabled],
   &:disabled,
@@ -67,27 +72,27 @@ fieldset {
 }
 
 .fa {
-    margin-right: 10px;
-    &.fa-check-circle-o {
-      color: green;
-    }
-    &.fa-times-circle-o {
-      color: red;
-    }
-    &.custom-arrow-right {
-      margin-right: -25px;
-    }
+  margin-right: 10px;
+  &.fa-check-circle-o {
+    color: green;
   }
-  label {
-    display: block;
-    color: #aaa;
-    text-transform: uppercase;
-    margin: 5px 0 0 0;
-    &.inline {
-      display: inline;
-    }
-  }
-  .required:after {
-    content: '*';
+  &.fa-times-circle-o {
     color: red;
   }
+  &.custom-arrow-right {
+    margin-right: -25px;
+  }
+}
+label {
+  display: block;
+  color: #aaa;
+  text-transform: uppercase;
+  margin: 5px 0 0 0;
+  &.inline {
+    display: inline;
+  }
+}
+.required:after {
+  content: '*';
+  color: red;
+}

@@ -3,6 +3,8 @@
     "Id": "0D5C8E0A-1BDD-4D86-972D-94BF9B150AE4",
     "Name": "Administrator",
     "AspNetUserId": "20557D75-4FF1-4F6F-B8F6-DFB0264A2A86",
+    "PartyId": "EU.EORI.NL000000000",
+    "PartyName": "iSHARE Scheme Owner",
     "CreatedDate": "2018-01-04T08:00:00",
     "Deleted": "false",
     "Active": true
@@ -34,6 +36,16 @@
     "PartyId": "EU.EORI.NL850169513",
     "PartyName": "Fictive Party",
     "CreatedDate": "2018-03-04T08:00:00",
+    "Deleted": "false",
+    "Active": true
+  },
+  {
+    "Id": "D6B4B9A7-3432-4FAE-8262-1A3DE9A1DD5F",
+    "Name": "Banana User",
+    "AspNetUserId": "CA2F2E80-91B6-4E8D-8368-326C94CFD38E",
+    "PartyId": "EU.EORI.NL000000005",
+    "PartyName": "Banana & Co BV",
+    "CreatedDate": "2018-11-01T10:30:00",
     "Deleted": "false",
     "Active": true
   }

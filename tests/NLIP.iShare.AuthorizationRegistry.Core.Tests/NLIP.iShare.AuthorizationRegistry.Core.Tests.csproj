@@ -5,17 +5,13 @@
     <ProjectGuid>25C85B88-3B05-4932-BF18-9BCE176B54BD</ProjectGuid>
   </PropertyGroup>
 
-  <ItemGroup>
-    <None Remove="DelegationTestCases\**\*.json" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="DelegationTestCases\**\*.json" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Update="DelegationTestCases\**\*.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <CodeAnalysisRuleSet>NLIP.iShare.AuthorizationRegistry.Core.Tests.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <CodeAnalysisRuleSet>NLIP.iShare.AuthorizationRegistry.Core.Tests.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
   <ItemGroup>
     <!-- Required packages in test libraries -->
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.8.0" />

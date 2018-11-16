@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-namespace NLIP.iShare.EntityFramework
+namespace NLIP.iShare.EntityFramework.Migrations.Seed
 {
     public class ReplaceCollectionDatabaseSeeder<TContext> where TContext : DbContext
     {
@@ -21,7 +21,7 @@ namespace NLIP.iShare.EntityFramework
             Environment = environment;
         }
 
-        protected void AddOrUpdateCollection<TEntity>(string source) where TEntity : class, IEntity
+        protected void AddOrUpdateCollection<TEntity>(string source) where TEntity : class
         {
             Logger.LogInformation("Seed {TEntity} from {source} for {environment}", typeof(TEntity).FullName, source, Environment);
 

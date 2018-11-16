@@ -1,21 +1,13 @@
 import { Injectable, Inject } from '@angular/core';
-import {
-  HttpInterceptor,
-  HttpHandler,
-  HttpEvent,
-  HttpRequest,
-  HTTP_INTERCEPTORS
-} from '@angular/common/http';
+import { HttpInterceptor, HttpHandler, HttpEvent, HttpRequest, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { Observable } from 'rxjs/internal/Observable';
+import { constants } from '../../constants';
 
 @Injectable()
 export class JwtHttpInterceptor implements HttpInterceptor {
-  environment: any;
-  constructor(@Inject('environmentProvider') private environmentProvider: any) {
-    this.environment = environmentProvider;
-  }
+  constructor() {}
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    const token = localStorage.getItem(this.environment.localStorageKeys.auth);
+    const token = localStorage.getItem(constants.storage.keys.auth);
     let clone: HttpRequest<any>;
     if (token) {
       clone = request.clone({

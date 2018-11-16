@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using NLIP.iShare.Abstractions;
-using NLIP.iShare.AuthorizationRegistry.Core.Api;
 using NLIP.iShare.AuthorizationRegistry.Core.Requests;
 using NLIP.iShare.AuthorizationRegistry.Data;
 using NLIP.iShare.AuthorizationRegistry.Data.Models;
@@ -9,7 +10,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-
+using NLIP.iShare.AuthorizationRegistry.Core.Api;
+using NLIP.iShare.IdentityServer.Delegation;
+using NLIP.iShare.Models;
+using Delegation = NLIP.iShare.AuthorizationRegistry.Data.Models.Delegation;
 
 namespace NLIP.iShare.AuthorizationRegistry.Core
 {
@@ -25,13 +29,19 @@ namespace NLIP.iShare.AuthorizationRegistry.Core
         public async Task<PagedResult<Delegation>> GetAll(DelegationQuery query)
         {
             var delegations = _db.Delegations
-                .Where(d => !d.Deleted && (query.PartyId == null || d.PolicyIssuer == query.PartyId));
+                .Where(d => !d.Deleted && (query.PartyId == Constants.SchemeOwnerPartyId || d.PolicyIssuer == query.PartyId));
+
+            if (!string.IsNullOrEmpty(query.Filter))
+            {
+                delegations = delegations.Where(d =>
+                    d.AuthorizationRegistryId.Contains(query.Filter) ||
+                    d.PolicyIssuer.Contains(query.Filter) ||
+                    d.AccessSubject.Contains(query.Filter));
+            }
 
             int count = await delegations.CountAsync().ConfigureAwait(false);
 
-            delegations = delegations
-                .OrderByDescending(d => d.CreatedDate)
-                .GetPage(query);
+            delegations = Sort(query, delegations).GetPage(query);
 
             return await delegations.ToPagedResult(count).ConfigureAwait(false);
         }
@@ -41,7 +51,7 @@ namespace NLIP.iShare.AuthorizationRegistry.Core
             var delegation = await _db.Delegations
                 .Include(d => d.CreatedBy)
                 .FirstOrDefaultAsync(d => d.AuthorizationRegistryId == arId
-                                     && (partyId == null || d.PolicyIssuer == partyId)
+                                     && (partyId == Constants.SchemeOwnerPartyId || d.PolicyIssuer == partyId)
                                      && !d.Deleted)
                 .ConfigureAwait(false);
             if (delegation != null)
@@ -58,7 +68,7 @@ namespace NLIP.iShare.AuthorizationRegistry.Core
             var delegation = await _db.Delegations
                 .Include(d => d.CreatedBy)
                 .FirstOrDefaultAsync(d => d.AccessSubject == subject
-                                     && (partyId == null || d.PolicyIssuer == partyId)
+                                     && (partyId == Constants.SchemeOwnerPartyId || d.PolicyIssuer == partyId)
                                      && !d.Deleted)
                 .ConfigureAwait(false);
 
@@ -68,7 +78,7 @@ namespace NLIP.iShare.AuthorizationRegistry.Core
         public async Task<Delegation> Get(Guid id, string partyId)
         {
             var delegation = await _db.Delegations
-                .FirstOrDefaultAsync(d => d.Id == id && (partyId == null || d.PolicyIssuer == partyId) && !d.Deleted)
+                .FirstOrDefaultAsync(d => d.Id == id && (partyId == Constants.SchemeOwnerPartyId || d.PolicyIssuer == partyId) && !d.Deleted)
                 .ConfigureAwait(false);
 
             return delegation;
@@ -102,7 +112,7 @@ namespace NLIP.iShare.AuthorizationRegistry.Core
 
             var createdBy = _db.Users.First(u => u.AspNetUserId == request.UserId);
 
-            var delegation = new Delegation()
+            var delegation = new Delegation
             {
                 AuthorizationRegistryId = await GenerateArId().ConfigureAwait(false),
                 PolicyIssuer = policyIssuer,
@@ -149,6 +159,65 @@ namespace NLIP.iShare.AuthorizationRegistry.Core
             return entity;
         }
 
+        public async Task<Delegation> CreateOrUpdatePolicyForParty(PolicyRequest policy, string partyId)
+        {
+            var policyIssuer = policy.DelegationEvidence.PolicyIssuer;
+            var accessSubject = policy.DelegationEvidence.Target.AccessSubject;
+
+            var serializerSettings = new JsonSerializerSettings
+            {
+                ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                NullValueHandling = NullValueHandling.Ignore
+            };
+
+            var policyJson = JsonConvert.SerializeObject(policy, serializerSettings);
+
+            var delegation = await GetExistingDelegation(policyIssuer, accessSubject);
+            if (delegation != null)
+            {
+                delegation = await UpdateExistingDelegation(delegation, policyJson);
+            }
+            else
+            {
+                delegation = new Delegation
+                {
+                    AuthorizationRegistryId = await GenerateArId(),
+                    PolicyIssuer = policyIssuer,
+                    AccessSubject = accessSubject,
+                    Policy = policyJson,
+                    CreatedDate = DateTime.Now,
+                    UpdatedDate = DateTime.Now,
+                    DelegationHistory = new List<DelegationHistory>()
+                };
+
+                await _db.Delegations.AddAsync(delegation);
+            }
+            await _db.SaveChangesAsync();
+            return delegation;
+        }
+
+        private async Task<Delegation> UpdateExistingDelegation(Delegation delegation, string newPolicy)
+        {
+            await _db.DelegationsHistories.AddAsync(new DelegationHistory
+            {
+                DelegationId = delegation.Id,
+                Policy = delegation.Policy,
+                CreatedDate = DateTime.Now,
+            }).ConfigureAwait(false);
+
+            delegation.Policy = newPolicy;
+            delegation.UpdatedDate = DateTime.Now;
+
+            _db.Delegations.Update(delegation);
+            return delegation;
+        }
+
+        private async Task<Delegation> GetExistingDelegation(string policyIssuer, string accessSubject)
+        {
+            return await _db.Delegations
+                .FirstOrDefaultAsync(d => d.PolicyIssuer == policyIssuer && d.AccessSubject == accessSubject && !d.Deleted);
+        }
+
         public async Task MakeInactive(string arId, string userId)
         {
             var delegation = await _db.Delegations
@@ -183,7 +252,7 @@ namespace NLIP.iShare.AuthorizationRegistry.Core
             var history = await _db.DelegationsHistories
                 .Include(dh => dh.CreatedBy)
                 .Where(dh => !dh.Delegation.Deleted && dh.Delegation.AuthorizationRegistryId == arId
-                             && (partyId == null || dh.Delegation.PolicyIssuer == partyId))
+                             && (partyId == Constants.SchemeOwnerPartyId || dh.Delegation.PolicyIssuer == partyId))
                 .ToListAsync()
                 .ConfigureAwait(false);
 
@@ -195,19 +264,42 @@ namespace NLIP.iShare.AuthorizationRegistry.Core
             var history = await _db.DelegationsHistories
                 .Include(d => d.Delegation)
                 .FirstOrDefaultAsync(dh => dh.Id == query.Id
-                                     && (query.PartyId == null || dh.Delegation.PolicyIssuer == query.PartyId))
+                                     && (query.PartyId == Constants.SchemeOwnerPartyId || dh.Delegation.PolicyIssuer == query.PartyId))
                 .ConfigureAwait(false);
 
             return history;
         }
 
+        private static IQueryable<Delegation> Sort(DelegationQuery query, IQueryable<Delegation> data)
+        {
+            var result = data;
+
+            switch (query.SortBy)
+            {
+                case "policyIssuer":
+                    result = result.OrderBy(c => c.PolicyIssuer, query.SortOrder);
+                    break;
+                case "accessSubject":
+                    result = result.OrderBy(c => c.AccessSubject, query.SortOrder);
+                    break;
+                default:
+                    result = result.OrderBy(c => c.AuthorizationRegistryId, query.SortOrder);
+                    break;
+            }
+
+            return result;
+        }
+
         private async Task<string> GenerateArId()
         {
-            var arId = AuthorizationRegistryIdGenerator.New();
+            const string prefix = "AR";
+            var arId = PolicyIdGenerator.New(prefix);
 
-            if (await _db.Delegations.AnyAsync(d => d.AuthorizationRegistryId == arId && !d.Deleted).ConfigureAwait(false))
+            if (await _db.Delegations
+                .AnyAsync(d => d.AuthorizationRegistryId == arId && !d.Deleted)
+                .ConfigureAwait(false))
             {
-                return AuthorizationRegistryIdGenerator.New();
+                return PolicyIdGenerator.New(prefix);
             }
 
             return arId;

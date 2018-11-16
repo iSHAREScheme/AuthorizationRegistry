@@ -5,7 +5,7 @@ using System.Reflection;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
-namespace NLIP.iShare.EntityFramework
+namespace NLIP.iShare.EntityFramework.Migrations.Seed
 {
     public static class ImportFromJson
     {

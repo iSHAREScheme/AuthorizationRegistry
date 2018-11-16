@@ -1,7 +1,6 @@
 ﻿using NLIP.iShare.AuthorizationRegistry.Data.Models;
 using System;
-using NLIP.iShare.AuthorizationRegistry.IdentityServer.Models;
-using NLIP.iShare.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace NLIP.iShare.AuthorizationRegistry.Core.Responses
 {
@@ -16,7 +15,7 @@ namespace NLIP.iShare.AuthorizationRegistry.Core.Responses
         public string[] Roles { get; set; }
         public string IdentityId { get; set; }
         public bool Active { get; set; }
-        public static UserModel Create(AspNetUser identity, User user, string[] roles)
+        public static UserModel Create(IdentityUser<string> identity, User user, string[] roles)
         {
             return new UserModel
             {

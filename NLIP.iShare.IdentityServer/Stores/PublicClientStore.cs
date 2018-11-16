@@ -4,8 +4,10 @@ using IdentityModel;
 using IdentityServer4.Models;
 using IdentityServer4.Stores;
 using Microsoft.Extensions.Logging;
+using NLIP.iShare.IdentityServer.Configuration;
+using NLIP.iShare.Models;
 
-namespace NLIP.iShare.IdentityServer
+namespace NLIP.iShare.IdentityServer.Stores
 {
     /// <summary>
     /// Enables Identity Server the capability to support OAuth clients "on the fly"
@@ -36,7 +38,7 @@ namespace NLIP.iShare.IdentityServer
             {
                 ClientId = clientId,
                 AllowedGrantTypes = new List<string> { OidcConstants.GrantTypes.ClientCredentials },
-                AllowedScopes = new List<string> { Constants.Scopes.iSHARE }
+                AllowedScopes = new List<string> { StandardScopes.iSHARE }
             };
         }
     }

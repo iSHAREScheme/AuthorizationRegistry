@@ -1,7 +1,6 @@
 ﻿using System;
 
-
-namespace NLIP.iShare.TokenClient
+namespace NLIP.iShare.TokenClient.Models
 {
     public class ClientAssertion
     {

@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Reflection;
 using Microsoft.EntityFrameworkCore;
+using NLIP.iShare.EntityFramework.Migrations.Seed;
 
 namespace NLIP.iShare.EntityFramework
 {
@@ -25,7 +26,7 @@ namespace NLIP.iShare.EntityFramework
             }
             if (keyFields.Count <= 0)
             {
-                throw new EFExtensionsException($"{t.FullName} does not have a KeyAttribute field. Unable to exec AddOrUpdate call.");
+                throw new DatabaseSeedException($"{t.FullName} does not have a KeyAttribute field. Unable to exec AddOrUpdate call.");
             }
             var entities = dbSet.AsNoTracking().ToList();
             foreach (var keyField in keyFields)

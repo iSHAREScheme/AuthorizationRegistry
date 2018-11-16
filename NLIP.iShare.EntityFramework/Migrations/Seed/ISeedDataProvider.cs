@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 
-namespace NLIP.iShare.EntityFramework
+namespace NLIP.iShare.EntityFramework.Migrations.Seed
 {
     /// <summary>
     /// Provides a list of entities based on environment

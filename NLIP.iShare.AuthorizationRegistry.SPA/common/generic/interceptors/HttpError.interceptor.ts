@@ -27,7 +27,6 @@ export class HttpErrorInterceptor implements HttpInterceptor {
 
           if (response.status === 401) {
             this.auth.logout();
-          } else if (response.status >= 400) {
           } else if (response.status >= 500) {
             result.message = 'Server error. Please contact administrator.';
             result.alert = this.alert.error(result.message);

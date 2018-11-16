@@ -2,32 +2,30 @@ import { Injectable, Inject } from '@angular/core';
 import { Profile } from '../models/Profile';
 import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
 import { Observable } from 'rxjs/internal/Observable';
-import { EnvironmentModel } from '../models/EnvironmentModel';
+import { constants } from '../../constants';
 
 @Injectable()
 export class ProfileService {
   private profileBehaviourSubject: BehaviorSubject<Profile>;
   currentProfile: Observable<Profile>;
-  environment: any;
 
-  constructor(@Inject('environmentProvider') private environmentProvider: EnvironmentModel) {
-    this.environment = environmentProvider;
+  constructor() {
     this.profileBehaviourSubject = new BehaviorSubject<Profile>(this.get());
     this.currentProfile = this.profileBehaviourSubject.asObservable();
   }
 
   set(profile: Profile): void {
-    localStorage.setItem(this.environment.localStorageKeys.profile, JSON.stringify(profile));
+    localStorage.setItem(constants.storage.keys.profile, JSON.stringify(profile));
     this.profileBehaviourSubject.next(profile);
   }
 
   get(): Profile {
-    const rawProfileData = localStorage.getItem(this.environment.localStorageKeys.profile);
+    const rawProfileData = localStorage.getItem(constants.storage.keys.profile);
     return JSON.parse(rawProfileData);
   }
 
   clear(): void {
-    localStorage.removeItem(this.environment.localStorageKeys.profile);
+    localStorage.removeItem(constants.storage.keys.profile);
     this.profileBehaviourSubject.next(undefined);
   }
 }

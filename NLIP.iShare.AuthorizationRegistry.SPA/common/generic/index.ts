@@ -11,13 +11,13 @@ export * from './services/profile.service';
 export * from './services/app-insights.service';
 export * from './services/alert.service';
 export * from './services/runtime-configuration.service';
+export * from './services/app-config.service';
 
 export * from './guards/auth.guard';
 export * from './guards/role.guard';
 export * from './models/PagedResult';
 export * from './models/Profile';
-export * from './models/Pagination';
-export * from './models/Sorting';
+export * from './models/Query';
 export * from './models/EnvironmentModel';
 export * from './models/ResponseModel';
 

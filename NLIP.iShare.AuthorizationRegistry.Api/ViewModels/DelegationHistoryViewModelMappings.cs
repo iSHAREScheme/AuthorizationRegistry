@@ -10,7 +10,7 @@ namespace NLIP.iShare.AuthorizationRegistry.Api.ViewModels
             {
                 Id = delegationHistory.Id,
                 CreatedDate = delegationHistory.CreatedDate,
-                CreatedBy = delegationHistory.CreatedBy.Name,
+                CreatedBy = delegationHistory.CreatedBy?.Name,
                 Policy = delegationHistory.Policy
             };
         }

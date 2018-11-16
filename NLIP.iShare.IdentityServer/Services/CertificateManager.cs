@@ -1,5 +1,4 @@
-﻿using NLIP.iShare.Api;
-using NLIP.iShare.IdentityServer.Configuration;
+﻿using NLIP.iShare.IdentityServer.Configuration;
 using System;
 using System.Security.Cryptography.X509Certificates;
 

@@ -2,7 +2,7 @@ import { Router } from '@angular/router';
 import { Component, OnInit } from '@angular/core';
 import { AccountService } from '../../services/account.service';
 import { ForgotPasswordModel } from '../../models/ForgotPasswordModel';
-import { AlertService } from '@generic/index';
+import { AuthService } from '@generic/index';
 
 @Component({
   selector: 'app-forgot-password',
@@ -13,15 +13,16 @@ export class ForgotPasswordComponent implements OnInit {
   username: string;
   emailAddress: string;
   serverError: string;
+  success = false;
 
   ngOnInit(): void {}
 
-  constructor(private api: AccountService, private router: Router, private alert: AlertService) {
+  constructor(private api: AccountService, private router: Router, private auth: AuthService) {
     this.username = '';
   }
 
-  back(): void {
-    this.router.navigate(['']);
+  login(): void {
+    this.auth.goToLogin();
   }
 
   sendForgotPasswordEmail(): void {
@@ -31,9 +32,7 @@ export class ForgotPasswordComponent implements OnInit {
 
     this.api.sendForgotPasswordEmail(user).subscribe(
       response => {
-        this.alert.success('Email sent successfully.');
-        this.serverError = '';
-        this.router.navigateByUrl('account/login');
+        this.success = true;
       },
       error => {
         if (error.data && error.data.length > 0) {

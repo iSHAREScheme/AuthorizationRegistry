@@ -11,6 +11,10 @@
             Address = address;
             DisplayName = displayName;
         }
-        public EmailAddress() { }
+
+        public EmailAddress()
+        {
+            // leave the constructor here as it is used by ASP.NET Core DI
+        }
     }
 }

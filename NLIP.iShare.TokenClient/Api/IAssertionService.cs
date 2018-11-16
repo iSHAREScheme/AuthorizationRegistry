@@ -1,4 +1,6 @@
-﻿namespace NLIP.iShare.TokenClient
+﻿using NLIP.iShare.TokenClient.Models;
+
+namespace NLIP.iShare.TokenClient.Api
 {
     /// <summary>
     /// Provides signed assertions for specific client

@@ -1,7 +1,7 @@
-import { Injectable, Inject } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
-import { EnvironmentModel, ResponseModel } from '@generic/index';
+import { ResponseModel, EnvironmentModel } from '@generic/index';
 
 import { ChangePasswordModel } from '../models/ChangePasswordModel';
 import { ActivateAccountModel } from '../models/ActivateAccountModel';
@@ -12,15 +12,10 @@ import { ResetPasswordModel } from '../models/ResetPasswordModel';
   providedIn: 'root'
 })
 export class AccountService {
-  environment: EnvironmentModel;
   baseUrl: string;
 
-  constructor(
-    private http: HttpClient,
-    @Inject('environmentProvider') private environmentProvider: EnvironmentModel
-  ) {
-    this.environment = environmentProvider;
-    this.baseUrl = this.environment.api + 'account';
+  constructor(private http: HttpClient, private environment: EnvironmentModel) {
+    this.baseUrl = `${this.environment.apiEndpoint}/account`;
   }
 
   changePassword(model: ChangePasswordModel) {
@@ -37,7 +32,23 @@ export class AccountService {
     });
     return this.http.post<ResponseModel>(`${this.baseUrl}/forgot-password`, user, { headers });
   }
+
   confirmPasswordReset(model: ResetPasswordModel) {
     return this.http.post<ResponseModel>(`${this.baseUrl}/reset-password`, model);
+  }
+
+  enable2fa(username: string, password: string, code: string) {
+    return this.http.post<any>(`${this.baseUrl}/2fa/enable`, {
+      username: username,
+      password: password,
+      code: code
+    });
+  }
+
+  getAuthenticatorKey(username: string, password: string) {
+    return this.http.post<any>(`${this.baseUrl}/2fa/key`, {
+      username: username,
+      password: password
+    });
   }
 }

@@ -1,10 +1,11 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json.Linq;
+﻿using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Serialization;
+using NLIP.iShare.Api.Controllers;
 using NLIP.iShare.Api.Filters;
 using NLIP.iShare.AuthorizationRegistry.Api.Attributes;
 using NLIP.iShare.AuthorizationRegistry.Core.Api;
+using NLIP.iShare.IdentityServer.Delegation;
+using NLIP.iShare.Models;
 using NLIP.iShare.Models.DelegationEvidence;
 using NLIP.iShare.Models.DelegationMask;
 using System.Threading.Tasks;
@@ -12,10 +13,8 @@ using System.Threading.Tasks;
 namespace NLIP.iShare.AuthorizationRegistry.Api.Controllers
 {
     [Route("delegation")]
-    [Authorize]
-    [TypeFilter(typeof(JsonSchemaValidateAttribute))]
-    [TypeFilter(typeof(AuthorizeDelegationRequestAttribute))]
-    public class DelegationEvidenceController : Controller
+    [TypeFilter(typeof(JsonSchemaValidateAttribute), Arguments = new object[]{ "delegationMaskSchema.json" })]
+    public class DelegationEvidenceController : SchemeAuthorizedController
     {
         private readonly IDelegationService _delegationService;
         private readonly IDelegationTranslateService _delegationTranslateService;
@@ -33,15 +32,20 @@ namespace NLIP.iShare.AuthorizationRegistry.Api.Controllers
         }
 
         /// <summary>
-        /// Find the corresponding delegation policy and run the delegation translation algorithm
+        /// Obtains delegation evidence
         /// </summary>
-        /// <param name="mask">The delegation mask used to find the delegation policy</param>
+        /// <remarks>
+        /// Used to obtain delegation evidence from an Authorization Registry. The response is a signed JSON Web Token. 
+        /// Please refer to the iSHARE language of delegation in order to understand the decoded response data model.
+        /// </remarks>
+        /// <param name="delegation_mask">iSHARE specific, optional, JSON structure that acts as a mask to delegation evidence</param>
         /// <returns>JWT encoded delegation evidence</returns>
         [HttpPost]
-        [SignResponse(ClaimName = "delegationEvidence", TokenName = "delegation_token", JsonContractType = typeof(CamelCasePropertyNamesContractResolver))]
-        public async Task<ActionResult<DelegationEvidence>> Translate([FromBody]JObject mask)
+        [TypeFilter(typeof(AuthorizeDelegationRequestAttribute))]
+        [SignResponse("delegation_token", "delegationEvidence", "DelegationEvidence", JsonContractType = typeof(CamelCasePropertyNamesContractResolver))]
+        public async Task<ActionResult<DelegationEvidence>> Translate([FromBody]DelegationMask delegation_mask)
         {
-            var result = await TranslateDelegation(mask);
+            var result = await TranslateDelegation(delegation_mask);
 
             if (result.Value == null)
             {
@@ -52,20 +56,22 @@ namespace NLIP.iShare.AuthorizationRegistry.Api.Controllers
         }
 
         /// <summary>
-        /// Find the corresponding delegation policy and run the delegation translation algorithm
+        /// Obtains delegation evidence
         /// </summary>
-        /// <param name="mask">The delegation mask used to find the delegation policy</param>
+        /// <remarks>
+        /// Used to obtain delegation evidence from an Authorization Registry. The response is a signed JSON Web Token. 
+        /// Please refer to the iSHARE language of delegation in order to understand the decoded response data model.
+        /// </remarks>
+        /// <param name="delegation_mask">iSHARE specific, optional, JSON structure that acts as a mask to delegation evidence</param>
         /// <returns>The delegation evidence</returns>
         [HttpPost, Route("test"), ApiExplorerSettings(IgnoreApi = true)]
-        public async Task<ActionResult<DelegationTranslationTestResponse>> TestDelegationTranslation([FromBody]JObject mask)
+        public async Task<ActionResult<DelegationTranslationTestResponse>> TestDelegationTranslation([FromBody]DelegationMask delegation_mask)
         {
-            return await TranslateDelegation(mask);
+            return await TranslateDelegation(delegation_mask);
         }
 
-        private async Task<ActionResult<DelegationTranslationTestResponse>> TranslateDelegation(JObject mask)
+        private async Task<ActionResult<DelegationTranslationTestResponse>> TranslateDelegation(DelegationMask delegationMask)
         {
-            var delegationMask = mask.ToObject<DelegationMask>();
-
             var validationResult = _delegationMaskValidationService.Validate(delegationMask);
 
             if (!validationResult.Success)

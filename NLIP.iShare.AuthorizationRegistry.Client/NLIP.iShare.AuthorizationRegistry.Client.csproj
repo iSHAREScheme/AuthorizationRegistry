@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
-    <ProjectGuid>6444D52F-AFC0-49B7-9EFE-044F4BABA9E6</ProjectGuid>          
+    <ProjectGuid>6444D52F-AFC0-49B7-9EFE-044F4BABA9E6</ProjectGuid>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">

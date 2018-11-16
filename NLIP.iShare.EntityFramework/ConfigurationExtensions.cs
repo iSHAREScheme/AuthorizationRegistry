@@ -1,5 +1,4 @@
-﻿using IdentityServer4.EntityFramework.DbContexts;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -17,16 +16,15 @@ namespace NLIP.iShare.EntityFramework
         public static bool RunMigration(this IConfiguration configuration) => configuration["RunMigration"] == "true";
 
         public static IApplicationBuilder UseMigrations<TContext>(this IApplicationBuilder app,
-            IConfiguration configuration,
-            IHostingEnvironment environment)
+            IConfiguration configuration)
             where TContext : DbContext
         {
             if (configuration.RunMigration())
             {
                 using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
                 {
-                    // Automatically perform database migration
                     var context = serviceScope.ServiceProvider.GetRequiredService<TContext>();
+
                     context.Database.Migrate();
                 }
             }
@@ -44,35 +42,14 @@ namespace NLIP.iShare.EntityFramework
                 {
                     throw new DatabaseSeedException(
                         $"A database seeder for {environment.EnvironmentName} could not be found in the requested namespace {typeof(IDatabaseSeeder<TContext>).Namespace}. " +
-                        $"Make sure a {nameof(IDatabaseSeeder<TContext>)} implementation is registered for this environment.");
+                        $"Make sure a {nameof(IDatabaseSeeder<TContext>)}<{typeof(TContext).Name}> implementation is registered for this environment.");
                 }
 
                 seeder.Seed();
             }
             return app;
         }
-
-        public static IServiceCollection AddIdentityServerSeedServices(this IServiceCollection services,
-            IHostingEnvironment environment,
-            string @namespace,
-            Assembly sourcesAssembly)
-        {
-            services.AddIdentityServerSeedServices(environment, @namespace, sourcesAssembly, ClientsDatabaseSeeder.CreateSeeder);
-
-            return services;
-        }
-
-        public static IServiceCollection AddIdentityServerSeedServices(this IServiceCollection services,
-            IHostingEnvironment environment,
-            string @namespace,
-            Assembly sourcesAssembly,
-            Func<IServiceProvider, string, IDatabaseSeeder<ConfigurationDbContext>> seederFactory)
-        {
-            services.AddSeedServices(environment, @namespace, sourcesAssembly, seederFactory);
-
-            return services;
-        }
-
+       
         public static IServiceCollection AddSeedServices<TContext>(this IServiceCollection services,
             IHostingEnvironment environment,
             string @namespace,

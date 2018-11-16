@@ -76,7 +76,7 @@
     "AuthorizationRegistryId": "AR.HAPPYFLOW1",
     "PolicyIssuer": "EU.EORI.NL000000003",
     "AccessSubject": "EU.EORI.NL000000001",
-    "Policy": "{\"delegationEvidence\":{\"notBefore\":1529574873,\"notOnOrAfter\":1539574873,\"policyIssuer\":\"EU.EORI.NL000000003\",\"target\":{\"accessSubject\":\"EU.EORI.NL000000001\"},\"policySets\":[{\"maxDelegationDepth\":5,\"target\":{\"environment\":{\"licenses\":[\"ISHARE.0001\"]}},\"policies\":[{\"target\":{\"resource\":{\"type\":\"CONTAINER.DATA\",\"identifiers\":[\"*\"],\"attributes\":[\"CONTAINER.DATA.ATTRIBUTE.ETA\"]},\"actions\":[\"ISHARE.READ\"]},\"rules\":[{\"effect\":\"Permit\"}]}]}]}}",
+    "Policy": "{\"delegationEvidence\":{\"notBefore\":1529574873,\"notOnOrAfter\":1559574873,\"policyIssuer\":\"EU.EORI.NL000000003\",\"target\":{\"accessSubject\":\"EU.EORI.NL000000001\"},\"policySets\":[{\"maxDelegationDepth\":5,\"target\":{\"environment\":{\"licenses\":[\"ISHARE.0001\"]}},\"policies\":[{\"target\":{\"resource\":{\"type\":\"CONTAINER.DATA\",\"identifiers\":[\"*\"],\"attributes\":[\"CONTAINER.DATA.ATTRIBUTE.ETA\"]},\"actions\":[\"ISHARE.READ\"]},\"rules\":[{\"effect\":\"Permit\"}]}]}]}}",
     "CreatedById": "0D5C8E0A-1BDD-4D86-972D-94BF9B150AE4",
     "UpdatedById": "0D5C8E0A-1BDD-4D86-972D-94BF9B150AE4",
     "CreatedDate": "2018-07-02T08:00:00",
@@ -88,7 +88,7 @@
     "AuthorizationRegistryId": "AR.HAPPYFLOW2",
     "PolicyIssuer": "EU.EORI.NL000000003",
     "AccessSubject": "EU.EORI.NL000000002",
-    "Policy": "{\"delegationEvidence\":{\"notBefore\":1529574873,\"notOnOrAfter\":1539574873,\"policyIssuer\":\"EU.EORI.NL000000003\",\"target\":{\"accessSubject\":\"EU.EORI.NL000000002\"},\"policySets\":[{\"maxDelegationDepth\":5,\"target\":{\"environment\":{\"licenses\":[\"ISHARE.0001\"]}},\"policies\":[{\"target\":{\"resource\":{\"type\":\"CONTAINER.DATA\",\"identifiers\":[\"*\"],\"attributes\":[\"CONTAINER.DATA.ATTRIBUTE.ETA\"]},\"actions\":[\"ISHARE.READ\"]},\"rules\":[{\"effect\":\"Permit\"},{\"effect\":\"Deny\",\"target\":{\"resource\":{\"type\":\"CONTAINER.DATA\",\"identifiers\":[\"180621.ABC120\",\"180621.ABC121\",\"180621.ABC122\",\"180621.ABC123\"],\"attributes\":[\"*\"]}}}]}]}]}}",
+    "Policy": "{\"delegationEvidence\":{\"notBefore\":1529574873,\"notOnOrAfter\":1559574873,\"policyIssuer\":\"EU.EORI.NL000000003\",\"target\":{\"accessSubject\":\"EU.EORI.NL000000002\"},\"policySets\":[{\"maxDelegationDepth\":5,\"target\":{\"environment\":{\"licenses\":[\"ISHARE.0001\"]}},\"policies\":[{\"target\":{\"resource\":{\"type\":\"CONTAINER.DATA\",\"identifiers\":[\"*\"],\"attributes\":[\"CONTAINER.DATA.ATTRIBUTE.ETA\"]},\"actions\":[\"ISHARE.READ\"]},\"rules\":[{\"effect\":\"Permit\"},{\"effect\":\"Deny\",\"target\":{\"resource\":{\"type\":\"CONTAINER.DATA\",\"identifiers\":[\"180621.ABC120\",\"180621.ABC121\",\"180621.ABC122\",\"180621.ABC123\"],\"attributes\":[\"*\"]}}}]}]}]}}",
     "CreatedById": "0D5C8E0A-1BDD-4D86-972D-94BF9B150AE4",
     "UpdatedById": "0D5C8E0A-1BDD-4D86-972D-94BF9B150AE4",
     "CreatedDate": "2018-07-02T08:10:00",
@@ -100,11 +100,23 @@
     "AuthorizationRegistryId": "AR.HAPPYFLOW3",
     "PolicyIssuer": "EU.EORI.NL000000002",
     "AccessSubject": "EU.EORI.NL000000001",
-    "Policy": "{\"delegationEvidence\":{\"notBefore\":1529574873,\"notOnOrAfter\":1549574873,\"policyIssuer\":\"EU.EORI.NL000000002\",\"target\":{\"accessSubject\":\"EU.EORI.NL000000001\"},\"policySets\":[{\"maxDelegationDepth\":5,\"target\":{\"environment\":{\"licenses\":[\"ISHARE.0001\"]}},\"policies\":[{\"target\":{\"resource\":{\"type\":\"CONTAINER.DATA\",\"identifiers\":[\"*\"],\"attributes\":[\"CONTAINER.DATA.ATTRIBUTE.ETA\"]},\"actions\":[\"ISHARE.READ\"]},\"rules\":[{\"effect\":\"Permit\"},{\"effect\":\"Deny\",\"target\":{\"resource\":{\"type\":\"CONTAINER.DATA\",\"identifiers\":[\"180621.ABC120\",\"180621.ABC121\",\"180621.ABC122\",\"180621.ABC123\"],\"attributes\":[\"*\"]}}}]}]}]}}",
+    "Policy": "{\"delegationEvidence\":{\"notBefore\":1529574873,\"notOnOrAfter\":1559574873,\"policyIssuer\":\"EU.EORI.NL000000002\",\"target\":{\"accessSubject\":\"EU.EORI.NL000000001\"},\"policySets\":[{\"maxDelegationDepth\":5,\"target\":{\"environment\":{\"licenses\":[\"ISHARE.0001\"]}},\"policies\":[{\"target\":{\"resource\":{\"type\":\"CONTAINER.DATA\",\"identifiers\":[\"*\"],\"attributes\":[\"CONTAINER.DATA.ATTRIBUTE.ETA\"]},\"actions\":[\"ISHARE.READ\"]},\"rules\":[{\"effect\":\"Permit\"},{\"effect\":\"Deny\",\"target\":{\"resource\":{\"type\":\"CONTAINER.DATA\",\"identifiers\":[\"180621.ABC120\",\"180621.ABC121\",\"180621.ABC122\",\"180621.ABC123\"],\"attributes\":[\"*\"]}}}]}]}]}}",
     "CreatedById": "0D5C8E0A-1BDD-4D86-972D-94BF9B150AE4",
     "UpdatedById": "0D5C8E0A-1BDD-4D86-972D-94BF9B150AE4",
     "CreatedDate": "2018-10-02T12:50:00",
     "UpdatedDate": "2018-10-02T12:50:00",
+    "Deleted": "false"
+  },
+  {
+    "Id": "03D8F2DD-E188-4205-9BC1-D9CB4F8ACF0A",
+    "AuthorizationRegistryId": "AR.HAPPYFLOW4",
+    "PolicyIssuer": "EU.EORI.NL000000005",
+    "AccessSubject": "EU.EORI.NL000000001",
+    "Policy": "{\"delegationEvidence\": {\"notBefore\": 1541058939,\"notOnOrAfter\": 1551058939,\"policyIssuer\": \"EU.EORI.NL000000005\",\"target\": {\"accessSubject\": \"EU.EORI.NL000000001\"},\"policySets\": [{\"target\": {\"environment\": {\"licenses\": [\"ISHARE.0001\"]}},\"policies\": [{\"target\": {\"resource\": {\"type\": \"CONTAINER.DATA\",\"identifiers\": [\"180621.ABC120\",\"180621.ABC121\",\"180621.ABC122\",\"180621.ABC123\",\"180621.ABC124\",\"180621.ABC125\",\"180621.ABC126\",\"180621.ABC127\",\"180621.ABC128\",\"180621.ABC129\",\"180621.ABC130\",\"180621.ABC131\",\"180621.ABC132\",\"180621.ABC133\",\"180621.ABC134\",\"180621.ABC135\"],\"attributes\": [\"ETA\",\"WEIGHT\"]},\"actions\": [\"ISHARE.CREATE\",\"ISHARE.READ\",\"ISHARE.UPDATE\",\"ISHARE.DELETE\"]},\"rules\": [{\"effect\": \"Permit\"},{\"effect\": \"Deny\",\"target\": {\"resource\": {\"type\": \"CONTAINER.DATA\",\"identifiers\": [\"180621.ABC134\",\"180621.ABC135\"],\"attributes\": [\"ETA\"]},\"actions\": [\"ISHARE.CREATE\",\"ISHARE.UPDATE\",\"ISHARE.DELETE\"]}}]},{\"target\": {\"resource\": {\"type\": \"ORDER.DATA\",\"identifiers\": [\"W13.181022.001\",\"W13.181022.002\",\"W13.181022.003\",\"W13.181022.004\",\"W13.181022.005\",\"W13.181022.006\"],\"attributes\": [\"STATUS\",\"PACKAGES\",\"TRUCKBAY.PICKUP\"]},\"actions\": [\"ISHARE.CREATE\",\"ISHARE.READ\",\"ISHARE.UPDATE\",\"ISHARE.DELETE\"]},\"rules\": [{\"effect\": \"Permit\"},{\"effect\": \"Deny\",\"target\": {\"type\": \"ORDER.DATA\",\"resource\": {\"identifiers\": [\"W13.181022.001\"],\"attributes\": [\"TRUCKBAY.PICKUP\"]},\"actions\": [\"ISHARE.DELETE\"]}}]},{\"target\": {\"resource\": {\"type\": \"CONTAINER.DATA\",\"identifiers\": [\"180621.ABC150\",\"180621.ABC151\",\"180621.ABC152\",\"180621.ABC153\",\"180621.ABC154\",\"180621.ABC155\",\"180621.ABC156\",\"180621.ABC157\",\"180621.ABC158\",\"180621.ABC159\",\"180621.ABC160\",\"180621.ABC161\",\"180621.ABC162\",\"180621.ABC163\",\"180621.ABC164\",\"180621.ABC165\"],\"attributes\": [\"ETA\",\"WEIGHT\"]},\"actions\": [\"ISHARE.CREATE\",\"ISHARE.READ\",\"ISHARE.UPDATE\",\"ISHARE.DELETE\"]},\"rules\": [{\"effect\": \"Permit\"},{\"effect\": \"Deny\",\"target\": {\"resource\": {\"type\": \"CONTAINER.DATA\",\"identifiers\": [\"180621.ABC150\",\"180621.ABC151\",\"180621.ABC152\",\"180621.ABC153\",\"180621.ABC154\"],\"attributes\": [\"WEIGHT\"]},\"actions\": [\"ISHARE.CREATE\",\"ISHARE.DELETE\"]}}]},{\"target\": {\"resource\": {\"type\": \"ORDER.DATA\",\"identifiers\": [\"AWE.2018.10.#062\",\"AWE.2018.10.#063\",\"AWE.2018.10.#064\",\"AWE.2018.10.#065\",\"AWE.2018.10.#066\",\"AWE.2018.10.#067\"],\"attributes\": [\"STATUS\",\"PACKAGES\",\"TRUCKBAY.PICKUP\"]},\"actions\": [\"ISHARE.CREATE\",\"ISHARE.READ\",\"ISHARE.UPDATE\",\"ISHARE.DELETE\"]},\"rules\": [{\"effect\": \"Permit\"},{\"effect\": \"Deny\",\"target\": {\"resource\": {\"type\": \"ORDER.DATA\",\"identifiers\": [\"AWE.2018.10.#065\"],\"attributes\": [\"TRUCKBAY.PICKUP\"]},\"actions\": [\"ISHARE.UPDATE\"]}}]}]}]}}",
+    "CreatedById": "D6B4B9A7-3432-4FAE-8262-1A3DE9A1DD5F",
+    "UpdatedById": "D6B4B9A7-3432-4FAE-8262-1A3DE9A1DD5F",
+    "CreatedDate": "2018-10-01T10:32:00",
+    "UpdatedDate": "2018-10-01T10:32:00",
     "Deleted": "false"
   }
 ]

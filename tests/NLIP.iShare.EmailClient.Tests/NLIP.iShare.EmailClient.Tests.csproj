@@ -5,6 +5,14 @@
     <ProjectGuid>E770D711-E90E-4E31-A334-3DEFFFBC326C</ProjectGuid>  
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <CodeAnalysisRuleSet>NLIP.iShare.EmailClient.Tests.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <CodeAnalysisRuleSet>NLIP.iShare.EmailClient.Tests.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+
   <ItemGroup>
     <!-- Required packages in test libraries -->
     <PackageReference Include="Flurl" Version="2.8.0" />

@@ -12,7 +12,7 @@ namespace NLIP.iShare.AuthorizationRegistry.Data.Models
         public Delegation Delegation { get; set; }
         public string Policy { get; set; }
         public DateTime CreatedDate { get; set; }
-        public Guid CreatedById { get; set; }
+        public Guid? CreatedById { get; set; }
         public User CreatedBy { get; set; }
     }
 }

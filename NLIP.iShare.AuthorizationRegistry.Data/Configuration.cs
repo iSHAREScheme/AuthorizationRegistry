@@ -5,17 +5,19 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using NLIP.iShare.EntityFramework;
 using System.Reflection;
-using NLIP.iShare.AuthorizationRegistry.Data.Migrations.Seed;
+using NLIP.iShare.AuthorizationRegistry.Data.Migrations.Seed.Seeders;
+
 
 namespace NLIP.iShare.AuthorizationRegistry.Data
 {
     public static class Configuration
     {
-        public static void AddAuthorizationRegistryUserDbContext(this IServiceCollection services,
+        public static void AddDb(this IServiceCollection services,
             IConfiguration configuration,
             IHostingEnvironment environment)
         {
-            services.AddDbContext<AuthorizationRegistryDbContext>(options => options.UseSqlServer(configuration.GetConnectionString("Main")));
+            var connectionString = configuration.GetConnectionString("Main");
+            services.AddDbContext<AuthorizationRegistryDbContext>(options => options.UseSqlServer(connectionString));
 
             services.AddSeedServices<AuthorizationRegistryDbContext>(environment,
                 "NLIP.iShare.AuthorizationRegistry.Data.Migrations.Seed",
@@ -27,7 +29,7 @@ namespace NLIP.iShare.AuthorizationRegistry.Data
             IConfiguration configuration,
             IHostingEnvironment environment)
         {
-            app.UseMigrations<AuthorizationRegistryDbContext>(configuration, environment);
+            app.UseMigrations<AuthorizationRegistryDbContext>(configuration);
             app.UseSeed<AuthorizationRegistryDbContext>(environment);
         }
     }

@@ -1,7 +1,6 @@
 ﻿using System;
 
-
-namespace NLIP.iShare.IdentityServer
+namespace NLIP.iShare.IdentityServer.Models
 {
     public class ClientAssertion
     {

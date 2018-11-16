@@ -1,8 +1,9 @@
-﻿using NLIP.iShare.Api;
-using NLIP.iShare.AuthorizationRegistry.Core.Api;
-using System;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using System.Threading.Tasks;
+using NLIP.iShare.AuthorizationRegistry.Core.Api;
+using NLIP.iShare.IdentityServer;
+using NLIP.iShare.IdentityServer.Delegation;
+using NLIP.iShare.Models;
 
 namespace NLIP.iShare.AuthorizationRegistry.Core
 {
@@ -21,17 +22,7 @@ namespace NLIP.iShare.AuthorizationRegistry.Core
             var newPolicyIssuer = policyJsonParsed.PolicyIssuer;
             var newAccessSubject = policyJsonParsed.AccessSubject;
 
-            if (string.IsNullOrEmpty(newPolicyIssuer) || string.IsNullOrEmpty(newAccessSubject))
-            {
-                return ValidationResult.Invalid("Policy issuer and access subject are required.");
-            }
-
-            if (currentUser.IsInRole(Constants.Roles.EntitledPartyCreator) && currentUser.GetPartyId() != newPolicyIssuer)
-            {
-                return ValidationResult.Invalid("Policy issuer must be equal to your party id.");
-            }
-
-            return ValidationResult.Valid();
+            return ValidateIssuer(currentUser.GetPartyId(), newPolicyIssuer, newAccessSubject);
         }
 
         public async Task<ValidationResult> ValidateCreate(string policyJson, ClaimsPrincipal currentUser)
@@ -40,14 +31,10 @@ namespace NLIP.iShare.AuthorizationRegistry.Core
             var newPolicyIssuer = policyJsonParsed.PolicyIssuer;
             var newAccessSubject = policyJsonParsed.AccessSubject;
 
-            if (string.IsNullOrEmpty(newPolicyIssuer) || string.IsNullOrEmpty(newAccessSubject))
+            var validationResult = ValidateIssuer(currentUser.GetPartyId(), newPolicyIssuer, newAccessSubject);
+            if (!validationResult.Success)
             {
-                return ValidationResult.Invalid("Policy issuer and access subject are required.");
-            }
-
-            if (currentUser.IsInRole(Constants.Roles.EntitledPartyCreator) && currentUser.GetPartyId() != newPolicyIssuer)
-            {
-                return ValidationResult.Invalid("Policy issuer must be equal to your party id.");
+                return validationResult;
             }
 
             if (await _delegationService.DelegationExists(newPolicyIssuer, newAccessSubject).ConfigureAwait(false))
@@ -74,6 +61,21 @@ namespace NLIP.iShare.AuthorizationRegistry.Core
             if (existingEntity.PolicyIssuer != newPolicyIssuer || existingEntity.AccessSubject != newAccessSubject)
             {
                 return ValidationResult.Invalid("The combination policyIssuer - accessSubject must remain unmodified.");
+            }
+
+            return ValidationResult.Valid();
+        }
+
+        public ValidationResult ValidateIssuer(string partyId, string policyIssuer, string accessSubject)
+        {
+            if (string.IsNullOrEmpty(policyIssuer) || string.IsNullOrEmpty(accessSubject))
+            {
+                return ValidationResult.Invalid("Policy issuer and access subject are required.");
+            }
+
+            if (partyId != policyIssuer)
+            {
+                return ValidationResult.Invalid("Policy issuer must be equal to your party id.");
             }
 
             return ValidationResult.Valid();

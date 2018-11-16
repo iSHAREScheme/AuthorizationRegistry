@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Mvc.Authorization;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Collections.Generic;
@@ -10,27 +10,27 @@ namespace NLIP.iShare.Api.Swagger
     {
         public void Apply(Operation operation, OperationFilterContext context)
         {
+            var filterDescriptors = context.ApiDescription.ActionDescriptor.FilterDescriptors;
+            var isAuthorizeAttribute = filterDescriptors.Select(fd => fd.Filter).Any(f => f is AuthorizeFilter);
+
+            if (!isAuthorizeAttribute)
+            {
+                return;
+            }
+
             if (operation.Parameters == null)
             {
                 operation.Parameters = new List<IParameter>();
             }
-            var authorizeAttributes = context.ApiDescription
-                .ControllerAttributes()
-                .Union(context.ApiDescription.ActionAttributes())
-                .OfType<AuthorizeAttribute>();
-            if (!authorizeAttributes.Any())
-            {
-                return;
-            }
-            var parameter = new Parameter
+
+            operation.Parameters.Add(new Parameter
             {
                 Name = "Authorization",
                 In = "header",
                 Description = "Oauth 2.0 authorization based on bearer token. MUST contain ”Bearer” + access token value",
                 Required = true,
                 Type = "string"
-            };
-            operation.Parameters.Add(parameter);
+            });
         }
     }
 }

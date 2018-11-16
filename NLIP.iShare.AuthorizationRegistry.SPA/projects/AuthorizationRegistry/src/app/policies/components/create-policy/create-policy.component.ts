@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { PoliciesApiService } from '@app-ar/policies/services/policies-api.service';
 import { Router } from '@angular/router';
 import { ProfileService, JSONService, AlertService } from 'common';
+import { PoliciesApiService } from '../../services/policies-api.service';
 
 @Component({
   selector: 'app-create-policy',

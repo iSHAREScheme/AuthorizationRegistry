@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
-import { environment } from '@env-ar/environment';
-import { User } from '@app-ar/users/models/User';
-import { PagedResult } from '@common/index';
 import { Observable } from 'rxjs/internal/Observable';
+import { PagedResult, Query, EnvironmentModel } from 'common';
+import { User } from '../models/User';
 
 @Injectable({
   providedIn: 'root'
@@ -11,16 +10,17 @@ import { Observable } from 'rxjs/internal/Observable';
 export class UsersApiService {
   baseUrl: string;
 
-  constructor(private http: HttpClient) {
-    this.baseUrl = environment.api + 'users';
+  constructor(private http: HttpClient, private environment: EnvironmentModel) {
+    this.baseUrl = `${this.environment.apiEndpoint}/users`;
   }
 
-  getAll(page: number, pageSize: number, sortBy: string, sortOrder: 'asc' | 'desc'): Observable<PagedResult<User>> {
+  getAll(query: Query) {
     const params = new HttpParams()
-      .set('page', page.toString())
-      .set('pageSize', pageSize.toString())
-      .set('sortBy', sortBy)
-      .set('sortOrder', sortOrder);
+      .set('filter', query.filter)
+      .set('page', query.page.toString())
+      .set('pageSize', query.pageSize.toString())
+      .set('sortBy', query.sortBy)
+      .set('sortOrder', query.sortOrder);
     return this.http.get<PagedResult<User>>(this.baseUrl, { params });
   }
 

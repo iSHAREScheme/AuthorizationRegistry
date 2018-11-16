@@ -7,6 +7,8 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
+using NLIP.iShare.TokenClient.Api;
+using NLIP.iShare.TokenClient.Models;
 
 namespace NLIP.iShare.TokenClient
 {

@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Security.Cryptography;
+using NLIP.iShare.TokenClient.Api;
 
 namespace NLIP.iShare.TokenClient
 {
