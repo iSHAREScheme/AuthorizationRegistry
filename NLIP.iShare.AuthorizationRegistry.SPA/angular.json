@@ -25,7 +25,7 @@
             "assets": [
               "projects/AuthorizationRegistry/src/favicon.ico",
               "projects/AuthorizationRegistry/src/assets",
-			  {
+              {
                 "glob": "**/*",
                 "input": "common/assets",
                 "output": "/assets"
@@ -41,36 +41,11 @@
               "./node_modules/alertifyjs/build/css/themes/default.min.css",
               "./node_modules/alertifyjs/build/css/themes/bootstrap.min.css"
             ],
-            "scripts": [
-              "./node_modules/ace-builds/src-min/ace.js",
-              "./node_modules/ace-builds/src-min/theme-crimson_editor.js"
-            ]
+            "scripts": ["./node_modules/ace-builds/src-min/ace.js", "./node_modules/ace-builds/src-min/theme-crimson_editor.js"]
           },
           "configurations": {
             "production": {
-              "fileReplacements": [
-                {
-                  "replace": "projects/AuthorizationRegistry/src/environments/environment.ts",
-                  "with": "projects/AuthorizationRegistry/src/environments/environment.prod.ts"
-                }
-              ],
-              "optimization": true,
-              "outputHashing": "all",
-              "sourceMap": false,
-              "extractCss": false,
-              "namedChunks": false,
-              "aot": true,
-              "extractLicenses": true,
-              "vendorChunk": false,
-              "buildOptimizer": true
-            },
-            "qa": {
-              "fileReplacements": [
-                {
-                  "replace": "projects/AuthorizationRegistry/src/environments/environment.ts",
-                  "with": "projects/AuthorizationRegistry/src/environments/environment.qa.ts"
-                }
-              ],
+              "fileReplacements": [],
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
@@ -86,7 +61,8 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "site:build"
+            "browserTarget": "site:build",
+			"port":4201
           },
           "configurations": {
             "production": {
@@ -107,24 +83,15 @@
             "polyfills": "projects/AuthorizationRegistry/src/polyfills.ts",
             "tsConfig": "projects/AuthorizationRegistry/tsconfig.spec.json",
             "karmaConfig": "projects/AuthorizationRegistry/karma.conf.js",
-            "styles": [
-              "./node_modules/normalize.css/normalize.css",
-              "common/styles.scss"
-            ],
+            "styles": ["./node_modules/normalize.css/normalize.css", "common/styles.scss"],
             "scripts": [],
-            "assets": [
-              "projects/AuthorizationRegistry/src/favicon.ico",
-              "projects/AuthorizationRegistry/src/assets"
-            ]
+            "assets": ["projects/AuthorizationRegistry/src/favicon.ico", "projects/AuthorizationRegistry/src/assets"]
           }
         },
         "lint": {
           "builder": "@angular-devkit/build-angular:tslint",
           "options": {
-            "tsConfig": [
-              "projects/AuthorizationRegistry/tsconfig.app.json",
-              "projects/AuthorizationRegistry/tsconfig.spec.json"
-            ],
+            "tsConfig": ["projects/AuthorizationRegistry/tsconfig.app.json", "projects/AuthorizationRegistry/tsconfig.spec.json"],
             "exclude": ["**/node_modules/**"]
           }
         }

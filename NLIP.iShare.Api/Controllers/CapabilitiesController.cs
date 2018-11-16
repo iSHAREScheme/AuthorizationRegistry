@@ -1,14 +1,15 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.FileProviders;
 using NLIP.iShare.Api.Filters;
+using NLIP.iShare.Models.Capabilities;
+using Swashbuckle.AspNetCore.Annotations;
 using System;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace NLIP.iShare.Api.Controllers
 {
-    [Authorize]
-    public class CapabilitiesController : Controller
+    public class CapabilitiesController : SchemeAuthorizedController
     {
         private readonly IFileInfo _fileInfo;
 
@@ -19,16 +20,18 @@ namespace NLIP.iShare.Api.Controllers
 
         [HttpGet]
         [Route("capabilities")]
-        [SignResponse(TokenName = "capabilities_token", ClaimName = "capabilities_info")]
-        public IActionResult Get()
+        [SignResponse("capabilities_token", "capabilities_info", "Capabilities")]
+        [SwaggerOperation(
+            Summary = "Retrieves iSHARE capabilities",
+            Description = "Retrieves the iSHARE capabilities (supported versions & optional features) of the iSHARE party.")]
+        public async Task<ActionResult<Capabilities>> Get()
         {
-            string result;
-            using (var stream = new StreamReader(_fileInfo.CreateReadStream()))
+            using (var stream = _fileInfo.CreateReadStream())
+            using (var streamReader = new StreamReader(stream))
             {
-                result = stream.ReadToEnd();
+                var json = await streamReader.ReadToEndAsync();
+                return Capabilities.FromJson(json);
             }
-
-            return Ok(result);
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using System.Threading.Tasks;
+using NLIP.iShare.Models;
 
 namespace NLIP.iShare.AuthorizationRegistry.Core.Api
 {
@@ -11,5 +12,6 @@ namespace NLIP.iShare.AuthorizationRegistry.Core.Api
         Task<ValidationResult> ValidateCreate(string policyJson, ClaimsPrincipal currentUser);
         Task<ValidationResult> ValidateEdit(string arId, string policyJson, ClaimsPrincipal currentUser);
         ValidationResult ValidateCopy(string policyJson, ClaimsPrincipal currentUser);
+        ValidationResult ValidateIssuer(string partyId, string policyIssuer, string accessSubject);
     }
 }

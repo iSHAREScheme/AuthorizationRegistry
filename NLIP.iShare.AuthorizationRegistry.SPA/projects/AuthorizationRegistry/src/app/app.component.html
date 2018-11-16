@@ -6,8 +6,7 @@
       <p>
         <a class="profile-email">{{profile.email}}</a>
       </p>
-      <p *ngIf="!profile.partyName">Scheme Owner</p>
-      <p *ngIf="profile.partyName">{{profile.partyName}}</p>
+      <p>{{profile.partyName}}</p>
       <p>{{profile.partyId}}</p>
     </div>
     <i id="btn-logout" class="fa fa-sign-out" aria-hidden="true" (click)="logout()"></i>

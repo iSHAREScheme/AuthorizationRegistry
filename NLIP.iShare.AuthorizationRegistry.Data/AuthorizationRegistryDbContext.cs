@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using NLIP.iShare.AuthorizationRegistry.Data.Configurations;
 using NLIP.iShare.AuthorizationRegistry.Data.Models;
+using NLIP.iShare.EntityFramework.Migrations;
 
 namespace NLIP.iShare.AuthorizationRegistry.Data
 {
@@ -18,8 +18,7 @@ namespace NLIP.iShare.AuthorizationRegistry.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            base.OnModelCreating(modelBuilder);
-            modelBuilder.ApplyConfiguration(new DelegationConfiguration());
+            modelBuilder.RegisterConfigurations<AuthorizationRegistryDbContext>();
         }
     }
 }

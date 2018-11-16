@@ -1,12 +1,11 @@
-import { CreateOrEditPolicy } from './../models/CreateOrEditPolicy';
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { environment } from '@env-ar/environment';
 import { Observable } from 'rxjs';
-import { PagedResult, DownloadService } from '@common/index';
 import * as _ from 'lodash';
-import { OverviewPolicy } from '@app-ar/policies/models/OverviewPolicy';
-import { Policy } from '@app-ar/policies/models/Policy';
+import { PagedResult, DownloadService, Query, EnvironmentModel } from 'common';
+import { CreateOrEditPolicy } from './../models/CreateOrEditPolicy';
+import { OverviewPolicy } from '../models/OverviewPolicy';
+import { Policy } from '../models/Policy';
 
 @Injectable({
   providedIn: 'root'
@@ -14,14 +13,17 @@ import { Policy } from '@app-ar/policies/models/Policy';
 export class PoliciesApiService {
   baseUrl: string;
 
-  constructor(private http: HttpClient, private fileDownload: DownloadService) {
-    this.baseUrl = environment.api + 'delegations';
+  constructor(private http: HttpClient, private fileDownload: DownloadService, private environment: EnvironmentModel) {
+    this.baseUrl = `${this.environment.apiEndpoint}/delegations`;
   }
 
-  getAll(page: number, pageSize: number): Observable<PagedResult<OverviewPolicy>> {
+  getAll(query: Query) {
     const params = new HttpParams()
-      .set('page', page.toString())
-      .set('pageSize', pageSize.toString());
+      .set('filter', query.filter)
+      .set('page', query.page.toString())
+      .set('pageSize', query.pageSize.toString())
+      .set('sortBy', query.sortBy)
+      .set('sortOrder', query.sortOrder);
     return this.http.get<PagedResult<OverviewPolicy>>(this.baseUrl, { params });
   }
 

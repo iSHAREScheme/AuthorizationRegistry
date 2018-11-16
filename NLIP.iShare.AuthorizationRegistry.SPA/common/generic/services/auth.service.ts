@@ -1,90 +1,100 @@
-import { Injectable, Inject } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable, ReplaySubject } from 'rxjs';
 import * as _ from 'lodash';
 import { ProfileService } from '../services/profile.service';
+import { constants } from '../../constants';
+import { AuthServiceOptions } from '../models/AuthServiceOptions';
 import { EnvironmentModel } from '../models/EnvironmentModel';
 
 @Injectable()
 export class AuthService {
-  private currentToken: string;
-  loginUrl: string;
-  environment: any;
-
+  private options: AuthServiceOptions;
   constructor(
     private http: HttpClient,
     private jwtHelperService: JwtHelperService,
     private router: Router,
     private profileService: ProfileService,
-    @Inject('environmentProvider') private environmentProvider: EnvironmentModel
+    private config: EnvironmentModel
   ) {
-    this.environment = environmentProvider;
-    this.loginUrl = `${this.environment.api}connect/token`;
+    this.options = new AuthServiceOptions(this.config);
   }
 
-  login(username, password): Promise<any> {
-    this.logout();
-    const promise = new Promise<any>((resolve, reject) => {
-      localStorage.removeItem(this.environment.localStorageKeys.auth);
+  getAuthorizationUrl(): string {
+    const params = {
+      client_id: this.options.clientId,
+      redirect_uri: this.options.redirectEndpoint,
+      response_type: 'token',
+      scope: this.options.scope
+    };
+    const query = Object.keys(params)
+      .map(key => `${key}=${encodeURIComponent(params[key])}`)
+      .join('&');
+    const result = this.options.authorizeEndpoint + '?' + query;
+    return result;
+  }
 
-      const body = new HttpParams()
-        .set('grant_type', 'password')
-        .set('client_id', 'SPA')
-        .set('client_secret', 'secret')
-        .set('scope', this.environment.scope)
-        .set('username', username)
-        .set('password', password);
-
-      this.http
-        .post(this.loginUrl, body.toString(), {
-          headers: new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded')
-        })
-        .toPromise()
-        .then(
-          response => {
-            this.currentToken = (<any>response).access_token;
-            localStorage.setItem(this.environment.localStorageKeys.auth, this.currentToken);
-            const tokenExpiringDate = Date.now() + (<any>response).expires_in * 1000;
-            localStorage.setItem(this.environment.localStorageKeys.authExpiration, JSON.stringify(tokenExpiringDate));
-            const decodedToken = this.jwtHelperService.decodeToken(this.currentToken);
-            this.profileService.set({
-              email: decodedToken.email,
-              partyId: decodedToken.partyId,
-              partyName: decodedToken.partyName,
-              role: decodedToken.role,
-              id: decodedToken.sub
-            });
-            resolve();
-          },
-          err => reject(err)
-        );
+  goToLogin() {
+    window.location.href = this.getAuthorizationUrl();
+  }
+  login(username, password) {
+    const body = new HttpParams().set('username', username).set('password', password);
+    return this.http.post<any>(this.options.loginEndpoint, body.toString(), {
+      headers: new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded'),
+      withCredentials: true
     });
+  }
 
-    return promise;
+  loginWith2Fa(username, password, code) {
+    const body = new HttpParams()
+      .set('username', username)
+      .set('password', password)
+      .set('twoFactorCode', code);
+    return this.http.post<any>(this.options.loginEndpoint, body.toString(), {
+      headers: new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded'),
+      withCredentials: true
+    });
+  }
+
+  setAccessToken(accessToken: string, expirationTime: string) {
+    const decodedToken = this.jwtHelperService.decodeToken(accessToken);
+    this.profileService.set({
+      email: decodedToken.email,
+      partyId: decodedToken.partyId,
+      partyName: decodedToken.partyName,
+      role: decodedToken.role,
+      id: decodedToken.sub
+    });
+    localStorage.setItem(constants.storage.keys.auth, accessToken);
+    const tokenExpiringDate = Date.now() + <any>expirationTime * 1000;
+    localStorage.setItem(constants.storage.keys.authExpiration, JSON.stringify(tokenExpiringDate));
+    this.router.navigate(['']);
   }
 
   logout(): void {
     this.clearLogout();
-    this.router.navigate(['account/login']);
+    this.http.post<any>(this.options.logoutEndpoint, null, { withCredentials: true }).subscribe(() => {
+      this.goToLogin();
+    });
   }
   clearLogout(): void {
-    this.currentToken = null;
-    localStorage.removeItem(this.environment.localStorageKeys.auth);
-    localStorage.removeItem(this.environment.localStorageKeys.authExpiration);
     this.profileService.clear();
+    localStorage.removeItem(constants.storage.keys.authExpiration);
+    localStorage.removeItem(constants.storage.keys.auth);
   }
 
   isLoggedIn(): boolean {
-    const expiringDate = JSON.parse(localStorage.getItem(this.environment.localStorageKeys.authExpiration));
+    const expiringDate = JSON.parse(localStorage.getItem(constants.storage.keys.authExpiration));
     if (expiringDate && Date.now() > expiringDate) {
       return false;
     }
-    if (!this.currentToken) {
-      this.currentToken = localStorage.getItem(this.environment.localStorageKeys.auth);
-    }
-    return !!this.currentToken;
+    return !!this.getToken();
+  }
+
+  getToken() {
+    return localStorage.getItem(constants.storage.keys.auth);
   }
 
   authorize(roles: string[]): Observable<boolean> {
@@ -95,7 +105,7 @@ export class AuthService {
   }
 
   inRole(roles: string[]): boolean {
-     return this.isInRole(roles);
+    return this.isInRole(roles);
   }
 
   private isInRole(roles: string[]): boolean {

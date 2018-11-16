@@ -6,6 +6,7 @@ using NLIP.iShare.IdentityServer.Services;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using NLIP.iShare.IdentityServer.Configuration;
 
 namespace NLIP.iShare.IdentityServer.Validation
 {
@@ -35,8 +36,11 @@ namespace NLIP.iShare.IdentityServer.Validation
 
             if (!result.Success)
             {
+                _logger.LogInformation("Service consumer validation failed for {issuer}.", assertion?.JwtToken?.Issuer ?? "[not present]");
                 return result;
             }
+
+            _logger.LogInformation("Service consumer validation is valid. Continue with the {innerValidator}", _inner.Instance.GetType().Name);
 
             var allSecrets = secrets.ToList();
             allSecrets.AddRange(assertion.Certificates.Select(c => new Secret

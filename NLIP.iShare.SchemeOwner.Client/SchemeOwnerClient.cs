@@ -1,11 +1,11 @@
 ﻿using Flurl;
 using Flurl.Http;
 using Microsoft.Extensions.Logging;
-using NLIP.iShare.IdentityServer;
-using NLIP.iShare.TokenClient;
-using System.Threading.Tasks;
 using NLIP.iShare.Configuration.Configurations;
-using ClientAssertion = NLIP.iShare.IdentityServer.ClientAssertion;
+using System.Threading.Tasks;
+using NLIP.iShare.IdentityServer.Models;
+using NLIP.iShare.TokenClient.Api;
+using ClientAssertion = NLIP.iShare.IdentityServer.Models.ClientAssertion;
 
 namespace NLIP.iShare.SchemeOwner.Client
 {
@@ -36,7 +36,7 @@ namespace NLIP.iShare.SchemeOwner.Client
             return await GetCertificateStatus(accessToken, certificateHash).ConfigureAwait(false);
         }
 
-        public async Task<CertificateStatus> GetCertificate(IdentityServer.ClientAssertion clientAssertion, string certificateHash)
+        public async Task<CertificateStatus> GetCertificate(ClientAssertion clientAssertion, string certificateHash)
         {
             var accessToken = await GetAccessToken(clientAssertion).ConfigureAwait(false);
 
@@ -66,7 +66,7 @@ namespace NLIP.iShare.SchemeOwner.Client
         {
             var authorityAudience = $"{_schemeOwnerClientOptions.BaseUri.TrimEnd('/')}/connect/token";
 
-            var assertion = new TokenClient.ClientAssertion
+            var assertion = new TokenClient.Models.ClientAssertion
             {
                 Subject = _partyDetailsOptions.ClientId,
                 Issuer = _partyDetailsOptions.ClientId,

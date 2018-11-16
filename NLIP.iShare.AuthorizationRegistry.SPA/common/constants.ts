@@ -6,16 +6,19 @@ export class Field {
     this.value = value;
   }
 }
-
 export const constants = {
+  storage: {
+    keys: {
+      auth: 'NLIP.iSHARE.auth',
+      profile: 'NLIP.iSHARE.profile',
+      logging: 'NLIP.iSHARE.logging',
+      authExpiration: 'NLIP.iSHARE.authExpiration',
+      settings: 'NLIP.iSHARE.settings'
+    }
+  },
   roles: {
     SchemeOwner: 'SchemeOwner',
     EntitledPartyViewer: 'EntitledPartyViewer',
     EntitledPartyCreator: 'EntitledPartyCreator'
-  },
-  paginationDefault: {
-    pageSize: 10,
-    page: 1,
-    total: 0
   }
 };

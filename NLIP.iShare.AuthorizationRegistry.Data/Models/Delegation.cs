@@ -17,11 +17,9 @@ namespace NLIP.iShare.AuthorizationRegistry.Data.Models
         public string AccessSubject { get; set; }
         [Required]
         public string Policy { get; set; }
-        public Guid CreatedById { get; set; }
-        [Required]
+        public Guid? CreatedById { get; set; }
         public User CreatedBy { get; set; }
-        public Guid UpdatedById { get; set; }
-        [Required]
+        public Guid? UpdatedById { get; set; }
         public User UpdatedBy { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime UpdatedDate { get; set; }

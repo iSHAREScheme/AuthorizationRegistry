@@ -1,11 +1,11 @@
-﻿namespace NLIP.iShare.Models.DelegationEvidence
+﻿namespace NLIP.iShare.Models
 {
     public class DelegationClientTranslationResponse
     {
         public bool HasAccess { get; set; }
-        public DelegationEvidence DelegationEvidence { get; set; }
+        public DelegationEvidence.DelegationEvidence DelegationEvidence { get; set; }
 
-        public static DelegationClientTranslationResponse Permit(DelegationEvidence delegationEvidence)
+        public static DelegationClientTranslationResponse Permit(DelegationEvidence.DelegationEvidence delegationEvidence)
         {
             return new DelegationClientTranslationResponse
             {

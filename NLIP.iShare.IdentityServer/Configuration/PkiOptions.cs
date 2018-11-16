@@ -1,5 +1,4 @@
 ﻿using NLIP.iShare.Configuration.Configurations;
-using System;
 
 namespace NLIP.iShare.IdentityServer.Configuration
 {
@@ -12,43 +11,50 @@ namespace NLIP.iShare.IdentityServer.Configuration
         public string CARootCertificate { get; set; }
         public void Validate(ConfigurationOptionsValidator validateConfigurationOptions)
         {
-            ValidateThumbprints(validateConfigurationOptions);
+            ValidateThumbprints();
 
-            ValidateCertificates(validateConfigurationOptions);
+            ValidateStoreLocation();
+
+            ValidateCertificates();
         }
 
-        private void ValidateThumbprints(ConfigurationOptionsValidator validateConfigurationOptions)
+        private void ValidateThumbprints()
         {
-            var required = !IsQa(validateConfigurationOptions);            
-
-            if (required)
+            if (!string.IsNullOrEmpty(CARootThumbprint))
             {
-                ConfigurationException.AssertThumbprint(CARootThumbprint, nameof(CARootThumbprint));
-                ConfigurationException.AssertThumbprint(IAThumbprint, nameof(IAThumbprint));
+                ConfigurationException.AssertThumbprint(CARootThumbprint, $"{nameof(PkiOptions)}.{nameof(CARootThumbprint)}");
+            }
+
+            if (!string.IsNullOrEmpty(IAThumbprint))
+            {
+                ConfigurationException.AssertThumbprint(IAThumbprint, $"{nameof(PkiOptions)}.{nameof(IAThumbprint)}");
             }
         }
 
-        private void ValidateCertificates(ConfigurationOptionsValidator validateConfigurationOptions)
+        private void ValidateCertificates()
         {
-            var required = IsQa(validateConfigurationOptions);
-            if (required)
+            if (!string.IsNullOrEmpty(IACertificate))
             {
-                ConfigurationException.AssertNotNull(IACertificate, nameof(IACertificate));
-                ConfigurationException.AssertNotNull(CARootCertificate, nameof(CARootCertificate));
+                ConfigurationException.AssertNotNull(IACertificate, $"{nameof(PkiOptions)}.{nameof(IACertificate)}");
             }
 
-            if (!string.IsNullOrEmpty(StoreLocation) && StoreLocation != "CurrentUser" && StoreLocation != "LocalMachine")
+            if (!string.IsNullOrEmpty(CARootCertificate))
+            { 
+                ConfigurationException.AssertNotNull(CARootCertificate, $"{nameof(PkiOptions)}.{nameof(CARootCertificate)}");
+            }
+        }
+
+        private void ValidateStoreLocation()
+        {
+            var usesThumbprints = !string.IsNullOrEmpty(CARootThumbprint) || !string.IsNullOrEmpty(IAThumbprint);
+            if (usesThumbprints 
+                    && !string.IsNullOrEmpty(StoreLocation)
+                    && !(StoreLocation == "CurrentUser" || StoreLocation == "LocalMachine"))
             {
                 throw new ConfigurationException(
-                    $"The value of `{nameof(StoreLocation)}` should be `CurrentUser` or `LocalMachine`.");
+                    $"The value of `{nameof(PkiOptions)}.{nameof(StoreLocation)}` should be `CurrentUser` or `LocalMachine`, " +
+                    $"but it was { StoreLocation }.");
             }
         }
-
-        private static bool IsQa(ConfigurationOptionsValidator validateConfigurationOptions)
-        {
-            return validateConfigurationOptions
-                       ?.Environment
-                       .StartsWith("Qa", StringComparison.OrdinalIgnoreCase) == true;
-        }
     }
-}   
+}

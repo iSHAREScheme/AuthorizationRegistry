@@ -7,7 +7,7 @@ namespace NLIP.iShare.Api.Filters
     {
         public static IServiceCollection AddSigning(this IServiceCollection services)
         {
-            services.AddScoped<IResponseJwtBuilder, ResponseJwtBuilder>();
+            services.AddTransient<IResponseJwtBuilder, ResponseJwtBuilder>();
             return services;
         }
     }

@@ -6,6 +6,10 @@ using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Security.Cryptography;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.Extensions.Configuration;
+using NLIP.iShare.Configuration;
+using AuthenticationOptions = NLIP.iShare.Configuration.AuthenticationOptions;
 
 namespace NLIP.iShare.Api.Configurations
 {
@@ -13,18 +17,14 @@ namespace NLIP.iShare.Api.Configurations
     {
         public static IServiceCollection AddJwtAuthentication(this IServiceCollection services,
             IHostingEnvironment hostingEnvironment,
-            string[] audiences)
+            string[] audiences, IConfiguration configuration)
         {
-            services.AddAuthentication(opt =>
-            {
-                // to return 401 Unauthorized instead of 302 (AspNetIdentity default)
-                opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
+            services.ConfigureRuntimeOptions(configuration, "Auth", new AuthenticationOptions());
+            services
+                .AddAuthentication(opts => opts.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
                     var partyDetailsOptions = services.BuildServiceProvider().GetRequiredService<PartyDetailsOptions>();
-                    // base-address of your identityserver
                     options.Authority = partyDetailsOptions.BaseUri;
 
                     // name of the API resource
@@ -46,7 +46,9 @@ namespace NLIP.iShare.Api.Configurations
                     }
 
                     options.BackchannelHttpHandler = handler;
-                });
+                })
+                .AddScheme<AuthenticationSchemeOptions, TestAuthenticationHandler>(TestAuthenticationDefaults.AuthenticationScheme, _ => { })
+            ;
             return services;
         }
     }

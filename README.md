@@ -39,8 +39,9 @@ Navigate to the local Authorization Registry repository and run `dotnet build`
 Authorization Registry is using a SQL database that is created at runtime.
 Various test records are inserted from JSON files present here
 
-- `NLIP.iShare.AuthorizationRegistry.Data\Migrations\Seed`
-- `NLIP.iShare.AuthorizationRegistry.IdentityServer\Migrations\Seed`
+- `NLIP.iShare.AuthorizationRegistry.Api\Seed\Identity\Development`
+- `NLIP.iShare.AuthorizationRegistry.Api\Seed\IdentityServer\Development`
+- `NLIP.iShare.AuthorizationRegistry.Data\Migrations\Seed\Development`
 
 ## Run process
 
@@ -65,7 +66,7 @@ Run `npm install` inside NLIP.iShare.AuthorizationRegistry.SPA folder to get all
 Run `ng serve -o`.
 
 - NOTE: The Authorization Registry API must be running in order for the application to work correctly
-- NOTE: The SPA will be available by default at http://localhost:4200/admin
+- NOTE: The SPA will be available by default at http://localhost:4201/admin
 
 ## API References
 

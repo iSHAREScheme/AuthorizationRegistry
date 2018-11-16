@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
+using NLIP.iShare.TokenClient.Models;
 
-namespace NLIP.iShare.TokenClient
+namespace NLIP.iShare.TokenClient.Api
 {
     /// <summary>
     /// Defines a generic OAuth token client, specialized for the iSHARE scheme

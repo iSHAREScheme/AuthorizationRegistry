@@ -1,7 +1,7 @@
-﻿namespace NLIP.iShare.Models.DelegationEvidence
+﻿namespace NLIP.iShare.Models
 {
     public class DelegationTranslationTestResponse
     {
-        public DelegationEvidence DelegationEvidence { get; set; }
+        public DelegationEvidence.DelegationEvidence DelegationEvidence { get; set; }
     }
 }

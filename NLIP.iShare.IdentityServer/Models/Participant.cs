@@ -1,4 +1,4 @@
-﻿namespace NLIP.iShare.IdentityServer
+﻿namespace NLIP.iShare.IdentityServer.Models
 {
     public class Participant
     {

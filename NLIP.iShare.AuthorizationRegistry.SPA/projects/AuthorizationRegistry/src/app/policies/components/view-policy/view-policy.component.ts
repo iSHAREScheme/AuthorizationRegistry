@@ -1,8 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { PoliciesApiService } from '@app-ar/policies/services/policies-api.service';
-import { Policy } from '@app-ar/policies/models/Policy';
 import * as _ from 'lodash';
+import { PoliciesApiService } from '../../services/policies-api.service';
+import { Policy } from '../../models/Policy';
 
 @Component({
   selector: 'app-view-policy',
@@ -17,11 +17,7 @@ export class ViewPolicyComponent implements OnInit, OnDestroy {
   historyVisible = false;
   loading = true;
 
-  constructor(
-    private route: ActivatedRoute,
-    private api: PoliciesApiService,
-    private router: Router
-  ) {}
+  constructor(private route: ActivatedRoute, private api: PoliciesApiService, private router: Router) {}
 
   ngOnInit() {
     this.paramsSubscription = this.route.params.subscribe(params => {
@@ -39,18 +35,19 @@ export class ViewPolicyComponent implements OnInit, OnDestroy {
   }
 
   private load(id: string): void {
-    this.api.get(id).subscribe(response => {
-      this.model = response;
-      this.model.history = _
-        .sortBy(this.model.history, item => new Date(item.createdDate))
-        .reverse();
-      this.parsedForViewer = JSON.parse(response.policy);
-      this.loading = false;
-    }, err => {
-      this.loading = false;
-      if (err.status === 404) {
-        this.router.navigate(['not-found'], { skipLocationChange: true });
+    this.api.get(id).subscribe(
+      response => {
+        this.model = response;
+        this.model.history = _.sortBy(this.model.history, item => new Date(item.createdDate)).reverse();
+        this.parsedForViewer = JSON.parse(response.policy);
+        this.loading = false;
+      },
+      err => {
+        this.loading = false;
+        if (err.status === 404) {
+          this.router.navigate(['not-found'], { skipLocationChange: true });
+        }
       }
-    });
+    );
   }
 }

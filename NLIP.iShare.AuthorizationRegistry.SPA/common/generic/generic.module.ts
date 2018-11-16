@@ -1,6 +1,6 @@
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule as AngularCommonModule } from '@angular/common';
-import { NgModule, ModuleWithProviders } from '@angular/core';
+import { NgModule, ModuleWithProviders, APP_INITIALIZER } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
 import { RuntimeConfigurationService } from './services/runtime-configuration.service';
@@ -21,11 +21,12 @@ import { JSONService } from './services/JSON.service';
 
 import { HumanizePipe } from './pipes/humanize.pipe';
 import { AlertService } from './services/alert.service';
-import { EnvironmentModel } from './models/EnvironmentModel';
 import { NotFoundPageComponent } from './components/not-found-page/not-found-page.component';
 import { LeftMenuComponent } from './components/left-menu/left-menu.component';
 import { DropdownComponent } from './components/dropdown/dropdown.component';
 import { LoaderComponent } from './components/loader/loader.component';
+import { SortingComponent } from './components/sorting/sorting.component';
+import { SearchComponent } from './components/search/search.component';
 
 import { DisplayErrorsComponent } from './components/display-errors.component';
 import { ValidationMessageComponent } from './components/validation-message.component';
@@ -41,6 +42,8 @@ import { MinUppercaseValidatorDirective } from './directives/min-uppercase.direc
     ForbiddenPageComponent,
     LeftMenuComponent,
     LoaderComponent,
+    SortingComponent,
+    SearchComponent,
     HumanizePipe,
     NotFoundPageComponent,
     DropdownComponent,
@@ -56,6 +59,8 @@ import { MinUppercaseValidatorDirective } from './directives/min-uppercase.direc
     ForbiddenPageComponent,
     LeftMenuComponent,
     LoaderComponent,
+    SortingComponent,
+    SearchComponent,
     HumanizePipe,
     NotFoundPageComponent,
     DropdownComponent,
@@ -68,7 +73,7 @@ import { MinUppercaseValidatorDirective } from './directives/min-uppercase.direc
   ]
 })
 export class GenericModule {
-  static forRoot(env: EnvironmentModel): ModuleWithProviders {
+  static forRoot(): ModuleWithProviders {
     return {
       ngModule: GenericModule,
       providers: [
@@ -84,8 +89,7 @@ export class GenericModule {
         ErrorInterceptorProvider,
         LoaderInterceptorProvider,
         AlertService,
-        AppInsightsService,
-        { provide: 'environmentProvider', useValue: env }
+        AppInsightsService
       ]
     };
   }

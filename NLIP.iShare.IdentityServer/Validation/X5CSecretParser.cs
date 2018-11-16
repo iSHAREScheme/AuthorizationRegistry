@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Threading.Tasks;
+using NLIP.iShare.IdentityServer.Configuration;
 
 namespace NLIP.iShare.IdentityServer.Validation
 {

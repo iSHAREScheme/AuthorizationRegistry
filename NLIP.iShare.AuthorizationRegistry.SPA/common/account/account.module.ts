@@ -11,16 +11,23 @@ import { ActivateAccountComponent } from './components/activate-account/activate
 import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
 import { LoginComponent } from './components/login/login.component';
 import { ResetPasswordComponent } from './components/reset-password/reset-password.component';
+import { PasswordRulesComponent } from './components/password-rules/password-rules.component';
+import { AuthCallbackComponent } from './components/auth-callback/auth-callback.component';
+import { AccessDeniedComponent } from './components/access-denied/access-denied.component';
+import { NgxQRCodeModule } from 'ngx-qrcode2';
 
 @NgModule({
-  imports: [AccountRoutingModule, FormsModule, CommonModule, ReactiveFormsModule, GenericModule],
+  imports: [AccountRoutingModule, FormsModule, CommonModule, ReactiveFormsModule, GenericModule, NgxQRCodeModule],
   declarations: [
     ProfileComponent,
     ChangePasswordComponent,
     ActivateAccountComponent,
     ForgotPasswordComponent,
     LoginComponent,
-    ResetPasswordComponent
+    ResetPasswordComponent,
+    PasswordRulesComponent,
+    AuthCallbackComponent,
+    AccessDeniedComponent
   ],
   exports: [
     ProfileComponent,
@@ -28,7 +35,10 @@ import { ResetPasswordComponent } from './components/reset-password/reset-passwo
     ActivateAccountComponent,
     ForgotPasswordComponent,
     LoginComponent,
-    ResetPasswordComponent
+    ResetPasswordComponent,
+    PasswordRulesComponent,
+    AuthCallbackComponent,
+    AccessDeniedComponent
   ],
   providers: [AccountService]
 })

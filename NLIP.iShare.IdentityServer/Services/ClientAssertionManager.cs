@@ -1,11 +1,12 @@
 ﻿using IdentityServer4.Validation;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using NLIP.iShare.Api;
+
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Threading.Tasks;
+using NLIP.iShare.IdentityServer.Models;
 
 namespace NLIP.iShare.IdentityServer.Services
 {
@@ -85,7 +86,7 @@ namespace NLIP.iShare.IdentityServer.Services
 
             if (assertion.Exp - assertion.Iat > 30)
             {
-                _logger.LogError("Client assertion validity exceeds the maximum authorized");
+                _logger.LogError("Client assertion validity exceeds the maximum authorized.");
                 return fail;
             }
 
@@ -97,13 +98,13 @@ namespace NLIP.iShare.IdentityServer.Services
 
             try
             {
-                if(!_certificateValidator.IsValidAtMoment(DateTime.UtcNow, assertion.Certificates.ToArray()))
+                if (!_certificateValidator.IsValidAtMoment(DateTime.UtcNow, assertion.Certificates.ToArray()))
                 {
                     _logger.LogInformation("Certificate chain is not valid");
                     return fail;
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogWarning(ex, "Could not load certificate from x5C header.");
                 return fail;

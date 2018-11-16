@@ -7,6 +7,11 @@
     <ApplicationInsightsAnnotationResourceId>/subscriptions/5042975c-809d-4429-b691-0c3e51f323e0/resourceGroups/iSHARE-QA/providers/microsoft.insights/components/ishare-local</ApplicationInsightsAnnotationResourceId>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);1591</NoWarn>
+  </PropertyGroup>
+
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <CodeAnalysisRuleSet>NLIP.iShare.AuthorizationRegistry.Api.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
@@ -19,6 +24,7 @@
     <PackageReference Include="Manatee.Json" Version="9.9.5" />
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.1.4" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.4" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="3.0.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -30,17 +36,17 @@
     <ProjectReference Include="..\NLIP.iShare.Api\NLIP.iShare.Api.csproj" />
     <ProjectReference Include="..\NLIP.iShare.AuthorizationRegistry.Core\NLIP.iShare.AuthorizationRegistry.Core.csproj" />
     <ProjectReference Include="..\NLIP.iShare.AuthorizationRegistry.Data\NLIP.iShare.AuthorizationRegistry.Data.csproj" />
-    <ProjectReference Include="..\NLIP.iShare.AuthorizationRegistry.IdentityServer\NLIP.iShare.AuthorizationRegistry.IdentityServer.csproj" />
+    <ProjectReference Include="..\NLIP.iShare.Identity.Data\NLIP.iShare.Identity.Data.csproj" />
+    <ProjectReference Include="..\NLIP.iShare.IdentityServer.Data\NLIP.iShare.IdentityServer.Data.csproj" />
     <ProjectReference Include="..\NLIP.iShare.EmailClient\NLIP.iShare.EmailClient.csproj" />
+    <ProjectReference Include="..\NLIP.iShare.IdentityServer\NLIP.iShare.IdentityServer.csproj" />
+    <ProjectReference Include="..\NLIP.iShare.Identity\NLIP.iShare.Identity.csproj" />
     <ProjectReference Include="..\NLIP.iShare.Models\NLIP.iShare.Models.csproj" />
     <ProjectReference Include="..\NLIP.iShare.SchemeOwner.Client\NLIP.iShare.SchemeOwner.Client.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Update="appsettings.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Update="delegationEvidenceSchema.json">
+    <Content Update="policySchema.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Update="delegationMaskSchema.json">
@@ -54,4 +60,9 @@
   <ItemGroup>
     <WCFMetadata Include="Connected Services" />
   </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Seed\**\*.json" />
+  </ItemGroup>
+
 </Project>

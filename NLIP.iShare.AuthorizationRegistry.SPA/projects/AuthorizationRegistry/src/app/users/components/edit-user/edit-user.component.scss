@@ -47,3 +47,8 @@
     }
   }
 }
+*,
+:after,
+:before {
+  box-sizing: unset;
+}

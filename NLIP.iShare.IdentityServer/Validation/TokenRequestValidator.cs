@@ -1,7 +1,9 @@
-﻿using IdentityModel;
+﻿using System;
+using IdentityModel;
 using IdentityServer4.Validation;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
+using NLIP.iShare.Models;
 
 namespace NLIP.iShare.IdentityServer.Validation
 {
@@ -18,12 +20,14 @@ namespace NLIP.iShare.IdentityServer.Validation
 
         public Task ValidateAsync(CustomTokenRequestValidationContext context)
         {
-            _logger.LogDebug("Start custom token request validation");
+            _logger.LogInformation("Start token request validator");
 
             var validatedRequest = context.Result.ValidatedRequest;
 
             if (validatedRequest.Client.ClientId == "SPA")
             {
+                _logger.LogInformation("ClientId is SPA, no further validation required");
+
                 return Task.CompletedTask;
             }
 
@@ -31,13 +35,13 @@ namespace NLIP.iShare.IdentityServer.Validation
 
             var scope = parameters.Get(OidcConstants.TokenRequest.Scope);
 
-            if (scope == null || !scope.Contains(Constants.TokenRequest.iSHARE))
+            if (scope == null || !scope.Contains(StandardScopes.iSHARE, StringComparison.CurrentCultureIgnoreCase))
             {
                 _logger.LogError("Scope is not iSHARE");
                 context.Result.IsError = true;
                 context.Result.Error = OidcConstants.TokenErrors.InvalidScope;
                 context.Result.ErrorDescription =
-                    $"The {OidcConstants.TokenRequest.Scope} parameter should be {Constants.TokenRequest.iSHARE}";
+                    $"The {OidcConstants.TokenRequest.Scope} parameter should be {StandardScopes.iSHARE}";
                 return Task.CompletedTask;
             }
 
@@ -58,6 +62,7 @@ namespace NLIP.iShare.IdentityServer.Validation
                 return Task.CompletedTask;
             }
 
+            _logger.LogInformation("TokenRequestValidator is valid for {client}", validatedRequest.Client.ClientId);
             return Task.CompletedTask;
         }
     }

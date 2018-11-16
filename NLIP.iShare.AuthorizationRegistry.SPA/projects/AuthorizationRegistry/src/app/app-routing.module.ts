@@ -1,6 +1,13 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { AppInsightsInterceptor, AuthGuard, ForbiddenPageComponent, NotFoundPageComponent } from 'common';
+import {
+  AppInsightsInterceptor,
+  AuthGuard,
+  ForbiddenPageComponent,
+  NotFoundPageComponent,
+  AuthCallbackComponent,
+  AccessDeniedComponent
+} from 'common';
 
 const routes: Routes = [
   {
@@ -33,6 +40,16 @@ const routes: Routes = [
   {
     path: 'account',
     loadChildren: 'common/account/account.module#AccountModule'
+  },
+  {
+    path: 'callback',
+    canActivate: [AppInsightsInterceptor],
+    component: AuthCallbackComponent
+  },
+  {
+    path: 'access-denied',
+    canActivate: [AppInsightsInterceptor],
+    component: AccessDeniedComponent
   },
   {
     path: 'forbidden',

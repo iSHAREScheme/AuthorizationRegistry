@@ -10,6 +10,7 @@ namespace NLIP.iShare.Api.ApplicationInsights
             IHostingEnvironment hostingEnvironment)
         {
             services.AddSingleton<ITelemetryInitializer>(new CloudRoleNameInitializer(apiName));
+            services.AddSingleton<ITelemetryInitializer, EoriInitializer>();
             return services;
         }
     }

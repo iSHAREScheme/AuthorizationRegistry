@@ -1,7 +1,7 @@
 import { Observable, of } from 'rxjs';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { ProfileService, Pagination, Sorting, Profile, constants, AlertService } from 'common';
+import { ProfileService, Query, Profile, constants, AlertService } from 'common';
 import { User } from '../../models/User';
 import { UsersApiService } from '../../services/users-api.service';
 
@@ -12,33 +12,42 @@ import { UsersApiService } from '../../services/users-api.service';
 })
 export class UsersOverviewComponent implements OnInit {
   users: Observable<User[]>;
-  pagination: Pagination;
-  sorting: Sorting;
+  query: Query;
   currentUser: Profile;
 
-  constructor(private api: UsersApiService, private router: Router, private alert: AlertService, private profile: ProfileService) {}
+  constructor(
+    private api: UsersApiService,
+    private router: Router,
+    private alert: AlertService,
+    private profile: ProfileService
+  ) {}
 
   ngOnInit() {
     this.currentUser = this.profile.get();
-    this.initTableConnfiguration();
+    this.query = new Query('username');
     this.loadData();
   }
 
   loadData() {
-    this.api.getAll(this.pagination.page, this.pagination.pageSize, this.sorting.by, this.sorting.order).subscribe(response => {
-      this.pagination.total = response.count;
+    this.api.getAll(this.query).subscribe(response => {
+      this.query.total = response.count;
       this.users = of(response.data);
     });
   }
 
   onPageChange(page: number) {
-    this.pagination.page = page;
+    this.query.page = page;
     this.loadData();
   }
 
-  sort(by: string, order: 'asc' | 'desc') {
-    this.sorting.by = by;
-    this.sorting.order = order;
+  search(filter: string): void {
+    this.query.filter = filter;
+    this.loadData();
+  }
+
+  sort($event: any) {
+    this.query.sortBy = $event.by;
+    this.query.sortOrder = $event.order;
     this.loadData();
   }
 
@@ -57,13 +66,5 @@ export class UsersOverviewComponent implements OnInit {
         this.loadData();
       });
     }
-  }
-
-  initTableConnfiguration(): void {
-    this.pagination = constants.paginationDefault;
-    this.sorting = {
-      by: 'partyId',
-      order: 'asc'
-    };
   }
 }

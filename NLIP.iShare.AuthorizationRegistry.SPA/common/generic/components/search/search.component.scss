@@ -1,0 +1,26 @@
+:host {
+  .search {
+    margin-top: 0px;
+    margin-left: 20px;
+    border: 1px solid #62376015;
+    height: 3em;
+    width: 30%;
+    float: right;
+    .fa-search {
+      margin-top: 7px;
+      margin-right: 10px;
+      float: right;
+      font-size: 30px;
+      cursor: pointer;
+    }
+  }
+  .search-input {
+    margin-top: 0px;
+    height: 100%;
+    width: 80%;
+    border: none;
+  }
+  .search-input:focus {
+    background-color: #62376005;
+  }
+}

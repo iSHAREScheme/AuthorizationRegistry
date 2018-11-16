@@ -11,15 +11,15 @@ namespace NLIP.iShare.EmailClient
         public EmailAddress From { get; set; }
         public void Validate(ConfigurationOptionsValidator validateConfigurationOptions)
         {
-            ConfigurationException.AssertNotNull(SendGridKey, nameof(SendGridKey));
+            ConfigurationException.AssertNotNull(SendGridKey, $"{nameof(EmailOptions)}.{nameof(SendGridKey)}");
 
             if (From == null)
             {
-                throw new ConfigurationException($"Either the `{nameof(From)}` key was not found in the configuration or its value was not set.");
+                throw new ConfigurationException($"Either the `{nameof(EmailOptions)}.{nameof(From)}` key was not found in the configuration or its value was not set.");
             }
 
-            ConfigurationException.AssertNotNull(From.Address, nameof(From.Address));
-            ConfigurationException.AssertNotNull(From.DisplayName, nameof(From.DisplayName));
+            ConfigurationException.AssertNotNull(From.Address, $"{nameof(EmailOptions)}.{nameof(From)}{nameof(From.Address)}");
+            ConfigurationException.AssertNotNull(From.DisplayName, $"{nameof(EmailOptions)}.{nameof(From)}{nameof(From.DisplayName)}");
 
             try
             {
@@ -27,7 +27,7 @@ namespace NLIP.iShare.EmailClient
             }
             catch (FormatException)
             {
-                throw new ConfigurationException($"The value of `{nameof(From.Address)}` key must be a valid email address.");
+                throw new ConfigurationException($"The value of `{nameof(EmailOptions)}.{nameof(From)}.{nameof(From.Address)}` key must be a valid email address.");
             }
         }
     }

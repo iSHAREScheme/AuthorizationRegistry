@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
 import { CreateDelegationMask } from './../models/CreateDelegationMask';
-import { environment } from '@env-ar/environment';
+import { EnvironmentModel } from 'common';
 
 @Injectable({
   providedIn: 'root'
@@ -11,8 +11,8 @@ import { environment } from '@env-ar/environment';
 export class MaskApiService {
   baseUrl: string;
 
-  constructor(private http: HttpClient) {
-    this.baseUrl = environment.api + 'delegation/test';
+  constructor(private http: HttpClient, private environment: EnvironmentModel) {
+    this.baseUrl = `${this.environment.apiEndpoint}/delegation/test`;
   }
 
   test(mask: CreateDelegationMask): Observable<CreateDelegationMask> {

@@ -8,12 +8,12 @@ using NLIP.iShare.Configuration.Configurations;
 using NLIP.iShare.IdentityServer.Validation.Interfaces;
 using NLIP.iShare.Models.DelegationEvidence;
 using NLIP.iShare.Models.DelegationMask;
-using NLIP.iShare.TokenClient;
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Threading.Tasks;
-using ClientAssertion = NLIP.iShare.IdentityServer.ClientAssertion;
+using NLIP.iShare.TokenClient.Api;
+using ClientAssertion = NLIP.iShare.IdentityServer.Models.ClientAssertion;
 
 namespace NLIP.iShare.AuthorizationRegistry.Client
 {
@@ -97,7 +97,7 @@ namespace NLIP.iShare.AuthorizationRegistry.Client
         {
             var authorityAudience = $"{_authorizationRegistryClientOptions.BaseUri}connect/token";
 
-            var assertion = new TokenClient.ClientAssertion
+            var assertion = new TokenClient.Models.ClientAssertion
             {
                 Subject = _partyDetailsOptions.ClientId,
                 Issuer = _partyDetailsOptions.ClientId,

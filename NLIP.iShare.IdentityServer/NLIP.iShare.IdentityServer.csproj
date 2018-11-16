@@ -9,7 +9,6 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <CodeAnalysisRuleSet>NLIP.iShare.IdentityServer.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
- 
 
   <ItemGroup>
     <PackageReference Include="Manatee.Json" Version="9.9.5" />
@@ -21,9 +20,9 @@
  
 
   <ItemGroup>
-    <ProjectReference Include="..\NLIP.iShare.Api\NLIP.iShare.Api.csproj" />
     <ProjectReference Include="..\NLIP.iShare.Configuration\NLIP.iShare.Configuration.csproj" />
     <ProjectReference Include="..\NLIP.iShare.Models\NLIP.iShare.Models.csproj" />
     <ProjectReference Include="..\NLIP.iShare.Abstractions\NLIP.iShare.Abstractions.csproj" />
   </ItemGroup>
+
 </Project>

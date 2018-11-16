@@ -12,15 +12,13 @@
  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
    <CodeAnalysisRuleSet>NLIP.iShare.TokenClient.ruleset</CodeAnalysisRuleSet>
  </PropertyGroup>
- 
 
   <ItemGroup>
     <PackageReference Include="Flurl.Http" Version="2.4.0" />
-    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="5.2.4" />    
+    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="5.2.4" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="5.2.4" />
   </ItemGroup>
- 
-
+  
   <ItemGroup>
     <ProjectReference Include="..\NLIP.iShare.Abstractions\NLIP.iShare.Abstractions.csproj" />
     <ProjectReference Include="..\NLIP.iShare.Configuration\NLIP.iShare.Configuration.csproj" />

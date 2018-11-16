@@ -11,12 +11,16 @@ using System.Collections.Generic;
 
 namespace NLIP.iShare.Api.Filters
 {
-    public class SignResponseAttribute : ActionFilterAttribute
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
+    public sealed class SignResponseAttribute : ActionFilterAttribute
     {
         public string TokenName { get; set; }
         public string ClaimName { get; set; }
 
         public Type JsonContractType { get; set; }
+
+        public string SwaggerDefinitionName { get; set; }
+        public bool ResponseContainsList { get; set; }
 
         private IContractResolver _contractResolver;
         public IContractResolver ContractResolver
@@ -31,13 +35,21 @@ namespace NLIP.iShare.Api.Filters
             }
         }
 
+        public SignResponseAttribute(string tokenName, string claimName, string swaggerDefinitionName, bool responseContainsList = false)
+        {
+            TokenName = tokenName;
+            ClaimName = claimName;
+            SwaggerDefinitionName = swaggerDefinitionName;
+            ResponseContainsList = responseContainsList;
+        }
+
         public override void OnResultExecuting(ResultExecutingContext context)
         {
             var serviceProvider = context.HttpContext.RequestServices;
             var jwtBuilder = serviceProvider.GetRequiredService<IResponseJwtBuilder>();
             var logger = serviceProvider.GetRequiredService<ILogger<SignResponseAttribute>>();
 
-            var doNotSign = string.Compare(context.HttpContext.Request.Headers["Do-Not-Sign"], "true", true) == 0;
+            var doNotSign = string.Compare(context.HttpContext.Request.Headers["Do-Not-Sign"], "true", StringComparison.OrdinalIgnoreCase) == 0;
 
             if (doNotSign)
             {
@@ -51,17 +63,14 @@ namespace NLIP.iShare.Api.Filters
                 return;
             }
 
-            // only successful responses should be signed
+            // only successful responses should be signed            
             if (objectResult.StatusCode.GetValueOrDefault() >= 400)
             {
                 return;
             }
             var partyDetails = serviceProvider.GetRequiredService<PartyDetailsOptions>();
 
-            var issuer = partyDetails.ClientId;
             var subject = partyDetails.ClientId;
-            var audience = partyDetails.ClientId;
-
             var originalValue = objectResult.Value;
             if (originalValue is DelegationEvidence delegation)
             {
@@ -69,17 +78,16 @@ namespace NLIP.iShare.Api.Filters
             }
 
             objectResult.Value = new Dictionary<string, object> {
-                {  TokenName, jwtBuilder.Create(
-                    payloadObject: originalValue,
-                    subject: subject,
-                    issuer: issuer,
-                    audience: audience,
-                    payloadObjectClaim: ClaimName,
-                    contractResolver: ContractResolver)
+                {
+                    TokenName, jwtBuilder.Create(
+                                    originalValue,
+                                    subject,
+                                    partyDetails.ClientId,
+                                    partyDetails.ClientId,
+                                    ClaimName,
+                                    ContractResolver)
                 }
             };
-
-
         }
     }
 }

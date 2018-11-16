@@ -4,6 +4,7 @@ using NLIP.iShare.Configuration;
 using NLIP.iShare.IdentityServer.Validation.Interfaces;
 using NLIP.iShare.TokenClient;
 using System;
+using NLIP.iShare.Configuration.Configurations;
 
 namespace NLIP.iShare.AuthorizationRegistry.Client
 {
@@ -11,7 +12,7 @@ namespace NLIP.iShare.AuthorizationRegistry.Client
     {
         public static void AddAuthorizationRegistryClient(this IServiceCollection services, IConfiguration configuration)
         {
-            var options = services.ConfigureOptions<AuthorizationRegistryClientOptions>(configuration, "AuthorizationRegistry");
+            var options = services.ConfigureOptions<AuthorizationRegistryClientOptions>(configuration, "AuthorizationRegistry", ConfigurationOptionsValidator.NullValidator);
 
             services.AddTokenClient(new TokenSource
             {

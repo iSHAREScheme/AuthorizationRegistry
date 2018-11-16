@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { Policy } from '@app-ar/policies/models/Policy';
-import { PoliciesApiService } from '@app-ar/policies/services/policies-api.service';
+import { Policy } from '../../models/Policy';
+import { PoliciesApiService } from '../../services/policies-api.service';
 
 @Component({
   selector: 'app-history-item',
@@ -8,8 +8,10 @@ import { PoliciesApiService } from '@app-ar/policies/services/policies-api.servi
   styleUrls: ['./history-item.component.scss']
 })
 export class HistoryItemComponent implements OnInit {
-  @Input() item: Policy & { expanded: boolean; parsedJson: any };
-  @Input() authorizationRegistryId: string;
+  @Input()
+  item: Policy & { expanded: boolean; parsedJson: any };
+  @Input()
+  authorizationRegistryId: string;
 
   constructor(private api: PoliciesApiService) {}
 

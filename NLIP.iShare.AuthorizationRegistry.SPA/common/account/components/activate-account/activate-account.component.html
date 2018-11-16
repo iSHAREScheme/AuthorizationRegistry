@@ -4,8 +4,8 @@
       <h3>Activate account</h3>
     </div>
   </div>
-  <div class="row">
-    <div class="col-md">
+  <div class="row no-gutters">
+    <div class="col-md-6">
       <form class="form-horizontal" #activateForm="ngForm" (ngSubmit)="activate()">
         <div class="form-group">
           <label for="password">create password</label>
@@ -31,6 +31,9 @@
           <i class="fa fa-arrow-right custom-arrow-right" aria-hidden="true"></i>
         </button>
       </form>
+    </div>
+    <div class="col-md-6">
+      <app-password-rules></app-password-rules>
     </div>
   </div>
 </div>

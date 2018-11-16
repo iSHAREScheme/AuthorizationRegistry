@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { Router } from '@angular/router';
-import { Pagination, constants, AlertService } from 'common';
+import { Query, constants, AlertService } from 'common';
 import { OverviewPolicy } from '../../models/OverviewPolicy';
 import { PoliciesApiService } from '../../services/policies-api.service';
 
@@ -12,27 +12,37 @@ import { PoliciesApiService } from '../../services/policies-api.service';
 })
 export class PoliciesOverviewComponent implements OnInit {
   policies: Observable<OverviewPolicy[]>;
-  pagination: Pagination;
+  query: Query;
   roles = constants.roles;
 
-  constructor(private api: PoliciesApiService, private router: Router, private alert: AlertService) {
-    this.pagination = constants.paginationDefault;
-  }
+  constructor(private api: PoliciesApiService, private router: Router, private alert: AlertService) {}
 
   ngOnInit() {
-    this.loadData(this.pagination.page, this.pagination.pageSize);
+    this.query = new Query('arIdentifier');
+    this.loadData();
   }
 
-  loadData(page: number, pageSize: number) {
-    this.api.getAll(page, pageSize).subscribe(response => {
-      this.pagination.total = response.count;
+  loadData() {
+    this.api.getAll(this.query).subscribe(response => {
+      this.query.total = response.count;
       this.policies = of(response.data);
     });
   }
 
+  search(filter: string): void {
+    this.query.filter = filter;
+    this.loadData();
+  }
+
+  sort($event) {
+    this.query.sortBy = $event.by;
+    this.query.sortOrder = $event.order;
+    this.loadData();
+  }
+
   onPageChange(page: number) {
-    this.pagination.page = page;
-    this.loadData(page, this.pagination.pageSize);
+    this.query.page = page;
+    this.loadData();
   }
 
   view(policy: OverviewPolicy) {
@@ -55,7 +65,7 @@ export class PoliciesOverviewComponent implements OnInit {
     if (confirm('Are you sure you want to delete this item?')) {
       this.api.delete(policy.authorizationRegistryId).subscribe(r => {
         this.alert.success('Delete performed successfully');
-        this.loadData(this.pagination.page, this.pagination.pageSize);
+        this.loadData();
       });
     }
   }

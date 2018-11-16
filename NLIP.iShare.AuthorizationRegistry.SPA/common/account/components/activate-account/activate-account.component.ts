@@ -57,7 +57,7 @@ export class ActivateAccountComponent implements OnInit, OnDestroy {
     );
   }
   login() {
-    this.router.navigate(['account', 'login']);
+    this.auth.goToLogin();
   }
   reload() {
     const url = `account/activate?uid=${this.model.id}&token=${this.model.token}&t=${new Date().toJSON()}`;

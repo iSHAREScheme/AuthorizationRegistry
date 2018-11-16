@@ -1,3 +1,4 @@
+import { FormsModule } from '@angular/forms';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NgxJsonViewerModule } from 'ngx-json-viewer';
@@ -17,7 +18,7 @@ import { CreatePolicyComponent } from './components/create-policy/create-policy.
 import { HistoryItemComponent } from './components/history-item/history-item.component';
 
 @NgModule({
-  imports: [CommonModule, AppCommonModule, PoliciesRoutingModule, NgxPaginationModule, NgxJsonViewerModule, AceEditorModule],
+  imports: [FormsModule, CommonModule, AppCommonModule, PoliciesRoutingModule, NgxPaginationModule, NgxJsonViewerModule, AceEditorModule],
   declarations: [
     PoliciesOverviewComponent,
     ViewPolicyComponent,

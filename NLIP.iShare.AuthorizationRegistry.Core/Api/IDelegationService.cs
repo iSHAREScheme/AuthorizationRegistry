@@ -1,9 +1,8 @@
-﻿using NLIP.iShare.AuthorizationRegistry.Core.Requests;
+﻿using NLIP.iShare.Abstractions;
+using NLIP.iShare.AuthorizationRegistry.Core.Requests;
 using NLIP.iShare.AuthorizationRegistry.Data.Models;
 using System;
-
 using System.Threading.Tasks;
-using NLIP.iShare.Abstractions;
 
 namespace NLIP.iShare.AuthorizationRegistry.Core.Api
 {
@@ -22,5 +21,6 @@ namespace NLIP.iShare.AuthorizationRegistry.Core.Api
         Task MakeInactive(string arId, string userId);
         Task<bool> DelegationExists(string partyId, string subject);        
         Task<DelegationHistory> GetDelegationHistoryById(DelegationHistoryQuery query);
+        Task<Delegation> CreateOrUpdatePolicyForParty(PolicyRequest policy, string partyId);
     }
 }

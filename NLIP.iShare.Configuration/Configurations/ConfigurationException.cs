@@ -34,6 +34,14 @@ namespace NLIP.iShare.Configuration.Configurations
             }
         }
 
+        public static void AssertNotNull(object value, string keyName)
+        {
+            if (value == null)
+            {
+                throw CreateFromKey(keyName);
+            }
+        }
+
         public static void AssertUri(string value, string keyName)
         {
             AssertNotNull(value, keyName);

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace NLIP.iShare.Abstractions
 {
@@ -16,6 +18,30 @@ namespace NLIP.iShare.Abstractions
             {
                 throw new ArgumentNullException(paramName);
             }
+        }
+
+        /// <summary>
+        /// Determines if the value is present in the source ignoring the case
+        /// </summary>
+        /// <param name="source">The source where the value is searched</param>
+        /// <param name="value">The value that is searched</param>
+        /// <param name="comparison">The search policy that can be set, which by default is StringComparison.OrdinalIgnoreCase</param>
+        /// <returns>True if value is present in source, otherwise false</returns>
+        public static bool Has(this string source, string value, StringComparison comparison = StringComparison.OrdinalIgnoreCase)
+        {
+            return source?.IndexOf(value, comparison) >= 0;
+        }
+
+        /// <summary>
+        /// Determines if the value is present in any of element from the source
+        /// </summary>
+        /// <param name="source">The source of elements where the value is present in any of the element</param>
+        /// <param name="value">The value that is searched</param>
+        /// <param name="comparison">The search policy that can be set, which by default is StringComparison.OrdinalIgnoreCase</param>
+        /// <returns>True if value is present in any of the source elements, otherwise false</returns>
+        public static bool Has(this IEnumerable<string> source, string value, StringComparison comparison = StringComparison.OrdinalIgnoreCase)
+        {
+            return source.Any(c => c.Has(value, comparison));
         }
     }
 }

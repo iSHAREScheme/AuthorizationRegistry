@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Reflection;
 
-namespace NLIP.iShare.EntityFramework
+namespace NLIP.iShare.EntityFramework.Migrations.Seed
 {
     public static class JsonLoader
     {

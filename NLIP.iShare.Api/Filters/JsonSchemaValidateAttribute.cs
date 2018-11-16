@@ -3,6 +3,8 @@ using Manatee.Json.Schema;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,15 +16,16 @@ namespace NLIP.iShare.Api.Filters
         private IJsonSchema _schema;
         private ILogger<JsonSchemaValidateAttribute> _logger;
 
-        public JsonSchemaValidateAttribute(Func<string, IJsonSchema> schemaFactory, ILogger<JsonSchemaValidateAttribute> logger)
+        public JsonSchemaValidateAttribute(string schemaFile, Func<string, IJsonSchema> schemaFactory, ILogger<JsonSchemaValidateAttribute> logger)
         {
-            _schema = schemaFactory("delegationMaskSchema.json");
+            _schema = schemaFactory(schemaFile);
             _logger = logger;
         }
 
         public override async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
-            var objectModel = context.ActionArguments.FirstOrDefault().Value?.ToString();
+            var objectModel = JsonConvert.SerializeObject(context.ActionArguments.FirstOrDefault().Value,
+                new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver(), NullValueHandling = NullValueHandling.Ignore });
 
             if (string.IsNullOrEmpty(objectModel))
             {

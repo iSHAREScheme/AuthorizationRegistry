@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Logging;
 using NLIP.iShare.Abstractions;
 using NLIP.iShare.Abstractions.Email;
@@ -9,14 +8,13 @@ using NLIP.iShare.AuthorizationRegistry.Core.Requests;
 using NLIP.iShare.AuthorizationRegistry.Core.Responses;
 using NLIP.iShare.AuthorizationRegistry.Data;
 using NLIP.iShare.AuthorizationRegistry.Data.Models;
-using NLIP.iShare.AuthorizationRegistry.IdentityServer.Models;
 using NLIP.iShare.Configuration.Configurations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
-using NLIP.iShare.Models.Responses;
+using NLIP.iShare.Models;
 
 
 namespace NLIP.iShare.AuthorizationRegistry.Core
@@ -51,6 +49,13 @@ namespace NLIP.iShare.AuthorizationRegistry.Core
         public async Task<PagedResult<UserModel>> GetAll(Query query)
         {
             var usersQuery = _db.Users.Where(u => !u.Deleted);
+            if (!string.IsNullOrEmpty(query.Filter))
+            {
+                usersQuery = usersQuery.Where(u =>
+                    u.Name.Contains(query.Filter) ||
+                    (!string.IsNullOrEmpty(u.PartyId) && u.PartyId.Contains(query.Filter)) ||
+                    (!string.IsNullOrEmpty(u.PartyName) && u.PartyName.Contains(query.Filter)));
+            }
             int count = await usersQuery.CountAsync().ConfigureAwait(false);
             usersQuery = Sort(query, usersQuery).GetPage(query);
 
@@ -100,36 +105,34 @@ namespace NLIP.iShare.AuthorizationRegistry.Core
         }
 
 
-        private UserModelResult ValidateRequest(UserModelRequest request)
+        private static Response<UserModel> ValidateRequest(UserModelRequest request)
         {
-            var isSchemeOwner = request.Roles.IndexOf(Constants.Roles.SchemeOwner) >= 0;
-            if (!isSchemeOwner || (isSchemeOwner && request.Roles.Length > 1))
+            var isSchemeOwner = request.Roles.Any() && request.Roles.Has(Constants.Roles.SchemeOwner);
+            if (isSchemeOwner)
             {
-                if (string.IsNullOrWhiteSpace(request.PartyId))
-                {
-                    return new UserModelResult { Success = false, Errors = new[] { "Party ID cannot be empty." } };
-                }
-
-                if (string.IsNullOrWhiteSpace(request.PartyName))
-                {
-                    return new UserModelResult { Success = false, Errors = new[] { "Party Name cannot be empty." } };
-                }
-            }
-            else if (isSchemeOwner)
-            {
-                // party ID and party Name aren't used for SchemOwner role
                 request.PartyId = string.Empty;
                 request.PartyName = string.Empty;
+                return Response<UserModel>.ForSuccess();
             }
-            return new UserModelResult { Success = true };
+
+            if (string.IsNullOrWhiteSpace(request.PartyId))
+            {
+                return Response<UserModel>.ForError("Party ID cannot be empty.");
+            }
+
+            if (string.IsNullOrWhiteSpace(request.PartyName))
+            {
+                return Response<UserModel>.ForError("Party Name cannot be empty.");
+            }
+            return Response<UserModel>.ForSuccess();
         }
 
-        public async Task<UserModelResult> SendForgotPasswordEmail(ForgotPasswordUserRequest request)
+        public async Task<Response<UserModel>> SendForgotPasswordEmail(ForgotPasswordUserRequest request)
         {
             var identity = await _userManager.Users.FirstOrDefaultAsync(u => u.UserName == request.Username);
             if (identity == null)
             {
-                return new UserModelResult("Username does not exist!");
+                return Response<UserModel>.ForError("Username does not exist!");
             }
             var user = await _db.Users.FirstOrDefaultAsync(u => u.AspNetUserId == identity.Id);
 
@@ -139,7 +142,7 @@ namespace NLIP.iShare.AuthorizationRegistry.Core
 
             await _emailClient.Send(identity.Email, "Forgot password notification", template);
 
-            return new UserModelResult { Success = true };
+            return Response<UserModel>.ForSuccess();
         }
 
         private async Task<string> GetUserEmailAsync(AspNetUser identity, User user, string fileName, string action, string token)
@@ -154,13 +157,13 @@ namespace NLIP.iShare.AuthorizationRegistry.Core
             return await _templateService.GetTransformed(fileName, _templateData.EmailData);
         }
 
-        public async Task<UserModelResult> ActivateAccountSendEmail(SendEmailActivationUserRequest request)
+        public async Task<Response<UserModel>> ActivateAccountSendEmail(SendEmailActivationUserRequest request)
         {
             var user = await _db.Users.FirstAsync(u => u.Id == request.Id).ConfigureAwait(false);
 
             if (user != null && user.Active)
             {
-                return new UserModelResult("Account already activated!");
+                return Response<UserModel>.ForError("Account already activated!");
             }
 
             var identity = await _userManager.Users.FirstAsync(u => u.Id == user.AspNetUserId).ConfigureAwait(false);
@@ -171,20 +174,20 @@ namespace NLIP.iShare.AuthorizationRegistry.Core
 
             await _emailClient.Send(identity.Email, "Activate account notification", template);
 
-            return new UserModelResult { Success = true };
+            return Response<UserModel>.ForSuccess();
         }
 
-        public async Task<UserModelResult> ActivateAccountConfirm(ActivateAccountRequest request)
+        public async Task<Response<UserModel>> ActivateAccountConfirm(ActivateAccountRequest request)
         {
             var user = await _db.Users.FirstOrDefaultAsync(x => x.Id == request.Id);
             if (user == null)
             {
-                return new UserModelResult("Invalid request");
+                return Response<UserModel>.ForError("Invalid request");
             }
 
             if (user.Active)
             {
-                return new UserModelResult("Account already activated");
+                return Response<UserModel>.ForError("Account already activated");
             }
 
             var aspNetUser = await _userManager.FindByIdAsync(user.AspNetUserId);
@@ -192,15 +195,8 @@ namespace NLIP.iShare.AuthorizationRegistry.Core
             var tokenResult = await _userManager.ConfirmEmailAsync(aspNetUser, request.Token);
             if (!tokenResult.Succeeded)
             {
-                return Convert(tokenResult);
+                return ConvertToResponse(tokenResult);
             }
-            ////TODO: check if explicit password validation is actually required
-            //var passwordValidationResult = await GetPasswordErrros(aspNetUser, request.Password);
-            //if (!passwordValidationResult.Success)
-            //{
-            //    return passwordValidationResult;
-            //}
-
 
             var passwordResult = await _userManager.AddPasswordAsync(aspNetUser, request.Password);
 
@@ -214,11 +210,11 @@ namespace NLIP.iShare.AuthorizationRegistry.Core
                 await _db.SaveChangesAsync();
             }
 
-            return Convert(passwordResult);
+            return ConvertToResponse(passwordResult);
         }
 
 
-        public async Task<UserModelResult> Create(CreateUserRequest request)
+        public async Task<Response<UserModel>> Create(CreateUserRequest request)
         {
             var identity = new AspNetUser
             {
@@ -237,7 +233,7 @@ namespace NLIP.iShare.AuthorizationRegistry.Core
 
             if (!result.Succeeded)
             {
-                return new UserModelResult { Success = false, Errors = result.Errors.Select(e => e.Description).ToArray() };
+                return Response<UserModel>.ForErrors(result.Errors.Select(e => e.Description));
             }
 
             foreach (var role in request.Roles)
@@ -262,11 +258,7 @@ namespace NLIP.iShare.AuthorizationRegistry.Core
 
             if (sendEmail.Success)
             {
-                return new UserModelResult
-                {
-                    Success = true,
-                    Model = UserModel.Create(identity, user, request.Roles)
-                };
+                return Response<UserModel>.ForSuccess(UserModel.Create(identity, user, request.Roles));
             }
 
             try
@@ -277,14 +269,14 @@ namespace NLIP.iShare.AuthorizationRegistry.Core
             }
             catch (Exception ex)
             {
-                _logger.LogError("unable to delete invalid account: ", ex);
-                return new UserModelResult("unable to create account");
+                _logger.LogError("Unable to delete invalid account: ", ex);
+                return Response<UserModel>.ForError("unable to create account");
             }
 
-            return new UserModelResult { Success = false, Errors = result.Errors.Select(e => e.Description).ToArray() };
+            return Response<UserModel>.ForErrors(result.Errors.Select(e => e.Description));
         }
 
-        public async Task<UserModelResult> Update(UpdateUserRequest request)
+        public async Task<Response<UserModel>> Update(UpdateUserRequest request)
         {
             var user = await _db.Users.FirstAsync(u => u.Id == request.Id).ConfigureAwait(false);
             var identity = await _userManager.Users.FirstAsync(u => u.Id == user.AspNetUserId).ConfigureAwait(false);
@@ -305,20 +297,16 @@ namespace NLIP.iShare.AuthorizationRegistry.Core
             _db.Users.Update(user);
             await _db.SaveChangesAsync().ConfigureAwait(false);
 
-            return new UserModelResult
-            {
-                Success = true,
-                Model = UserModel.Create(identity, user, request.Roles)
-            };
+            return Response<UserModel>.ForSuccess(UserModel.Create(identity, user, request.Roles));
         }
 
-        public async Task<RequestResult> MakeInactive(Guid id)
+        public async Task<Response> MakeInactive(Guid id)
         {
             var user = await _db.Users.FirstOrDefaultAsync(u => u.Id == id).ConfigureAwait(false);
 
             if (user == null)
             {
-                return new RequestResult("user id not found");
+                return Response.ForError("user id not found");
             }
 
             var identity = await _userManager.Users.FirstOrDefaultAsync(u => u.Id == user.AspNetUserId);
@@ -331,7 +319,7 @@ namespace NLIP.iShare.AuthorizationRegistry.Core
 
             await _db.SaveChangesAsync().ConfigureAwait(false);
 
-            return new RequestResult { Success = true };
+            return Response.ForSuccess();
         }
 
         public async Task<bool> Exists(Guid id)
@@ -357,48 +345,53 @@ namespace NLIP.iShare.AuthorizationRegistry.Core
         {
             var result = data;
 
-            if (query.SortBy == "partyId")
+            switch (query.SortBy)
             {
-                result = result.OrderBy(c => c.PartyId, query.SortOrder);
+                case "partyId":
+                    result = result.OrderBy(c => c.PartyId, query.SortOrder);
+                    break;
+                case "partyName":
+                    result = result.OrderBy(c => c.PartyName, query.SortOrder);
+                    break;
+                case "createdDate":
+                    result = result.OrderBy(c => c.CreatedDate, query.SortOrder);
+                    break;
+                default:
+                    result = result.OrderBy(c => c.Name, query.SortOrder);
+                    break;
             }
+
             return result;
         }
 
-        public async Task<UserModelResult> ChangePassword(ChangePasswordRequest request, string aspNetUserId)
+        public async Task<Response<UserModel>> ChangePassword(ChangePasswordRequest request, string aspNetUserId)
         {
             var aspNetUser = await _userManager.FindByIdAsync(aspNetUserId);
             if (aspNetUser == null)
             {
-                return new UserModelResult("user not found");
+                return Response<UserModel>.ForError("user not found");
             }
 
             if (request.NewPassword == request.CurrentPassword)
             {
-                return new UserModelResult("the new password should be different from the current password");
+                return Response<UserModel>.ForError("the new password should be different from the current password");
             }
 
-            var passwordValidationResult = (await GetPasswordErrors(aspNetUser, request.NewPassword));
+            var passwordValidationResult = await GetPasswordErrors(aspNetUser, request.NewPassword);
             if (!passwordValidationResult.Success)
             {
                 return passwordValidationResult;
             }
 
             var result = await _userManager.ChangePasswordAsync(aspNetUser, request.CurrentPassword, request.NewPassword);
-            return Convert(result);
+            return ConvertToResponse(result);
         }
 
-        private UserModelResult Convert(IdentityResult result)
-        {
-            if (result.Succeeded)
-            {
-                return new UserModelResult();
-            }
+        private static Response<UserModel> ConvertToResponse(IdentityResult result) 
+            => result.Succeeded ? Response<UserModel>.ForSuccess() 
+                : Response<UserModel>.ForErrors(result.Errors.Select(e => e.Description));
 
-            var errors = result.Errors.Select(e => e.Description).ToArray();
-            return new UserModelResult { Success = false, Errors = errors };
-        }
-
-        private async Task<UserModelResult> GetPasswordErrors(AspNetUser identity, string password)
+        private async Task<Response<UserModel>> GetPasswordErrors(AspNetUser identity, string password)
         {
             var results = await Task
                 .WhenAll(_userManager.PasswordValidators.Select(v =>
@@ -407,18 +400,18 @@ namespace NLIP.iShare.AuthorizationRegistry.Core
             var errorMessages = results.SelectMany(r => r.Errors).Select(i => i.Description).ToArray();
             if (errorMessages.Any())
             {
-                return new UserModelResult { Success = false, Errors = errorMessages };
+                return Response<UserModel>.ForErrors(errorMessages);
             }
-            return new UserModelResult();
+            return Response<UserModel>.ForSuccess();
         }
 
 
-        public async Task<UserModelResult> ForcePasswordReset(Guid userId)
+        public async Task<Response> ForcePasswordReset(Guid userId)
         {
             var user = await _db.Users.FindAsync(userId);
             if (user == null)
             {
-                return new UserModelResult("user not found");
+                return Response.ForError("user not found");
             }
 
             user.Active = false;
@@ -435,7 +428,7 @@ namespace NLIP.iShare.AuthorizationRegistry.Core
 
             await _emailClient.Send(identity.Email, "Password change required by administrator", email);
 
-            return new UserModelResult();
+            return Response.ForSuccess();
         }
 
         /// <summary>
@@ -443,12 +436,12 @@ namespace NLIP.iShare.AuthorizationRegistry.Core
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public async Task<UserModelResult> ConfirmPasswordReset(ConfirmPasswordResetRequest request)
+        public async Task<Response<UserModel>> ConfirmPasswordReset(ConfirmPasswordResetRequest request)
         {
             var user = await _db.Users.FindAsync(request.Id);
             if (user == null)
             {
-                return new UserModelResult("user not found");
+                return Response<UserModel>.ForError("user not found");
             }
             var identity = await _userManager.FindByIdAsync(user.AspNetUserId);
 
@@ -460,25 +453,25 @@ namespace NLIP.iShare.AuthorizationRegistry.Core
             var result = await _userManager.ConfirmEmailAsync(identity, request.Token);
             if (!result.Succeeded)
             {
-                return Convert(result);
+                return ConvertToResponse(result);
             }
 
             result = await _userManager.RemovePasswordAsync(identity);
             if (!result.Succeeded)
             {
-                return Convert(result);
+                return ConvertToResponse(result);
             }
 
             result = await _userManager.AddPasswordAsync(identity, request.NewPassword);
             if (!result.Succeeded)
             {
-                return Convert(result);
+                return ConvertToResponse(result);
             }
 
             user.Active = true;
             await _db.SaveChangesAsync();
 
-            return new UserModelResult();
+            return Response<UserModel>.ForSuccess();
         }
     }
 }

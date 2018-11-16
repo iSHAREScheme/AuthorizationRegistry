@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace NLIP.iShare.IdentityServer
+namespace NLIP.iShare.IdentityServer.Models
 {
     public enum Status
     {

@@ -1,15 +1,16 @@
+import { Injectable } from '@angular/core';
+
+@Injectable({
+  providedIn: 'root'
+})
 export class EnvironmentModel {
   production: boolean;
-  domain: string;
+  apiDomain: string;
+  apiEndpoint: string;
   appInsights: {
     instrumentationKey: string;
   };
-  api: string;
   scope: string;
-  localStorageKeys: {
-    auth: string;
-    profile: string;
-    logging: string;
-    authExpiration: string;
-  };
+  spaUrl: string;
+  clientId: string;
 }

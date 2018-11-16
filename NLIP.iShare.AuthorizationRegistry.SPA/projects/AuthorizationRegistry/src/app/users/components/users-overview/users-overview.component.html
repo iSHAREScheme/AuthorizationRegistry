@@ -1,3 +1,4 @@
+<app-search (action)="search($event)"></app-search>
 <button type="button" class="btn btn-primary" (click)="create()">
     <i class="fa fa-plus" aria-hidden="true"></i>add
 </button>
@@ -5,19 +6,24 @@
 <table class="app-table">
     <thead>
         <tr>
-            <th>Username</th>
-            <th>Party Id
-                <i class="btn-sort fa fa-angle-down" aria-hidden="true" (click)="sort('partyId', sorting.order === 'asc' ? 'desc': 'asc')"
-                    [ngClass]="{'fa-angle-down': sorting.order === 'asc', 'fa-angle-up': sorting.order === 'desc'}"></i>
+            <th>Username
+                <app-sorting (action)="sort($event)" by="username" order="asc"></app-sorting>
             </th>
-            <th>Party Name</th>
-            <th>Created</th>
+            <th>Party Id
+                <app-sorting (action)="sort($event)" by="partyId" order="asc"></app-sorting>
+            </th>
+            <th>Party Name
+                <app-sorting (action)="sort($event)" by="partyName" order="asc"></app-sorting>
+            </th>
+            <th>Created
+                <app-sorting (action)="sort($event)" by="createdDate" order="asc"></app-sorting>
+            </th>
             <th>Roles</th>
             <th>Is Active</th>
         </tr>
     </thead>
     <tbody>
-        <tr *ngFor="let user of users | async | paginate: { id:'users-pagination', itemsPerPage: pagination.pageSize, currentPage: pagination.page, totalItems: pagination.total }">
+        <tr *ngFor="let user of users | async | paginate: { id:'users-pagination', itemsPerPage: query.pageSize, currentPage: query.page, totalItems: query.total }">
             <td>{{user.username}}</td>
             <td>{{user.partyId}}</td>
             <td>{{user.partyName}}</td>
@@ -25,7 +31,7 @@
             <td>{{user.roles | humanize}}</td>
             <td>
                 <i [ngClass]="user.active ? 'fa fa-check-circle-o' : 'fa fa-times-circle-o'" aria-hidden="true"></i>
-              </td>
+            </td>
             <td class="actions-cell" *ngIf="user.identityId != currentUser.id">
                 <div class="actions">
                     <i class="fa fa-pencil" aria-hidden="true" (click)="edit(user)" title="Edit"></i>
@@ -35,5 +41,5 @@
         </tr>
     </tbody>
 </table>
-<pagination-controls *ngIf="!(pagination.page == 1 && pagination.total <= pagination.pageSize)" id="users-pagination" [directionLinks]="true"
-    [previousLabel]="''" [nextLabel]="''" (pageChange)="onPageChange($event)"></pagination-controls>
+<pagination-controls *ngIf="!(query.page == 1 && query.total <= query.pageSize)" id="users-pagination"
+    [directionLinks]="true" [previousLabel]="''" [nextLabel]="''" (pageChange)="onPageChange($event)"></pagination-controls>
