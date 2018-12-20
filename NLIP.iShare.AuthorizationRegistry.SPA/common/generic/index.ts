@@ -20,6 +20,8 @@ export * from './models/Profile';
 export * from './models/Query';
 export * from './models/EnvironmentModel';
 export * from './models/ResponseModel';
+export * from './models/CreateDelegationMask';
+export * from './models/DelegationResponse';
 
 export * from './interceptors/AppInsights.interceptor';
 export * from './interceptors/JwtHttp.interceptor';

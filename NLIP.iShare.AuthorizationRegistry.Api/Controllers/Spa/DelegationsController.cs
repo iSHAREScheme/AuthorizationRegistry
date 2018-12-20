@@ -1,7 +1,5 @@
 ﻿using System;
-using System.IO;
 using System.Linq;
-using System.Net.Mime;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,8 +9,8 @@ using NLIP.iShare.AuthorizationRegistry.Api.ViewModels;
 using NLIP.iShare.AuthorizationRegistry.Core;
 using NLIP.iShare.AuthorizationRegistry.Core.Api;
 using NLIP.iShare.AuthorizationRegistry.Core.Requests;
-using NLIP.iShare.IdentityServer;
 using NLIP.iShare.IdentityServer.Delegation;
+using NLIP.iShare.Models;
 
 namespace NLIP.iShare.AuthorizationRegistry.Api.Controllers.Spa
 {
@@ -135,23 +133,6 @@ namespace NLIP.iShare.AuthorizationRegistry.Api.Controllers.Spa
 
             var fileName = $"History-{delegationHistory.CreatedDate:yy-MM-dd}-{delegationHistory.Delegation?.AuthorizationRegistryId}.json";
             return BuildJsonDownloadFileResult(fileName, delegationHistory.Policy);
-        }
-
-        private FileStreamResult BuildJsonDownloadFileResult(string fileName, string jsonData)
-        {
-            var cd = new ContentDisposition
-            {
-                FileName = fileName,
-                Inline = false
-            };
-            Response.Headers.Add("Content-Disposition", cd.ToString());
-            Response.Headers.Add("Access-Control-Expose-Headers", "Content-Disposition");
-            var stream = new MemoryStream();
-            var writer = new StreamWriter(stream);
-            writer.Write(jsonData);
-            writer.Flush();
-            stream.Position = 0;
-            return File(stream, "text/plain");
         }
     }
 }

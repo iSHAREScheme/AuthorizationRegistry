@@ -101,6 +101,7 @@
         "environment": {
           "type": "object",
           "additionalProperties": false,
+          "required": [ "serviceProviders" ],
           "properties": {
             "serviceProviders": {
               "type": "array",

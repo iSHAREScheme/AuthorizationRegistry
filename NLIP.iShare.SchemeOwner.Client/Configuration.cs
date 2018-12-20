@@ -1,16 +1,16 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using System;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using NLIP.iShare.Configuration;
-using NLIP.iShare.TokenClient;
-using System;
 using NLIP.iShare.Configuration.Configurations;
+using NLIP.iShare.TokenClient;
 
 namespace NLIP.iShare.SchemeOwner.Client
 {
     public static class Configuration
     {
-        public static void AddSchemeOwnerClient(this IServiceCollection services, IConfiguration configuration, IHostingEnvironment environment)
+        public static IServiceCollection AddSchemeOwnerClient(this IServiceCollection services, IConfiguration configuration, IHostingEnvironment environment)
         {
             var options = services.ConfigureOptions<SchemeOwnerClientOptions>(configuration,
                 "SchemeOwner",
@@ -25,7 +25,9 @@ namespace NLIP.iShare.SchemeOwner.Client
                 Thumbprint = options.Thumbprint
             });
 
-            services.AddTransient<SchemeOwnerClient>();            
+            services.AddTransient<SchemeOwnerClient>();
+
+            return services;
         }
     }
 }

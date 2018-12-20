@@ -18,7 +18,7 @@ namespace NLIP.iShare.EntityFramework.Migrations.Seed
             _sourcesPrefix = sourcesPrefix;
             _sourcesAssembly = sourcesAssembly;
         }
-        public TEntity[] GetEntities<TEntity>(string source, string environment)
+        public TEntity[] GetEntities<TEntity>(string source, string environment) where TEntity : class
         {
             _logger.LogInformation("Get entities data from {source}, {environment}", source, environment);
             var json = JsonLoader.GetByName(source, environment, _sourcesPrefix, _sourcesAssembly);
@@ -27,6 +27,15 @@ namespace NLIP.iShare.EntityFramework.Migrations.Seed
 
             _logger.LogInformation("Found {count} item(s)", items.Length);
             return items;
+        }
+
+        public string GetRaw(string source, string environment)
+        {
+            _logger.LogInformation("Get entities data from {source}, {environment}", source, environment);
+            var raw = JsonLoader.GetByName(source, environment, _sourcesPrefix, _sourcesAssembly);
+
+            _logger.LogInformation("Found item ", raw != null);
+            return raw;
         }
     }
 }

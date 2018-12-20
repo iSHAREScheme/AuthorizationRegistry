@@ -1,6 +1,6 @@
 ﻿using NLIP.iShare.Configuration.Configurations;
 
-namespace NLIP.iShare.IdentityServer.Configuration
+namespace NLIP.iShare.IdentityServer
 {
     public class PkiOptions : IValidateOptions
     {

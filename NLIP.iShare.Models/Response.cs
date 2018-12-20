@@ -24,6 +24,7 @@ namespace NLIP.iShare.Models
 
     public sealed class Response<TModel>
     {
+
         private Response()
         {
         }
@@ -44,5 +45,13 @@ namespace NLIP.iShare.Models
 
         public static Response<TModel> ForSuccess(TModel model)
             => new Response<TModel> { Model = model };
+
+        private const string Unauthorized = "Unauthorized";
+        public static Response<TModel> ForUnauthorized() => ForError(Unauthorized);
+        public bool IsAuthorized() => !Errors.Contains(Unauthorized);
+
+        private const string NotFound = "NotFound";
+        public static Response<TModel> ForNotFound() => ForError(NotFound);
+        public bool IsFound() => !Errors.Contains(NotFound);
     }
 }

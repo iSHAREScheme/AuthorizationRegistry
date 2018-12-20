@@ -6,18 +6,23 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace NLIP.iShare.Api.Swagger.Attributes
 {
-    public class SwaggerAuthorizeServiceConsumerFilter : IOperationFilter
+    public class SwaggerServiceConsumerFilter : IOperationFilter
     {
         public void Apply(Operation operation, OperationFilterContext context)
         {
             var filterDescriptors = context.ApiDescription.ActionDescriptor.FilterDescriptors;
 
-            var descriptor = filterDescriptors.FirstOrDefault(f => (f.Filter is AuthorizeServiceConsumerAttribute));
+            var descriptor = filterDescriptors.FirstOrDefault(f => (f.Filter is ServiceConsumerAttribute));
 
             if (descriptor == null)
             {
                 return;
             }
+
+            operation.Summary = string.Concat(operation.Summary, $"Example service of the Service Provider");
+
+            operation.Description = string.Concat(operation.Description,
+                $"This is an example service to show how any Service Provider that adheres to iSHARE MUST apply iSHARE OAuth to every iSHARE enabled service.");
 
             if (operation.Parameters == null)
             {

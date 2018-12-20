@@ -69,13 +69,10 @@ namespace NLIP.iShare.Identity.Data
                 var user = await UserManager.FindByNameAsync(seedUser.UserName).ConfigureAwait(false);
                 if (user != null)
                 {
-                    await UserManager.DeleteAsync(user).ConfigureAwait(false);
-                }
-                if (user == null)
-                {
-                    user = seedUser;
+                    continue;
                 }
 
+                user = seedUser;
                 var result = await UserManager.CreateAsync(user, seedUser.Password).ConfigureAwait(false);
 
                 if (!result.Succeeded)
@@ -90,8 +87,8 @@ namespace NLIP.iShare.Identity.Data
             }
         }
 
-        public static IDatabaseSeeder<TUserDbContext> CreateSeeder(IServiceProvider srv, 
-            string environment) 
+        public static IDatabaseSeeder<TUserDbContext> CreateSeeder(IServiceProvider srv,
+            string environment)
             => new AspNetIdentityServerDatabaseSeeder<TUserDbContext, TUser>(environment,
             srv.GetService<ISeedDataProvider<TUserDbContext>>(),
             srv.GetService<UserManager<TUser>>(),

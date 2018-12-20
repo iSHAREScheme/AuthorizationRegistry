@@ -68,6 +68,8 @@ Run `ng serve -o`.
 - NOTE: The Authorization Registry API must be running in order for the application to work correctly
 - NOTE: The SPA will be available by default at http://localhost:4201/admin
 
+### [Differences between the implementation and the official documentation](Differences.md)
+
 ## API References
 
 1. https://ishareworks.atlassian.net/wiki/spaces/IS/pages/70222191/iSHARE+Scheme

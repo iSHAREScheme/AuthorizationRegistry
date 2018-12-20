@@ -58,5 +58,57 @@ namespace NLIP.iShare.IdentityServer.Tests
             //Assert
             Assert.Equal(JsonConvert.SerializeObject(delegationResponse), JsonConvert.SerializeObject(delegationEvidenceResponse));
         }
+
+        [Fact]
+        public void Translate_WhenBananaAndCoDelegatesRightsToABCTruckingAndDeniesReadAccessOnAContainerWhenRequestIsAll_ReturnsEffectDeny()
+        {
+            //Arrange
+            var delegationMask = @"DelegationTestCases\case3_mask.json".Read<DelegationMask>();
+
+            var delegationResponse = @"DelegationTestCases\case3_evidence.json".Read<DelegationTranslationTestResponse>();
+
+            var sut = new DelegationTranslateService();
+
+            //Act
+            var delegationEvidenceResponse = sut.Translate(delegationMask, @"DelegationTestCases\case3_policy.json".Read());
+
+            //Assert
+            Assert.Equal(JsonConvert.SerializeObject(delegationResponse), JsonConvert.SerializeObject(delegationEvidenceResponse));
+        }
+
+
+        [Fact]
+        public void Translate_Case4_ReturnsExpected()
+        {
+            //Arrange
+            var delegationMask = @"DelegationTestCases\case4_mask.json".Read<DelegationMask>();
+
+            var delegationResponse = @"DelegationTestCases\case4_evidence.json".Read<DelegationTranslationTestResponse>();
+
+            var sut = new DelegationTranslateService();
+
+            //Act
+            var result = sut.Translate(delegationMask, @"DelegationTestCases\case4_policy.json".Read());
+
+            //Assert
+            Assert.Equal(JsonConvert.SerializeObject(delegationResponse), JsonConvert.SerializeObject(result));
+        }
+
+        [Fact]
+        public void Translate_WhenMaskHasMultipleAtreibuteRequestForSameAction_ReturnsExpected()
+        {
+            //Arrange
+            var delegationMask = @"DelegationTestCases\case5_mask.json".Read<DelegationMask>();
+
+            var delegationResponse = @"DelegationTestCases\case5_evidence.json".Read<DelegationTranslationTestResponse>();
+
+            var sut = new DelegationTranslateService();
+
+            //Act
+            var result = sut.Translate(delegationMask, @"DelegationTestCases\case5_policy.json".Read());
+
+            //Assert
+            Assert.Equal(JsonConvert.SerializeObject(delegationResponse), JsonConvert.SerializeObject(result));
+        }
     }
 }

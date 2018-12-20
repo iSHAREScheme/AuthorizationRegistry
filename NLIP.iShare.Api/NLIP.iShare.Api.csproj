@@ -35,6 +35,7 @@
     <ProjectReference Include="..\NLIP.iShare.IdentityServer\NLIP.iShare.IdentityServer.csproj" />
     <ProjectReference Include="..\NLIP.iShare.Identity\NLIP.iShare.Identity.csproj" />
     <ProjectReference Include="..\NLIP.iShare.Models\NLIP.iShare.Models.csproj" />
+    <ProjectReference Include="..\NLIP.iShare.SchemeOwner.Client\NLIP.iShare.SchemeOwner.Client.csproj" />
   </ItemGroup>
 
 </Project>

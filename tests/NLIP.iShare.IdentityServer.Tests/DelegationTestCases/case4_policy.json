@@ -1,0 +1,112 @@
+{
+  "delegationEvidence": {
+    "notBefore": 1541058939,
+    "notOnOrAfter": 1551058939,
+    "policyIssuer": "EU.EORI.NL000000005",
+    "target": { "accessSubject": "EU.EORI.NL000000001" },
+    "policySets": [
+      {
+        "target": { "environment": { "licenses": [ "ISHARE.0001" ] } },
+        "policies": [
+          {
+            "target": {
+              "resource": {
+                "type": "GS1.CONTAINER",
+                "identifiers": [ "*" ],
+                "attributes": [ "GS1.CONTAINER.ATTRIBUTE.ETA", "GS1.CONTAINER.ATTRIBUTE.WEIGHT" ]
+              },
+              "actions": [ "ISHARE.CREATE", "ISHARE.READ", "ISHARE.UPDATE", "ISHARE.DELETE" ],
+              "environment": { "serviceProviders": [ "EU.EORI.NL000000003" ] }
+            },
+            "rules": [
+              { "effect": "Permit" },
+              {
+                "effect": "Deny",
+                "target": {
+                  "resource": {
+                    "type": "GS1.CONTAINER",
+                    "identifiers": [ "180621.ABC134", "180621.ABC135" ],
+                    "attributes": [ "GS1.CONTAINER.ATTRIBUTE.ETA" ]
+                  },
+                  "actions": [ "ISHARE.CREATE", "ISHARE.UPDATE", "ISHARE.DELETE" ]
+                }
+              }
+            ]
+          },
+          {
+            "target": {
+              "resource": {
+                "type": "ORDER.DATA",
+                "identifiers": [ "W13.181022.001", "W13.181022.002", "W13.181022.003", "W13.181022.004", "W13.181022.005", "W13.181022.006" ],
+                "attributes": [ "STATUS", "PACKAGES", "TRUCKBAY.PICKUP" ]
+              },
+              "actions": [ "ISHARE.CREATE", "ISHARE.READ", "ISHARE.UPDATE", "ISHARE.DELETE" ]
+            },
+            "rules": [
+              { "effect": "Permit" },
+              {
+                "effect": "Deny",
+                "target": {
+                  "type": "ORDER.DATA",
+                  "resource": {
+                    "identifiers": [ "W13.181022.001" ],
+                    "attributes": [ "TRUCKBAY.PICKUP" ]
+                  },
+                  "actions": [ "ISHARE.DELETE" ]
+                }
+              }
+            ]
+          },
+          {
+            "target": {
+              "resource": {
+                "type": "GS1.CONTAINER",
+                "identifiers": [ "180621.ABC150", "180621.ABC151", "180621.ABC152", "180621.ABC153", "180621.ABC154", "180621.ABC155", "180621.ABC156", "180621.ABC157", "180621.ABC158", "180621.ABC159", "180621.ABC160", "180621.ABC161", "180621.ABC162", "180621.ABC163", "180621.ABC164", "180621.ABC165" ],
+                "attributes": [ "GS1.CONTAINER.ATTRIBUTE.ETA", "GS1.CONTAINER.ATTRIBUTE.WEIGHT" ]
+              },
+              "actions": [ "ISHARE.CREATE", "ISHARE.READ", "ISHARE.UPDATE", "ISHARE.DELETE" ]
+            },
+            "rules": [
+              { "effect": "Permit" },
+              {
+                "effect": "Deny",
+                "target": {
+                  "resource": {
+                    "type": "GS1.CONTAINER",
+                    "identifiers": [ "180621.ABC150", "180621.ABC151", "180621.ABC152", "180621.ABC153", "180621.ABC154" ],
+                    "attributes": [ "GS1.CONTAINER.ATTRIBUTE.WEIGHT" ]
+                  },
+                  "actions": [ "ISHARE.CREATE", "ISHARE.DELETE" ]
+                }
+              }
+            ]
+          },
+          {
+            "target": {
+              "resource": {
+                "type": "ORDER.DATA",
+                "identifiers": [ "AWE.2018.10.#062", "AWE.2018.10.#063", "AWE.2018.10.#064", "AWE.2018.10.#065", "AWE.2018.10.#066", "AWE.2018.10.#067" ],
+                "attributes": [ "STATUS", "PACKAGES", "TRUCKBAY.PICKUP" ]
+              },
+              "actions": [ "ISHARE.CREATE", "ISHARE.READ", "ISHARE.UPDATE", "ISHARE.DELETE" ]
+            },
+            "rules": [
+              { "effect": "Permit" },
+              {
+                "effect": "Deny",
+                "target": {
+                  "resource": {
+                    "type": "ORDER.DATA",
+                    "identifiers": [ "AWE.2018.10.#065" ],
+                    "attributes": [ "TRUCKBAY.PICKUP" ]
+                  },
+                  "actions": [ "ISHARE.UPDATE" ]
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

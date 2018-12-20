@@ -9,6 +9,7 @@ namespace NLIP.iShare.EntityFramework.Migrations.Seed
     public interface ISeedDataProvider<TContext>
         where TContext: DbContext
     {
-        TEntity[] GetEntities<TEntity>(string source, string environment);
+        TEntity[] GetEntities<TEntity>(string source, string environment) where TEntity : class;
+        string GetRaw(string source, string environment);
     }
 }

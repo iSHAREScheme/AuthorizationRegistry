@@ -9,7 +9,7 @@ using NLIP.iShare.Configuration.Configurations;
 using NLIP.iShare.IdentityServer.Services;
 using NLIP.iShare.IdentityServer.Validation;
 
-namespace NLIP.iShare.IdentityServer.Configuration
+namespace NLIP.iShare.IdentityServer
 {
     public static class ConfigurationExtensionsHelper
     {

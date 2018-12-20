@@ -8,10 +8,16 @@ namespace NLIP.iShare.EntityFramework.Migrations
     {
         public static void RegisterConfigurations<TContext>(this ModelBuilder modelBuilder)
         {
-            var typesToRegister = typeof(TContext).Assembly.GetTypes()
-                .Where(t => t.GetInterfaces().Any(gi =>
-                    gi.IsGenericType && gi.GetGenericTypeDefinition() == typeof(IEntityTypeConfiguration<>))).ToList();
+            var entitiesTypes = typeof(TContext).GetProperties()
+                    .Where(c => c.PropertyType.IsGenericType && c.PropertyType.GetGenericTypeDefinition() == typeof(DbSet<>))
+                    .Select(c => c.PropertyType.GenericTypeArguments.First());
 
+            var typesToRegister = typeof(TContext).Assembly.GetTypes()
+                .Where(t => t.GetInterfaces()
+                    .Any(gi => gi.IsGenericType
+                           && gi.GetGenericTypeDefinition() == typeof(IEntityTypeConfiguration<>)
+                           && entitiesTypes.Any(e => e == gi.GenericTypeArguments.First()))
+                );
 
             foreach (var type in typesToRegister)
             {

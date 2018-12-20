@@ -1,16 +1,16 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using NLIP.iShare.Abstractions;
+using NLIP.iShare.AuthorizationRegistry.Core.Api;
 using NLIP.iShare.AuthorizationRegistry.Core.Requests;
 using NLIP.iShare.AuthorizationRegistry.Data;
 using NLIP.iShare.AuthorizationRegistry.Data.Models;
 using NLIP.iShare.EntityFramework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using NLIP.iShare.AuthorizationRegistry.Core.Api;
 using NLIP.iShare.IdentityServer.Delegation;
 using NLIP.iShare.Models;
 using Delegation = NLIP.iShare.AuthorizationRegistry.Data.Models.Delegation;
@@ -114,7 +114,7 @@ namespace NLIP.iShare.AuthorizationRegistry.Core
 
             var delegation = new Delegation
             {
-                AuthorizationRegistryId = await GenerateArId().ConfigureAwait(false),
+                AuthorizationRegistryId = await GenerateId().ConfigureAwait(false),
                 PolicyIssuer = policyIssuer,
                 AccessSubject = accessSubject,
                 Policy = request.Policy,
@@ -181,7 +181,7 @@ namespace NLIP.iShare.AuthorizationRegistry.Core
             {
                 delegation = new Delegation
                 {
-                    AuthorizationRegistryId = await GenerateArId(),
+                    AuthorizationRegistryId = await GenerateId(),
                     PolicyIssuer = policyIssuer,
                     AccessSubject = accessSubject,
                     Policy = policyJson,
@@ -290,19 +290,19 @@ namespace NLIP.iShare.AuthorizationRegistry.Core
             return result;
         }
 
-        private async Task<string> GenerateArId()
+        private async Task<string> GenerateId()
         {
             const string prefix = "AR";
-            var arId = PolicyIdGenerator.New(prefix);
+            var id = FriendlyIdGenerator.New(prefix);
 
-            if (await _db.Delegations
-                .AnyAsync(d => d.AuthorizationRegistryId == arId && !d.Deleted)
+            while (await _db.Delegations
+                .AnyAsync(d => d.AuthorizationRegistryId == id && !d.Deleted)
                 .ConfigureAwait(false))
             {
-                return PolicyIdGenerator.New(prefix);
+                id = FriendlyIdGenerator.New(prefix);
             }
 
-            return arId;
+            return id;
         }
     }
 }

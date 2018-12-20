@@ -8,7 +8,7 @@ using NLIP.iShare.AuthorizationRegistry.Core.Api;
 using NLIP.iShare.AuthorizationRegistry.Core.Requests;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Threading.Tasks;
-using NLIP.iShare.IdentityServer;
+using NLIP.iShare.Models;
 
 namespace NLIP.iShare.AuthorizationRegistry.Api.Controllers
 {

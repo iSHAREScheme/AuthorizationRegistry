@@ -4,7 +4,7 @@ using NLIP.iShare.AuthorizationRegistry.Data.Models;
 using Shouldly;
 using System.Collections.Generic;
 using System.Security.Claims;
-using NLIP.iShare.IdentityServer;
+using NLIP.iShare.Models;
 using Xunit;
 
 namespace NLIP.iShare.AuthorizationRegistry.Core.Tests

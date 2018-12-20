@@ -4,7 +4,7 @@ using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.Http;
 using System.Collections.Generic;
 using System.Diagnostics;
-using NLIP.iShare.IdentityServer;
+using NLIP.iShare.Models;
 
 namespace NLIP.iShare.Api.ApplicationInsights
 {

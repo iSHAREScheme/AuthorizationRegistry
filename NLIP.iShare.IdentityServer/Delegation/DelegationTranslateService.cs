@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using NLIP.iShare.Models;
 using NLIP.iShare.Models.DelegationEvidence;
 using NLIP.iShare.Models.DelegationMask;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace NLIP.iShare.IdentityServer.Delegation
 {
@@ -81,6 +81,7 @@ namespace NLIP.iShare.IdentityServer.Delegation
 
         private static bool IsMatchingPolicy(Policy maskPolicy, Policy evidencePolicy)
             => IsTypeMatch(maskPolicy, evidencePolicy)
+               && IsProviderMatch(maskPolicy, evidencePolicy)
                && HasAllIdentifiers(maskPolicy, evidencePolicy)
                && HasAllAttributes(maskPolicy, evidencePolicy)
                && HasAllActions(maskPolicy, evidencePolicy);
@@ -123,21 +124,32 @@ namespace NLIP.iShare.IdentityServer.Delegation
 
         private static bool AccessDeniedToContainers(Policy maskPolicy, Policy evidencePolicy)
         {
-            var reversed = evidencePolicy.Rules.ToList();
-            reversed.Reverse();
+            var reversedEvidencePolicy = evidencePolicy.Rules.ToList();
+            reversedEvidencePolicy.Reverse();
 
-            var maskResource = maskPolicy.Target.Resource;
-
-            return reversed.Any(rule =>
-                rule.Effect == PolicyRule.Deny().Effect &&
-                maskResource.Type == rule.Target.Resource.Type &&
-                maskResource.Identifiers.Any(mId =>
-                    rule.Target.Resource.Identifiers.Contains("*") ||
-                    rule.Target.Resource.Identifiers.Contains(mId)) &&
-                maskResource.Attributes.Any(mAtt =>
-                    rule.Target.Resource.Attributes.Contains("*") ||
-                    rule.Target.Resource.Attributes.Contains(mAtt))
+            return reversedEvidencePolicy.Any(rule => rule.IsDeny() &&
+                       rule.Target.Resource.HasSameType(maskPolicy.Target.Resource)
+                       && rule.Target.Resource.HasAnyIdentifiers(maskPolicy.Target.Resource.Identifiers)
+                       && rule.Target.Resource.HasAnyAttributes(maskPolicy.Target.Resource.Attributes)
+                       && rule.Target.HasAnyActions(maskPolicy.Target.Actions)
             );
+        }
+
+        private static bool IsProviderMatch(Policy maskPolicy, Policy evidencePolicy)
+        {
+            var evidenceEnvironment = evidencePolicy.Target.Environment;
+            if (evidenceEnvironment != null)
+            {
+                var maskEnvironment = maskPolicy.Target.Environment;
+                if (maskEnvironment == null)
+                {
+                    return false;
+                }
+
+                return maskEnvironment.ServiceProviders.
+                All(sc => evidenceEnvironment.ServiceProviders.Contains(sc));
+            }
+            return true;
         }
     }
 }

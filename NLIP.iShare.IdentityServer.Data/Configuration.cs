@@ -1,5 +1,4 @@
-﻿using System;
-using System.Reflection;
+﻿using System.Reflection;
 using IdentityServer4.EntityFramework.DbContexts;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -7,7 +6,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using NLIP.iShare.EntityFramework;
-using NLIP.iShare.EntityFramework.Migrations.Seed;
 using NLIP.iShare.IdentityServer.Data.Migrations.Seed;
 
 namespace NLIP.iShare.IdentityServer.Data
