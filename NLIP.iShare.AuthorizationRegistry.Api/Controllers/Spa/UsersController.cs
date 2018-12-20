@@ -7,7 +7,7 @@ using NLIP.iShare.Api.Controllers;
 using NLIP.iShare.AuthorizationRegistry.Api.ViewModels.Users;
 using NLIP.iShare.AuthorizationRegistry.Core.Api;
 using NLIP.iShare.AuthorizationRegistry.Core.Requests;
-using NLIP.iShare.IdentityServer;
+using NLIP.iShare.Models;
 
 namespace NLIP.iShare.AuthorizationRegistry.Api.Controllers.Spa
 {

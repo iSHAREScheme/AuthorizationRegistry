@@ -4,7 +4,7 @@ using IdentityModel;
 using IdentityServer4.Models;
 using IdentityServer4.Stores;
 using Microsoft.Extensions.Logging;
-using NLIP.iShare.IdentityServer.Configuration;
+using NLIP.iShare.Configuration;
 using NLIP.iShare.Models;
 
 namespace NLIP.iShare.IdentityServer.Stores

@@ -1,11 +1,15 @@
-﻿using Flurl;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
+using Flurl;
 using Flurl.Http;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using NLIP.iShare.Configuration.Configurations;
-using System.Threading.Tasks;
 using NLIP.iShare.IdentityServer.Models;
+using NLIP.iShare.SchemeOwner.Client.Models;
 using NLIP.iShare.TokenClient.Api;
-using ClientAssertion = NLIP.iShare.IdentityServer.Models.ClientAssertion;
 
 namespace NLIP.iShare.SchemeOwner.Client
 {
@@ -27,39 +31,35 @@ namespace NLIP.iShare.SchemeOwner.Client
             _partyDetailsOptions = partyDetailsOptions;
         }
 
-        public async Task<CertificateStatus> GetCertificate(string clientAssertion, string certificateHash)
+        public async Task<Party> GetParty(string partyId)
         {
-            var accessToken = await _tokenClient
-                .GetAccessToken(_schemeOwnerClientOptions.BaseUri, _partyDetailsOptions.ClientId, clientAssertion)
-                .ConfigureAwait(false);
+            _logger.LogInformation("Party id used: {partyId}", partyId);
 
-            return await GetCertificateStatus(accessToken, certificateHash).ConfigureAwait(false);
-        }
+            var accessToken = await GetAccessToken(new ClientAssertion(
+                _partyDetailsOptions.ClientId, 
+                _partyDetailsOptions.ClientId, 
+                $"{_schemeOwnerClientOptions.BaseUri}connect/token"));
 
-        public async Task<CertificateStatus> GetCertificate(ClientAssertion clientAssertion, string certificateHash)
-        {
-            var accessToken = await GetAccessToken(clientAssertion).ConfigureAwait(false);
 
-            return await GetCertificateStatus(accessToken, certificateHash).ConfigureAwait(false);
-        }
+            var request = await _schemeOwnerClientOptions.BaseUri
+                .AppendPathSegment("parties")
+                .AppendPathSegment(partyId)
+                .WithOAuthBearerToken(accessToken)                
+                .GetJsonAsync()
+                ;
 
-        private async Task<CertificateStatus> GetCertificateStatus(string accessToken, string certificateHash)
-        {
-            _logger.LogInformation("GetCertificateStatus: {accessToken}, {certificateHash}", accessToken, certificateHash);
+            if (request == null)
+            {
+                _logger.LogInformation("No party with client id {partyId} was found at SO.", partyId);
+                return null;
+            }
 
-            var certificateStatus = await _schemeOwnerClientOptions.BaseUri
-                .AppendPathSegment("certificates")
-                .AppendPathSegment(certificateHash)
-                .SetQueryParam("full", true)
-                .SetQueryParam("test", true)
-                .WithOAuthBearerToken(accessToken)
-                .GetAsync()
-                .ReceiveJson<CertificateStatus>()
-                .ConfigureAwait(false);
+            var partyClaim = new JwtSecurityTokenHandler().ReadJwtToken((string)request.party_token).Claims.FirstOrDefault(c => c.Type == "party_info") as Claim;
+            var party = JsonConvert.DeserializeObject<Party>(partyClaim.Value);
 
-            _logger.LogInformation("Certificates status : {status}", certificateStatus?.IsCertified);
+            _logger.LogInformation("Party status : {status}", party.Adherence.Status);
 
-            return certificateStatus;
+            return party;
         }
 
         private async Task<string> GetAccessToken(ClientAssertion clientAssertion)
@@ -85,6 +85,6 @@ namespace NLIP.iShare.SchemeOwner.Client
                     _partyDetailsOptions.PublicKeys)
                 .ConfigureAwait(false);
             return accessToken;
-        }
+        }        
     }
 }

@@ -6,7 +6,7 @@ using NLIP.iShare.IdentityServer.Services;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using NLIP.iShare.IdentityServer.Configuration;
+using NLIP.iShare.Configuration;
 
 namespace NLIP.iShare.IdentityServer.Validation
 {

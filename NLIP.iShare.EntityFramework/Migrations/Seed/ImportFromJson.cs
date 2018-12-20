@@ -9,6 +9,10 @@ namespace NLIP.iShare.EntityFramework.Migrations.Seed
 {
     public static class ImportFromJson
     {
+        private static JsonSerializerSettings Settings = new JsonSerializerSettings
+        {
+            ContractResolver = new PrivateOrInternalPropertiesResolver()
+        };
         public static TEntity[] DeserializeCollectionOf<TEntity>(string json)
         {
             if (string.IsNullOrEmpty(json))
@@ -16,12 +20,7 @@ namespace NLIP.iShare.EntityFramework.Migrations.Seed
                 return new TEntity[] { };
             }
 
-            var settings = new JsonSerializerSettings
-            {
-                ContractResolver = new PrivateOrInternalPropertiesResolver()
-            };
-
-            return JsonConvert.DeserializeObject<TEntity[]>(json, settings);
+            return JsonConvert.DeserializeObject<TEntity[]>(json, Settings);
         }
 
         public class PrivateOrInternalPropertiesResolver : DefaultContractResolver

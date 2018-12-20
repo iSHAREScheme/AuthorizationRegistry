@@ -1,14 +1,6 @@
 i {
   cursor: pointer;
 }
-.btn {
-  margin-top: 10px;
-  margin-bottom: 20px;
-  margin-right: 10px;
-  .fa {
-    margin-right: 10px;
-  }
-}
 .fa-trash {
   margin-left: 5px;
   color: red;
@@ -18,9 +10,4 @@ i {
 }
 input[type='text'] {
   margin-bottom: 10px;
-}
-.delegation {
-  height: 650px;
-  max-height: 650px;
-  overflow-y: auto;
 }

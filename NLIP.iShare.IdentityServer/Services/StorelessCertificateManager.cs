@@ -1,5 +1,4 @@
-﻿using NLIP.iShare.IdentityServer.Configuration;
-using System;
+﻿using System;
 using System.Security.Cryptography.X509Certificates;
 
 namespace NLIP.iShare.IdentityServer.Services

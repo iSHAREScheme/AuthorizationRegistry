@@ -2,6 +2,7 @@
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Collections.Generic;
 using System.Linq;
+using NLIP.iShare.Api.Swagger;
 
 namespace NLIP.iShare.Api.Filters
 {
@@ -78,7 +79,8 @@ namespace NLIP.iShare.Api.Filters
         {
             var key = "jwt_payload_" + attribute.TokenName;
             Schema claimSchema;
-            var claimDefinitionProperties = swaggerDoc.Definitions[attribute.SwaggerDefinitionName].Properties;
+            var normalizedDefinitionName = SwaggerUtils.NormalizeModelName(attribute.SwaggerDefinitionName);
+            var claimDefinitionProperties = swaggerDoc.Definitions[normalizedDefinitionName].Properties;
             if (attribute.ResponseContainsList)
             {
                 claimSchema = new Schema

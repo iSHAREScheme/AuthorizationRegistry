@@ -6,7 +6,7 @@ using System;
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace NLIP.iShare.IdentityServer.Configuration
+namespace NLIP.iShare.Configuration
 {
     public class Decorator<TService>
     {

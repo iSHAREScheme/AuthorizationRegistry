@@ -1,4 +1,7 @@
 ﻿using System.Linq;
+using System.Security.Cryptography;
+using Microsoft.IdentityModel.Tokens;
+using OpenSSL.PrivateKeyDecoder;
 
 namespace NLIP.iShare.Configuration.Configurations
 {
@@ -10,6 +13,7 @@ namespace NLIP.iShare.Configuration.Configurations
         public string BaseUri { get; set; }
         public string Thumbprint { get; set; }
         public string[] PublicKeys { get; set; }
+        public SigningCredentials SigningCredential => CreateAccessTokenSigningCredentials(PrivateKey);
 
         public void Validate(ConfigurationOptionsValidator validateConfigurationOptions)
         {
@@ -24,7 +28,17 @@ namespace NLIP.iShare.Configuration.Configurations
             {
                 throw new ConfigurationException($"The private/public pair is not valid because the signing/verification failed.");
             }
+        }
 
+        private static SigningCredentials CreateAccessTokenSigningCredentials(string privateKeyText)
+        {
+            var decoder = new OpenSSLPrivateKeyDecoder();
+
+            var rsaParams = decoder.DecodeParameters(privateKeyText, null);
+            var rsa = RSA.Create();
+            rsa.ImportParameters(rsaParams);
+
+            return new SigningCredentials(new RsaSecurityKey(rsa), SecurityAlgorithms.RsaSha256);
         }
     }
 }

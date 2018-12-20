@@ -6,7 +6,7 @@ using System.Text;
 
 namespace NLIP.iShare.Models
 {
-    public static class PolicyIdGenerator
+    public static class FriendlyIdGenerator
     {
         public static string New(string prefix)
         {

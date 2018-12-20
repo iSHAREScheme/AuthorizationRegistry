@@ -132,7 +132,7 @@ namespace NLIP.iShare.AuthorizationRegistry.Core
             var identity = await _userManager.Users.FirstOrDefaultAsync(u => u.UserName == request.Username);
             if (identity == null)
             {
-                return Response<UserModel>.ForError("Username does not exist!");
+                return Response<UserModel>.ForError("Username does not exist.");
             }
             var user = await _db.Users.FirstOrDefaultAsync(u => u.AspNetUserId == identity.Id);
 
@@ -163,7 +163,7 @@ namespace NLIP.iShare.AuthorizationRegistry.Core
 
             if (user != null && user.Active)
             {
-                return Response<UserModel>.ForError("Account already activated!");
+                return Response<UserModel>.ForError("Account already activated.");
             }
 
             var identity = await _userManager.Users.FirstAsync(u => u.Id == user.AspNetUserId).ConfigureAwait(false);
@@ -182,12 +182,12 @@ namespace NLIP.iShare.AuthorizationRegistry.Core
             var user = await _db.Users.FirstOrDefaultAsync(x => x.Id == request.Id);
             if (user == null)
             {
-                return Response<UserModel>.ForError("Invalid request");
+                return Response<UserModel>.ForError("Associated user not found.");
             }
 
             if (user.Active)
             {
-                return Response<UserModel>.ForError("Account already activated");
+                return Response<UserModel>.ForError("Account already activated.");
             }
 
             var aspNetUser = await _userManager.FindByIdAsync(user.AspNetUserId);
@@ -270,7 +270,7 @@ namespace NLIP.iShare.AuthorizationRegistry.Core
             catch (Exception ex)
             {
                 _logger.LogError("Unable to delete invalid account: ", ex);
-                return Response<UserModel>.ForError("unable to create account");
+                return Response<UserModel>.ForError("Unable to create account.");
             }
 
             return Response<UserModel>.ForErrors(result.Errors.Select(e => e.Description));
@@ -306,7 +306,7 @@ namespace NLIP.iShare.AuthorizationRegistry.Core
 
             if (user == null)
             {
-                return Response.ForError("user id not found");
+                return Response.ForError("User not found.");
             }
 
             var identity = await _userManager.Users.FirstOrDefaultAsync(u => u.Id == user.AspNetUserId);
@@ -369,12 +369,12 @@ namespace NLIP.iShare.AuthorizationRegistry.Core
             var aspNetUser = await _userManager.FindByIdAsync(aspNetUserId);
             if (aspNetUser == null)
             {
-                return Response<UserModel>.ForError("user not found");
+                return Response<UserModel>.ForError("User not found.");
             }
 
             if (request.NewPassword == request.CurrentPassword)
             {
-                return Response<UserModel>.ForError("the new password should be different from the current password");
+                return Response<UserModel>.ForError("The new password should be different from the current password.");
             }
 
             var passwordValidationResult = await GetPasswordErrors(aspNetUser, request.NewPassword);
@@ -411,7 +411,7 @@ namespace NLIP.iShare.AuthorizationRegistry.Core
             var user = await _db.Users.FindAsync(userId);
             if (user == null)
             {
-                return Response.ForError("user not found");
+                return Response.ForError("User not found.");
             }
 
             user.Active = false;
@@ -441,7 +441,7 @@ namespace NLIP.iShare.AuthorizationRegistry.Core
             var user = await _db.Users.FindAsync(request.Id);
             if (user == null)
             {
-                return Response<UserModel>.ForError("user not found");
+                return Response<UserModel>.ForError("User not found.");
             }
             var identity = await _userManager.FindByIdAsync(user.AspNetUserId);
 

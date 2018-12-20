@@ -1,9 +1,9 @@
-﻿using Microsoft.Extensions.Logging;
-using NLIP.iShare.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
+using Microsoft.Extensions.Logging;
+using NLIP.iShare.Models;
 
 namespace NLIP.iShare.IdentityServer
 {
@@ -26,7 +26,7 @@ namespace NLIP.iShare.IdentityServer
                 throw new ArgumentNullException(nameof(certificate));
             }
 
-            _logger.LogInformation("Start validating {thumbprint}", certificate.Thumbprint);
+            _logger.LogInformation("Start validating {thumbprint}.", certificate.Thumbprint);
 
             var keyUsage = (X509KeyUsageExtension)certificate.Extensions
                 .OfType<X509Extension>()
@@ -42,11 +42,11 @@ namespace NLIP.iShare.IdentityServer
 
 
             var checks = new List<string>();
-            AddCheck(checks, certificate.NotBefore <= periodStart && periodEnd <= certificate.NotAfter, "Date validation status");
-            AddCheck(checks, IsCertificatePartOfChain(certificate, chain), "Part of chain validation");
-            AddCheck(checks, certificate.SignatureAlgorithm.FriendlyName == "sha256RSA", "SHA 256 signed");
-            AddCheck(checks, certificate.PublicKey.Key.KeySize >= 2048, "Has 2048 private key");
-            AddCheck(checks, !string.IsNullOrEmpty(certificate.SerialNumber), "Has serial number");
+            AddCheck(checks, certificate.NotBefore <= periodStart && periodEnd <= certificate.NotAfter, "Certificate dates invalid.");
+            AddCheck(checks, IsCertificatePartOfChain(certificate, chain), "Certificate is not part of the chain.");
+            AddCheck(checks, certificate.SignatureAlgorithm.FriendlyName == "sha256RSA", "Certificate signature invalid.");
+            AddCheck(checks, certificate.PublicKey.Key.KeySize >= 2048, "Certificate public key size is smaller than 2048.");
+            AddCheck(checks, !string.IsNullOrEmpty(certificate.SerialNumber), "Certificate has no serial number");
 
             var keyUsagesIsForDigitalOnly = keyUsage.KeyUsages.HasFlag(X509KeyUsageFlags.DigitalSignature)
                                             &&
@@ -56,13 +56,13 @@ namespace NLIP.iShare.IdentityServer
                                                 keyUsage.KeyUsages.HasFlag(X509KeyUsageFlags.CrlSign)
                                             );
 
-            AddCheck(checks, keyUsagesIsForDigitalOnly, "Key usage is for digital signature and not for CA");
+            AddCheck(checks, keyUsagesIsForDigitalOnly, "Key usage is for digital signature and not for CA.");
 
             checks.ForEach(check => _logger.LogInformation(check));
 
             var result = checks.Any() ? Response.ForErrors(checks) : Response.ForSuccess();
 
-            _logger.LogInformation("Certificate {thumbprint} validation is {valid}", certificate.Thumbprint, result.Success);
+            _logger.LogInformation("Certificate {thumbprint} validation is {valid}.", certificate.Thumbprint, result.Success);
 
             return result;
         }
@@ -106,7 +106,7 @@ namespace NLIP.iShare.IdentityServer
 
                 if (certificatesChain != null && certificatesChain.Any())
                 {
-                    _logger.LogInformation("Using chain {thumbprints}", certificatesChain.Select(c => c.Thumbprint).ToArray());
+                    _logger.LogInformation("Using chain {thumbprints}.", certificatesChain.Select(c => c.Thumbprint).ToArray());
                     chain.ChainPolicy.ExtraStore.AddRange(certificatesChain.ToArray());
                 }
 
@@ -127,10 +127,10 @@ namespace NLIP.iShare.IdentityServer
                         isValidByPolicy = true;
                     }
 
-                    _logger.LogInformation("Chain validation status information {results}", statuses.Select(c => c.StatusInformation));
+                    _logger.LogInformation("Chain validation status information {results}.", statuses.Select(c => c.StatusInformation));
                 }
 
-                _logger.LogInformation("IsCertificatePartOfChain is {result}", isValidByPolicy);
+                _logger.LogInformation("IsCertificatePartOfChain is {result}.", isValidByPolicy);
                 return isValidByPolicy;
             }
         }

@@ -1,0 +1,47 @@
+//The evidence suggests that for the specific container 180621.ABC123, ETA Read access is permitted by Warehouse 13 to ABC Trucking. A Service Provider can use this evidence to decide whether actual access to the CONTAINER.DATA is given to ABC Trucking.
+
+{
+  "delegationEvidence": {
+    "notBefore": 1541058939,
+    "notOnOrAfter": 1551058939,
+    "policyIssuer": "EU.EORI.NL000000005",
+    "target": {
+      "accessSubject": "EU.EORI.NL000000001"
+    },
+    "policySets": [
+      {
+        "maxDelegationDepth": 0,
+        "target": {
+          "environment": {
+            "licenses": [ "ISHARE.0001" ]
+          }
+        },
+        "policies": [
+          {
+            "target": {
+              "resource": {
+                "type": "GS1.CONTAINER",
+                "identifiers": [ "*" ],
+                "attributes": [
+                  "GS1.CONTAINER.ATTRIBUTE.ETA",
+                  "GS1.CONTAINER.ATTRIBUTE.WEIGHT"
+                ]
+              },
+              "actions": [
+                "ISHARE.READ"
+              ],
+              "environment": {
+                "serviceProviders": [ "EU.EORI.NL000000002" ]
+              }
+            },
+            "rules": [
+              {
+                "effect": "Deny"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

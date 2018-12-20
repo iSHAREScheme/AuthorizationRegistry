@@ -1,0 +1,28 @@
+{
+  "delegationEvidence": {
+    "notBefore": 1529574873,
+    "notOnOrAfter": 1559574873,
+    "policyIssuer": "EU.EORI.NL000000003",
+    "target": { "accessSubject": "EU.EORI.NL000000001" },
+    "policySets": [
+      {
+        "maxDelegationDepth": 5,
+        "target": { "environment": { "licenses": [ "ISHARE.0001" ] } },
+        "policies": [
+          {
+            "target": {
+              "resource": {
+                "type": "GS1.CONTAINER",
+                "identifiers": [ "*" ],
+                "attributes": [ "CONTAINER.DATA.ATTRIBUTE.ETA" ]
+              },
+              "actions": [ "ISHARE.READ" ],
+              "environment": { "serviceProviders": [ "EU.EORI.NL000000003" ] }
+            },
+            "rules": [ { "effect": "Permit" } ]
+          }
+        ]
+      }
+    ]
+  }
+}

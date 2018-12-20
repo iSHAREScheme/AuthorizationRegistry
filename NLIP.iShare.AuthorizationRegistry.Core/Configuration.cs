@@ -1,9 +1,9 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using NLIP.iShare.AuthorizationRegistry.Core.Api;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using NLIP.iShare.AuthorizationRegistry.Core.Api;
 using NLIP.iShare.AuthorizationRegistry.Data.Models;
 using NLIP.iShare.Identity.Login;
 
@@ -11,7 +11,7 @@ namespace NLIP.iShare.AuthorizationRegistry.Core
 {
     public static class Configuration
     {
-        public static void AddCore(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddCore(this IServiceCollection services, IConfiguration configuration)
         {   
             services.AddTransient<IDelegationService, DelegationService>();
             services.AddTransient<IDelegationValidationService, DelegationValidationService>();            
@@ -27,7 +27,8 @@ namespace NLIP.iShare.AuthorizationRegistry.Core
                     return usersService.GetClaims(identityUserId);
                 };
                 return func;
-            });            
+            });
+            return services;
         }
     }
 }

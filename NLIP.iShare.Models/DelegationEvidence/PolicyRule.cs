@@ -10,14 +10,10 @@
             Effect = effect;
             Target = target;
         }
-        public static PolicyRule Permit()
-        {
-            return new PolicyRule("Permit");
-        }
+        public static PolicyRule Permit() => new PolicyRule("Permit");
+        public static PolicyRule Deny() => new PolicyRule("Deny");
 
-        public static PolicyRule Deny()
-        {
-            return new PolicyRule("Deny");
-        }
+        public bool IsDeny() => Effect == "Deny";
+        public bool IsPermit() => Effect == "Permit";
     }
 }

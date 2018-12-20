@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Security.Claims;
 
-namespace NLIP.iShare.IdentityServer
+namespace NLIP.iShare.Models
 {
     [DebuggerStepThrough]
     public static class ClaimsIdentityExtensions
@@ -45,6 +45,11 @@ namespace NLIP.iShare.IdentityServer
         public static string GetRequestingClientId(this ClaimsPrincipal principal)
         {
             return ((ClaimsIdentity)principal.Identity).Claims.First(c => c.Type == "client_id").Value;
+        }
+
+        public static string GetRole(this ClaimsPrincipal principal)
+        {
+            return ((ClaimsIdentity)principal.Identity).Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
         }
     }
 }

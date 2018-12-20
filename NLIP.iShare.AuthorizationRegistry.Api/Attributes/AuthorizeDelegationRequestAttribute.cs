@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Logging;
@@ -7,9 +10,6 @@ using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
 using NLIP.iShare.IdentityServer.Services;
 using NLIP.iShare.Models.DelegationMask;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace NLIP.iShare.AuthorizationRegistry.Api.Attributes
 {

@@ -8,7 +8,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Logging;
 using NLIP.iShare.Configuration;
 using NLIP.iShare.Configuration.Configurations;
-using NLIP.iShare.IdentityServer.Configuration;
 using NLIP.iShare.IdentityServer.Delegation;
 using NLIP.iShare.IdentityServer.Services;
 using NLIP.iShare.IdentityServer.Stores;
@@ -16,7 +15,7 @@ using NLIP.iShare.IdentityServer.Validation;
 
 namespace NLIP.iShare.IdentityServer
 {
-    public static class ConfigurationExtensions
+    public static class Configuration
     {
         /// <summary>
         /// Allow all CORS policy for Identity Server clients
@@ -47,7 +46,11 @@ namespace NLIP.iShare.IdentityServer
                 .AddTransientDecorator<IClientStore, PublicClientStore>()
                 ;
 
-            builder.AddSecretValidators(typeof(ClientAssertionSecretValidator), typeof(PrivateKeyJwtSecretValidator));
+            builder.AddSecretValidators(
+                typeof(ClientAssertionSecretValidator), 
+                typeof(PrivateKeyJwtSecretValidator),
+                typeof(PartyValidator)
+                );
             services.AddTransientDecorator<ISecretValidator, ServiceConsumerSecretValidator>();
             return builder;
         }
@@ -68,7 +71,6 @@ namespace NLIP.iShare.IdentityServer
         {
             services.AddIdentityServerCors(loggerFactory);
 
-            var identityServerOptions = services.ConfigureOptions<IdentityServerOptions>(configuration, "IdentityServer");
             var builder = services.AddIdentityServer(options =>
                     {
                         var serviceProvider = services.BuildServiceProvider();
@@ -87,11 +89,18 @@ namespace NLIP.iShare.IdentityServer
                         }
                     })
                     .AddPki(configuration)
-                    .AddDeveloperSigningCredential(persistKey: identityServerOptions.PersistSigningKey)
                     .AddDelegation()
                     .AddSecretParser<JwtBearerClientAssertionSecretParser>()
                     .AddCustomTokenRequestValidators(typeof(TokenRequestValidator))
                 ;
+            return builder;
+        }
+
+        public static IIdentityServerBuilder AddIdentityServerSigningCredentials(this IIdentityServerBuilder builder)
+        {
+            var serviceProvider = builder.Services.BuildServiceProvider();
+            var partyDetailsOptions = serviceProvider.GetRequiredService<PartyDetailsOptions>();
+            builder.AddSigningCredential(partyDetailsOptions.SigningCredential);
             return builder;
         }
 

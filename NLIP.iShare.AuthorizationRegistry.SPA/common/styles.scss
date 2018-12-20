@@ -39,9 +39,28 @@ h3 {
   font-weight: 700;
 }
 
+a {
+  color: #61385f;
+  &:hover {
+    color: #61385f;
+  }
+}
+
 input[type='text'],
 input[type='password'],
 input[type='date'] {
+  &[readonly],
+  &[disabled],
+  &:disabled,
+  &:read-only {
+    cursor: default;
+    &:focus {
+      box-shadow: none;
+    }
+  }
+}
+
+select {
   &[readonly],
   &[disabled],
   &:disabled,
@@ -95,4 +114,13 @@ label {
 .required:after {
   content: '*';
   color: red;
+}
+
+.btn {
+  margin-top: 10px;
+  margin-bottom: 20px;
+  margin-right: 10px;
+  .fa {
+    margin-right: 10px;
+  }
 }

@@ -28,7 +28,7 @@
   },
   "Spa": {
     "BaseUri": "http://localhost:4201/admin/",
-    "ApplicationName": "Authorization Registry Dev",
+    "ApplicationName": "Authorization-Registry-Dev",
     "TwoFactorEnabled": false
   }
 }

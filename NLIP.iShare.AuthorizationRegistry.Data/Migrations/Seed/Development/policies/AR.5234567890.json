@@ -1,0 +1,41 @@
+{
+  "delegationEvidence": {
+    "notBefore": 1509633681,
+    "notOnOrAfter": 1509633741,
+    "policyIssuer": "EU.EORI.NL812972715",
+    "target": { "accessSubject": "EU.EORI.NL000000002" },
+    "policySets": [
+      {
+        "maxDelegationDepth": 2,
+        "target": { "environment": { "licenses": [ "ISHARE.0001", "ISHARE.0003" ] } },
+        "policies": [
+          {
+            "target": {
+              "resource": {
+                "type": "GS1.CONTAINER",
+                "identifiers": [ "*" ],
+                "attributes": [ "GS1.CONTAINER.ATTRIBUTE.ETA", "GS1.CONTAINER.ATTRIBUTE.WEIGHT" ]
+              },
+              "actions": [ "ISHARE.READ", "ISHARE.CREATE" ],
+              "environment": { "serviceProviders": [ "EU.EORI.NL123412345" ] }
+            },
+            "rules": [
+              { "effect": "Permit" },
+              {
+                "effect": "Deny",
+                "target": {
+                  "resource": { "attributes": [ "GS1.CONTAINER.ATTRIBUTE.ETA" ] },
+                  "actions": [ "ISHARE.CREATE" ]
+                }
+              },
+              {
+                "effect": "Deny",
+                "target": { "resource": { "identifiers": [ "GS1.CONTAINER.ID.00000000001" ] } }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

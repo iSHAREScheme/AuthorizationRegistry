@@ -1,0 +1,76 @@
+{
+  "delegationEvidence": {
+    "notBefore": 1541058939,
+    "notOnOrAfter": 1551058939,
+    "policyIssuer": "EU.EORI.NL000000005",
+    "target": { "accessSubject": "EU.EORI.NL000000001" },
+    "policySets": [
+      {
+        "target": { "environment": { "licenses": [ "ISHARE.0001" ] } },
+        "policies": [
+          {
+            "target": {
+              "resource": {
+                "type": "GS1.CONTAINER",
+                "identifiers": [ "*" ],
+                "attributes": [ "GS1.CONTAINER.ATTRIBUTE.ETA", "GS1.CONTAINER.ATTRIBUTE.WEIGHT" ]
+              },
+              "actions": [ "ISHARE.CREATE", "ISHARE.READ", "ISHARE.UPDATE", "ISHARE.DELETE" ],
+              "environment": { "serviceProviders": [ "EU.EORI.NL000000003" ] }
+            },
+            "rules": [
+              { "effect": "Permit" },
+              {
+                "effect": "Deny",
+                "target": {
+                  "resource": {
+                    "type": "GS1.CONTAINER",
+                    "identifiers": [ "180621.ABC134", "180621.ABC135" ],
+                    "attributes": [ "GS1.CONTAINER.ATTRIBUTE.ETA" ]
+                  },
+                  "actions": [ "ISHARE.CREATE", "ISHARE.UPDATE", "ISHARE.DELETE" ]
+                }
+              }
+            ]
+          },
+          {
+            "target": {
+              "resource": {
+                "type": "GS1.CONTAINER",
+                "identifiers": [ "180621.ABC150", "180621.ABC151", "180621.ABC152", "180621.ABC153", "180621.ABC154", "180621.ABC155", "180621.ABC156", "180621.ABC157", "180621.ABC158", "180621.ABC159", "180621.ABC160", "180621.ABC161", "180621.ABC162", "180621.ABC163", "180621.ABC164", "180621.ABC165" ],
+                "attributes": [ "GS1.CONTAINER.ATTRIBUTE.ETA", "GS1.CONTAINER.ATTRIBUTE.WEIGHT" ]
+              },
+              "actions": [ "ISHARE.CREATE", "ISHARE.READ", "ISHARE.UPDATE", "ISHARE.DELETE" ],
+              "environment": { "serviceProviders": [ "EU.EORI.NL000000002" ] }
+            },
+            "rules": [
+              { "effect": "Permit" },
+              {
+                "effect": "Deny",
+                "target": {
+                  "resource": {
+                    "type": "GS1.CONTAINER",
+                    "identifiers": [ "180621.ABC150", "180621.ABC151", "180621.ABC152", "180621.ABC153", "180621.ABC154" ],
+                    "attributes": [ "GS1.CONTAINER.ATTRIBUTE.WEIGHT" ]
+                  },
+                  "actions": [ "ISHARE.CREATE", "ISHARE.DELETE" ]
+                }
+              },
+              {
+                "effect": "Deny",
+                "target": {
+                  "resource": {
+                    "type": "GS1.CONTAINER",
+                    "identifiers": [ "180621.ABC150" ],
+                    "attributes": [ "GS1.CONTAINER.ATTRIBUTE.ETA" ]
+                  },
+                  "actions": [ "ISHARE.READ" ]
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

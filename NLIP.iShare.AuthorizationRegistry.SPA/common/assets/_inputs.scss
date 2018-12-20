@@ -1,4 +1,9 @@
 $placeholder-color: #c5c5c5;
+
+textarea {
+  box-shadow: 0 0 4px #eb5f56;
+  padding-right: 15px;
+}
 input {
   &[type='text'],
   &[type='password'],
@@ -26,6 +31,18 @@ input {
       outline: 0;
       box-shadow: 0 0 4px #eb5f56;
     }
+  }
+}
+select {
+  width: 300px !important;
+  padding-right: 15px !important;
+  border: 1px solid #e5e5e5 !important;
+  margin-top: 5px !important;
+  margin-bottom: 5px !important;
+  padding: 10px !important;
+  &:focus {
+    outline: 0;
+    box-shadow: 0 0 4px #eb5f56;
   }
 }
 .panel {

@@ -1,10 +1,6 @@
 import { OnInit, Component } from '@angular/core';
 import { Router } from '@angular/router';
-
-import { AlertService } from 'common';
-
-import { DelegationResponse } from './../../models/DelegationResponse';
-import { CreateDelegationMask } from './../../models/CreateDelegationMask';
+import { AlertService, DelegationResponse, CreateDelegationMask } from 'common';
 import { MaskApiService } from '../../services/mask-api.service';
 
 @Component({

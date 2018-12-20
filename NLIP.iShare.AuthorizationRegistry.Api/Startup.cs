@@ -41,6 +41,7 @@ namespace NLIP.iShare.AuthorizationRegistry.Api
                 .AddIdentityServerDb(Configuration, HostingEnvironment, $"{seedRoot}IdentityServer", typeof(Startup).Assembly)
                 .AddConsumer()
                 .AddIdentity<AspNetUser, AspNetUserDbContext>()
+                .AddSchemeOwnerValidator(Configuration, HostingEnvironment)
                 ;
 
             services.AddIdentityServices<AspNetUser, AspNetUserDbContext>(
@@ -55,6 +56,8 @@ namespace NLIP.iShare.AuthorizationRegistry.Api
             base.ConfigureServices(services); // this needs to be called after .AddIdentity<TUser, TContext>
                                               // since it configures the JwtAuth and will make that as the default challenge
                                               // see https://stackoverflow.com/a/45853589/782754
+
+            IdentityServerBuilder.AddIdentityServerSigningCredentials();
         }
 
         public override void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory)

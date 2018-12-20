@@ -1,7 +1,6 @@
 ﻿using System.Security.Claims;
 using System.Threading.Tasks;
 using NLIP.iShare.AuthorizationRegistry.Core.Api;
-using NLIP.iShare.IdentityServer;
 using NLIP.iShare.IdentityServer.Delegation;
 using NLIP.iShare.Models;
 

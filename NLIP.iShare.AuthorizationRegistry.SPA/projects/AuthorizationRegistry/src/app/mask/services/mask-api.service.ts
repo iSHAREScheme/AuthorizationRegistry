@@ -1,9 +1,7 @@
 import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-
-import { CreateDelegationMask } from './../models/CreateDelegationMask';
-import { EnvironmentModel } from 'common';
+import { EnvironmentModel, CreateDelegationMask } from 'common';
 
 @Injectable({
   providedIn: 'root'

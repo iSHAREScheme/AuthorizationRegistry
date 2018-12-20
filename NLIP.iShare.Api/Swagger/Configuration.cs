@@ -43,7 +43,7 @@ namespace NLIP.iShare.Api.Swagger
                 IncludeXmlComments(Assembly.GetEntryAssembly(), c);
                 IncludeXmlComments(typeof(Configuration).Assembly, c);
 
-                c.CustomSchemaIds( type => type.FriendlyId().Replace("ViewModel", "", StringComparison.CurrentCultureIgnoreCase));
+                c.CustomSchemaIds( type => SwaggerUtils.NormalizeModelName(type.FriendlyId()));
             });
         }
 

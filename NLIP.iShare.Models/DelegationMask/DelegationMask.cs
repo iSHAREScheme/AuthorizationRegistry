@@ -45,5 +45,59 @@ namespace NLIP.iShare.Models.DelegationMask
 
             DelegationRequest = request;
         }
+
+        public DelegationMask(string[] identifers, string policyIssuer, string accessSubject, string[] attributes, string[] actions, string resourceType, string serviceProvider)
+        {
+            var policy = new Policy
+            {
+                Target = new PolicyTarget
+                {
+                    Resource = new PolicyTargetResource
+                    {
+                        Type = resourceType,
+                        Identifiers = identifers.ToList(),
+                        Attributes = attributes.ToList()
+                    },
+                    Actions = actions.ToList(),
+                    Environment = new PolicyTargetEnvironment
+                    {
+                        ServiceProviders = new List<string> { serviceProvider }
+                    }
+                },
+                Rules = new List<PolicyRule>() { PolicyRule.Permit() }
+            };
+
+            var policySet = new DelegationRequestPolicySet
+            {
+                Policies = new List<Policy>() { policy }
+            };
+
+            var request = new DelegationRequest
+            {
+                PolicyIssuer = policyIssuer,
+                Target = new Target
+                {
+                    AccessSubject = accessSubject
+                },
+                PolicySets = new List<DelegationRequestPolicySet>() { policySet }
+            };
+
+            DelegationRequest = request;
+        }
+
+        public DelegationMask(string policyIssuer, string accessSubject, DelegationRequestPolicySet customPolicies)
+        {
+            var request = new DelegationRequest
+            {
+                PolicyIssuer = policyIssuer,
+                Target = new Target
+                {
+                    AccessSubject = accessSubject
+                },
+                PolicySets = new List<DelegationRequestPolicySet>() { customPolicies }
+            };
+
+            DelegationRequest = request;
+        }
     }
 }
