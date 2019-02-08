@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <ProjectGuid>5B106EA7-FB34-4CD1-BA7D-E481D8A752C4</ProjectGuid>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <CodeAnalysisRuleSet>iSHARE.SchemeOwner.Client.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <CodeAnalysisRuleSet>iSHARE.SchemeOwner.Client.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="NewFolder\**" />
+    <EmbeddedResource Remove="NewFolder\**" />
+    <None Remove="NewFolder\**" />
+  </ItemGroup>
+
+ <ItemGroup>
+    <ProjectReference Include="..\iSHARE.Configuration\iSHARE.Configuration.csproj" />
+    <ProjectReference Include="..\iSHARE.IdentityServer\iSHARE.IdentityServer.csproj" />
+    <ProjectReference Include="..\iSHARE.TokenClient\iSHARE.TokenClient.csproj" />
+  </ItemGroup>
+
+</Project>

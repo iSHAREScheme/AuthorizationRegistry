@@ -1,0 +1,72 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <ProjectGuid>20010756-856B-43FC-9054-953047B7C1A9</ProjectGuid>
+    <ApplicationInsightsResourceId>/subscriptions/5042975c-809d-4429-b691-0c3e51f323e0/resourcegroups/iSHARE-QA/providers/microsoft.insights/components/ishare-local</ApplicationInsightsResourceId>
+    <ApplicationInsightsAnnotationResourceId>/subscriptions/5042975c-809d-4429-b691-0c3e51f323e0/resourceGroups/iSHARE-QA/providers/microsoft.insights/components/ishare-local</ApplicationInsightsAnnotationResourceId>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);1591</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <CodeAnalysisRuleSet>iSHARE.AuthorizationRegistry.Api.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <CodeAnalysisRuleSet>iSHARE.AuthorizationRegistry.Api.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Manatee.Json" Version="9.9.5" />
+    <PackageReference Include="Microsoft.AspNetCore.All" Version="2.1.4" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.4" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="3.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\iSHARE.Abstractions\iSHARE.Abstractions.csproj" />
+    <ProjectReference Include="..\iSHARE.Api\iSHARE.Api.csproj" />
+    <ProjectReference Include="..\iSHARE.AuthorizationRegistry.Core\iSHARE.AuthorizationRegistry.Core.csproj" />
+    <ProjectReference Include="..\iSHARE.AuthorizationRegistry.Data\iSHARE.AuthorizationRegistry.Data.csproj" />
+    <ProjectReference Include="..\iSHARE.Identity.Data\iSHARE.Identity.Data.csproj" />
+    <ProjectReference Include="..\iSHARE.IdentityServer.Data\iSHARE.IdentityServer.Data.csproj" />
+    <ProjectReference Include="..\iSHARE.EmailClient\iSHARE.EmailClient.csproj" />
+    <ProjectReference Include="..\iSHARE.IdentityServer\iSHARE.IdentityServer.csproj" />
+    <ProjectReference Include="..\iSHARE.Identity\iSHARE.Identity.csproj" />
+    <ProjectReference Include="..\iSHARE.Models\iSHARE.Models.csproj" />
+    <ProjectReference Include="..\iSHARE.SchemeOwner.Client\iSHARE.SchemeOwner.Client.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="policySchema.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="delegationMaskSchema.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Resources\capabilities.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Seed\**\*.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Resources\*" />
+  </ItemGroup>
+
+</Project>

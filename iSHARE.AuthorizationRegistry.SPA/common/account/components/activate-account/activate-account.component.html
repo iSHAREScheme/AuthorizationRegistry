@@ -1,0 +1,68 @@
+<div class="container p-0" *ngIf="!serverError && !success">
+  <div class="row">
+    <div class="col-md">
+      <h3>Activate account</h3>
+    </div>
+  </div>
+  <div class="row no-gutters">
+    <div class="col-md-6">
+      <form class="form-horizontal" #activateForm="ngForm" (ngSubmit)="activate()">
+        <div class="form-group">
+          <label for="password">create password</label>
+          <input class="form-control" type="password" [(ngModel)]="model.password" id="password" #password="ngModel" name="password"
+            required minlength="8" appMinUppercase="1" appMinLowercase="1" appMinSpecialChars="1" appMinNumeric="1" />
+          <app-display-errors [for]="password" *ngIf="password.dirty">
+            <app-validation-message [name]="'minLowercase'"> At least one lowercase character is required. </app-validation-message>
+            <app-validation-message [name]="'minUppercase'"> At least one uppercase character is required.</app-validation-message>
+            <app-validation-message [name]="'minSpecialChars'"> At least one special character is required.</app-validation-message>
+            <app-validation-message [name]="'minNumeric'">At least one numeric character is required.</app-validation-message>
+            <div class="error-message" *ngIf="password.touched && password?.errors?.minlength">Password must be at least 8 characters long.</div>
+          </app-display-errors>
+        </div>
+        <div class="form-group">
+          <label for="confirmPassword">confirm password</label>
+          <input class="form-control" type="password" [(ngModel)]="model.confirmPassword" id="confirmPassword" #confirmPassword="ngModel"
+            name="confirmPassword" required>
+          <div class="error-message" *ngIf="confirmPassword.value !== password.value && confirmPassword.dirty">
+            Passwords don't match.
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary save" [disabled]="(!activateForm.valid || password.value !== confirmPassword.value)">save
+          <i class="fa fa-arrow-right custom-arrow-right" aria-hidden="true"></i>
+        </button>
+      </form>
+    </div>
+    <div class="col-md-6">
+      <app-password-rules></app-password-rules>
+    </div>
+  </div>
+</div>
+<div class="container p-0" *ngIf="serverError">
+  <div class="row">
+    <div class="col-md">
+      <h3>Activation error</h3>
+      <p>Unable to activate account. Click
+        <a (click)="reload()">here</a> to try again. If errors are not resolved, please contact the administrator at
+        <a href="mailto:support@ishareworks.org">support@ishareworks.org</a>.
+      </p>
+      <h4>Details</h4>
+      <ul>
+        <li class="error-message" *ngFor="let error of serverError">
+          {{error}}
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+<div class="container p-0" *ngIf="success">
+  <div class="row">
+    <div class="col-md">
+      <h3>Activate account</h3>
+      <p>Account sucessfully activated</p>
+      <p>Click
+        <a (click)="login()">
+          <b>here</b>
+        </a> to login</p>
+    </div>
+  </div>
+</div>

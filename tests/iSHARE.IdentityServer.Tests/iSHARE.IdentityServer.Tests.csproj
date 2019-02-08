@@ -1,0 +1,36 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <ProjectGuid>C9CA5522-9C5B-4764-A451-A14DE02FE20E</ProjectGuid>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <CodeAnalysisRuleSet>iSHARE.IdentityServer.Tests.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <CodeAnalysisRuleSet>iSHARE.IdentityServer.Tests.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="DelegationTestCases\*.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <!-- Required packages in test libraries -->
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.8.0" />
+    <PackageReference Include="Moq" Version="4.10.0" />
+    <PackageReference Include="Shouldly" Version="3.0.0" />
+    <PackageReference Include="xunit" Version="2.4.0" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.0" />
+    <!-- /END Required packages in test libraries -->
+    <PackageReference Include="Microsoft.AspNetCore.Hosting" Version="2.1.1" />
+    <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="2.1.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\iSHARE.IdentityServer\iSHARE.IdentityServer.csproj" />    
+  </ItemGroup>
+
+</Project>

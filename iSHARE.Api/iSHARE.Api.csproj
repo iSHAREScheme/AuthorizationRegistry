@@ -1,0 +1,41 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <ProjectGuid>1d7490c9-c5da-4444-b0ca-2ed85593be17</ProjectGuid>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);1591</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <CodeAnalysisRuleSet>iSHARE.Api.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <CodeAnalysisRuleSet>iSHARE.Api.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="Manatee.Json" Version="9.9.5" />
+    <PackageReference Include="Microsoft.AspNetCore.All" Version="2.1.4" />
+    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.4.1" />
+    <PackageReference Include="IdentityServer4" Version="2.2.0" />    
+    <PackageReference Include="Swashbuckle.AspNetCore.MicrosoftExtensions" Version="0.4.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="3.0.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="3.0.0" />
+    <PackageReference Include="Serilog.Extensions.Logging.File" Version="1.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\iSHARE.Abstractions\iSHARE.Abstractions.csproj" />    
+    <ProjectReference Include="..\iSHARE.Configuration\iSHARE.Configuration.csproj" />
+    <ProjectReference Include="..\iSHARE.IdentityServer\iSHARE.IdentityServer.csproj" />
+    <ProjectReference Include="..\iSHARE.Identity\iSHARE.Identity.csproj" />
+    <ProjectReference Include="..\iSHARE.Models\iSHARE.Models.csproj" />
+    <ProjectReference Include="..\iSHARE.SchemeOwner.Client\iSHARE.SchemeOwner.Client.csproj" />
+  </ItemGroup>
+
+</Project>
