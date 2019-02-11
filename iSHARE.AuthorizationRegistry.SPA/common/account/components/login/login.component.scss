@@ -1,0 +1,26 @@
+:host {
+  input {
+    width: 300px;
+  }
+  .login {
+    padding-right: 16px;
+  }
+  .action {
+    margin-right: 10px;
+    .fa {
+      margin-right: 10px;
+    }
+  }
+  .key {
+    color: rgb(236, 39, 13);
+    background-color: rgb(231, 231, 231);
+  }
+}
+#forgotPassword {
+  cursor: pointer;
+  display: inline-block;
+  margin-top: 20px;
+  &:hover {
+    text-decoration: underline;
+  }
+}

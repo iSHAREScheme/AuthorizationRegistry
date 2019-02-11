@@ -27,7 +27,7 @@ The **Authorization Registry** is a role for which iSHARE Certification (iSHARE)
 ### Setup the development environment
 
 1. Create environment variable 'ENVIRONMENT' with the value 'Development'
-2. Navigate to NLIP.iShare.AuthorizationRegistry.Api and create a new file named 'appsettings.Development.json'
+2. Navigate to iSHARE.AuthorizationRegistry.Api and create a new file named 'appsettings.Development.json'
 3. Copy the content of 'appsettings.Development.json.template' into 'appsettings.Development.json' and complete all fields with the necessary information and save the changes
 
 ## Build API
@@ -39,13 +39,13 @@ Navigate to the local Authorization Registry repository and run `dotnet build`
 Authorization Registry is using a SQL database that is created at runtime.
 Various test records are inserted from JSON files present here
 
-- `NLIP.iShare.AuthorizationRegistry.Api\Seed\Identity\Development`
-- `NLIP.iShare.AuthorizationRegistry.Api\Seed\IdentityServer\Development`
-- `NLIP.iShare.AuthorizationRegistry.Data\Migrations\Seed\Development`
+- `iSHARE.AuthorizationRegistry.Api\Seed\Identity\Development`
+- `iSHARE.AuthorizationRegistry.Api\Seed\IdentityServer\Development`
+- `iSHARE.AuthorizationRegistry.Data\Migrations\Seed\Development`
 
 ## Run process
 
-1. Navigate to the local Authorization Registry repository, into NLIP.iShare.AuthorizationRegistry.Api folder and run `dotnet run`
+1. Navigate to the local Authorization Registry repository, into iSHARE.AuthorizationRegistry.Api folder and run `dotnet run`
 2. Open a browser tab and navigate to `localhost:61433/swagger`
 
 ## Installation for SPA
@@ -59,7 +59,7 @@ The software you'll need before installing Authorization Registry SPA:
 
 ### Install dependencies
 
-Run `npm install` inside NLIP.iShare.AuthorizationRegistry.SPA folder to get all dependencies downloaded locally.
+Run `npm install` inside iSHARE.AuthorizationRegistry.SPA folder to get all dependencies downloaded locally.
 
 ### Run process
 
