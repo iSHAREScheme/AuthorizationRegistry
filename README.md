@@ -29,6 +29,7 @@ The **Authorization Registry** is a role for which iSHARE Certification (iSHARE)
 1. Create environment variable 'ENVIRONMENT' with the value 'Development'
 2. Navigate to iSHARE.AuthorizationRegistry.Api and create a new file named 'appsettings.Development.json'
 3. Copy the content of 'appsettings.Development.json.template' into 'appsettings.Development.json' and complete all fields with the necessary information and save the changes
+4. Into appsettings.json file, change PrivateKey and PublicKeys fields from PartyDetails with valid keys and save changes
 
 ## Build API
 
