@@ -1,9 +1,15 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
-import { AuthService, ProfileService, Profile } from '@common/index';
+import { AuthService, ProfileService, Profile, EnvironmentModel } from '@common/index';
 import { AppInsightsService } from 'common';
 import { Router } from '@angular/router';
-import { RuntimeConfigurationService, ConfigurationModel } from '@generic/services/runtime-configuration.service';
+import {
+  RuntimeConfigurationService,
+  ConfigurationModel
+} from '@generic/services/runtime-configuration.service';
 import { MENU_ITEMS } from './menu/menu-items';
+import { HttpClient } from '@angular/common/http';
+import { AuthServiceOptions } from '@common/generic/models/AuthServiceOptions';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-root',
@@ -12,7 +18,8 @@ import { MENU_ITEMS } from './menu/menu-items';
 })
 export class AppComponent implements OnInit {
   profile: Profile;
-  menuItems = MENU_ITEMS;
+  menuItems = [];
+  private options: AuthServiceOptions;
 
   constructor(
     private auth: AuthService,
@@ -21,13 +28,21 @@ export class AppComponent implements OnInit {
     // Tracking is not properly enabled without injecting AppInsightsService
     private appInsightsService: AppInsightsService,
     private router: Router,
-    private changeDetectorRef: ChangeDetectorRef
+    private changeDetectorRef: ChangeDetectorRef,
+    private config: EnvironmentModel,
+    private http: HttpClient
   ) {
     appInsights.queue.push(() => {
       appInsights.context.addTelemetryInitializer(envelope => {
         envelope.tags['ai.cloud.role'] = 'ar.spa';
       });
     });
+    this.options = new AuthServiceOptions(this.config);
+    if (this.config.userManagement) {
+      this.menuItems = MENU_ITEMS;
+    } else {
+      this.menuItems = _.filter(MENU_ITEMS, x => x.text !== 'Users');
+    }
   }
 
   ngOnInit() {
@@ -44,10 +59,21 @@ export class AppComponent implements OnInit {
   }
 
   logout() {
-    this.auth.logout();
+    if (this.config.userManagement) {
+      this.http
+        .post<any>(this.options.logoutEndpoint, null, { withCredentials: true })
+        .subscribe(() => {
+          this.auth.clearLogout();
+          this.auth.goToLogin();
+        });
+    } else {
+      this.auth.logout();
+    }
   }
 
   goToProfile() {
-    this.router.navigate(['account', 'profile']);
+    if (this.config.userManagement) {
+      this.router.navigate(['account', 'profile']);
+    }
   }
 }

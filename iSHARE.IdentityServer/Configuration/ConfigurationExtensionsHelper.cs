@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Linq;
 using IdentityServer4.Validation;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using iSHARE.Configuration;
 using iSHARE.Configuration.Configurations;
 using iSHARE.IdentityServer.Services;
 using iSHARE.IdentityServer.Validation;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace iSHARE.IdentityServer
 {
@@ -49,18 +49,10 @@ namespace iSHARE.IdentityServer
         {
             var services = builder.Services;
             services.AddTransient<ICertificateRepository, CertificateRepository>();
+            services.AddTransient<ICertificatesAuthorities, CertificatesAuthorities>();
             services.AddTransient<ICertificateValidationService, CertificateValidationService>();
-            var options = services.ConfigureOptions<PkiOptions>(configuration, "Pki", ConfigurationOptionsValidator.NullValidator);
-
-            
-            if (!string.IsNullOrEmpty(options.CARootCertificate) && !string.IsNullOrEmpty(options.IACertificate))
-            {
-                services.AddTransient<ICertificateManager, StorelessCertificateManager>();
-            }
-            else
-            {
-                services.AddTransient<ICertificateManager, CertificateManager>();
-            }        
+            services.ConfigureOptions<PkiOptions>(configuration, "Pki", ConfigurationOptionsValidator.NullValidator);
+            services.AddTransient<ICertificateManager, CertificateManager>();
 
             return builder;
         }

@@ -43,7 +43,7 @@ export class LoginComponent implements OnInit {
     private alert: AlertService
   ) {
     this.form = new FormGroup({
-      username: new FormControl('', [Validators.required]),
+      email: new FormControl('', [Validators.required]),
       password: new FormControl('', [Validators.required])
     });
     this.twoFactorForm = new FormGroup({
@@ -72,7 +72,7 @@ export class LoginComponent implements OnInit {
   login() {
     if (this.form.valid) {
       this.serverError = undefined;
-      this.auth.login(this.form.get('username').value, this.form.get('password').value).subscribe(
+      this.auth.login(this.form.get('email').value, this.form.get('password').value).subscribe(
         response => {
           window.location.href = this.returnUrl;
         },
@@ -87,7 +87,7 @@ export class LoginComponent implements OnInit {
             this.show2FaSetup = true;
             this.getKey();
           } else {
-            this.serverError = 'Wrong username or password.';
+            this.serverError = 'Wrong email or password.';
           }
         }
       );
@@ -99,7 +99,7 @@ export class LoginComponent implements OnInit {
       this.serverError = undefined;
       this.auth
         .loginWith2Fa(
-          this.form.get('username').value,
+          this.form.get('email').value,
           this.form.get('password').value,
           this.twoFactorForm.get('twoFactorCode').value
         )
@@ -127,7 +127,7 @@ export class LoginComponent implements OnInit {
   enable2fa() {
     this.account
       .enable2fa(
-        this.form.get('username').value,
+        this.form.get('email').value,
         this.form.get('password').value,
         this.twoFactorSetupForm.get('twoFactorSetupCode').value
       )
@@ -144,7 +144,7 @@ export class LoginComponent implements OnInit {
 
   getKey() {
     this.account
-      .getAuthenticatorKey(this.form.get('username').value, this.form.get('password').value)
+      .getAuthenticatorKey(this.form.get('email').value, this.form.get('password').value)
       .subscribe(
         response => {
           this.QRcode = response['authenticatorUri'];

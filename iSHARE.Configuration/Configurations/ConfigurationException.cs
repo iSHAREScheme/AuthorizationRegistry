@@ -59,7 +59,7 @@ namespace iSHARE.Configuration.Configurations
                 AssertNotNull(value, keyName);
             }
 
-            
+
             if (!string.IsNullOrEmpty(value) && !Regex.IsMatch(value, "^[A-Fa-f0-9]{40}$"))
             {
                 throw new ConfigurationException($"The value of `{keyName}` doesn't have a SHA-1 like value.");

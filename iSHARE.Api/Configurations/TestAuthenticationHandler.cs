@@ -1,10 +1,11 @@
-﻿using Microsoft.AspNetCore.Authentication;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using System.Security.Principal;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using iSHARE.Models;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using AuthenticationOptions = iSHARE.Configuration.AuthenticationOptions;
 
 namespace iSHARE.Api.Configurations
@@ -29,7 +30,7 @@ namespace iSHARE.Api.Configurations
             {
                 var authenticationTicket = new AuthenticationTicket(
                     new ClaimsPrincipal(new GenericPrincipal(new GenericIdentity("Test User", "Test Identity"),
-                        new string[0])),
+                        new string[] { Constants.Roles.SchemeOwner })),
                     new AuthenticationProperties(),
                     TestSchemeDefaults.AuthenticationScheme);
 

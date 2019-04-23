@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Collections.Generic;
+using System.Linq;
 using iSHARE.Api.Swagger;
+using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace iSHARE.AuthorizationRegistry.Api.Attributes
 {
@@ -15,7 +15,7 @@ namespace iSHARE.AuthorizationRegistry.Api.Attributes
 
             var descriptor = filterDescriptors.FirstOrDefault(f => (f.Filter is TypeFilterAttribute ff) && ff.ImplementationType == typeof(AuthorizeDelegationRequestAttribute));
 
-            if(descriptor == null)
+            if (descriptor == null)
             {
                 return;
             }

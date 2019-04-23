@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
  <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
@@ -16,11 +16,13 @@
   <ItemGroup>
     <PackageReference Include="Flurl.Http" Version="2.4.0" />
     <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="5.2.4" />
-    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="5.2.4" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="5.2.4" />    
   </ItemGroup>
   
   <ItemGroup>
     <ProjectReference Include="..\iSHARE.Abstractions\iSHARE.Abstractions.csproj" />
+    <ProjectReference Include="..\iSHARE.AzureKeyVaultClient\iSHARE.AzureKeyVaultClient.csproj" />
     <ProjectReference Include="..\iSHARE.Configuration\iSHARE.Configuration.csproj" />
+    <ProjectReference Include="..\iSHARE.IdentityServer\iSHARE.IdentityServer.csproj" />
   </ItemGroup>
 </Project>

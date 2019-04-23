@@ -10,19 +10,30 @@
       "version": "1.7",
       "supported_features": [
         {
-          "feature": "capabilities",
-          "description": "Retrieves iSHARE capabilities",
-          "url": "http://localhost:61433/capabilities"
-        },
-        {
-          "feature": "access token",
-          "description": "Obtains access token",
-          "url": "http://localhost:61433/connect/token"
-        },
-        {
-          "feature": "delegation",
-          "description": "Obtains delegation evidence",
-          "url": "http://localhost:61433/delegation"
+          "public": [
+            {
+              "id": "9CB5036D-2D3E-4138-A8FE-9C4645CC95FC",
+              "feature": "capabilities",
+              "description": "Retrieves iSHARE capabilities",
+              "url": "http://localhost:61433/capabilities",
+              "token_endpoint": "http://localhost:61433/connect/token"
+            },
+            {
+              "id": "EC8FE173-2984-4D0A-94F5-A84151D77A03",
+              "feature": "access token",
+              "description": "Obtains access token",
+              "url": "http://localhost:61433/connect/token"
+            },
+            {
+              "id": "9DD8C18C-2109-4883-9072-6711278CA578",
+              "feature": "delegation",
+              "description": "Obtains delegation evidence",
+              "url": "http://localhost:61433/delegation",
+              "token_endpoint": "http://localhost:61433/connect/token"
+            }
+          ],
+          "restricted": [
+          ]
         }
       ]
     }

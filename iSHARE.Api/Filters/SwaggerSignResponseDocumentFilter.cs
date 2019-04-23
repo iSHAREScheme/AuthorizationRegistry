@@ -1,8 +1,8 @@
-﻿using Swashbuckle.AspNetCore.Swagger;
-using Swashbuckle.AspNetCore.SwaggerGen;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using iSHARE.Api.Swagger;
+using Swashbuckle.AspNetCore.Swagger;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace iSHARE.Api.Filters
 {
@@ -81,6 +81,7 @@ namespace iSHARE.Api.Filters
             Schema claimSchema;
             var normalizedDefinitionName = SwaggerUtils.NormalizeModelName(attribute.SwaggerDefinitionName);
             var claimDefinitionProperties = swaggerDoc.Definitions[normalizedDefinitionName].Properties;
+
             if (attribute.ResponseContainsList)
             {
                 claimSchema = new Schema
@@ -94,12 +95,13 @@ namespace iSHARE.Api.Filters
             {
                 claimSchema = NewSchemaItem(attribute.ClaimName, claimDefinitionProperties);
             }
+
             swaggerDoc.Definitions.Add(
                 key,
                 new Schema
                 {
                     Type = "object",
-                    Required = new[] { "iss", "sub", "aud", "jti", "exp", "iat", attribute.ClaimName },
+                    Required = new[] { "iss", "sub", attribute.AnonymousUsage ? "" : "aud", "jti", "exp", "iat", attribute.ClaimName },
                     Properties = new Dictionary<string, Schema>
                     {
                         {
@@ -156,8 +158,6 @@ namespace iSHARE.Api.Filters
                         }
                     }
                 });
-
-            
         }
 
         private Schema NewSchemaItem(string title, IDictionary<string, Schema> properties)

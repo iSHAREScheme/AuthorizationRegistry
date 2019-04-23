@@ -1,10 +1,10 @@
 ﻿using System;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using iSHARE.Configuration;
 using iSHARE.Configuration.Configurations;
 using iSHARE.TokenClient;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace iSHARE.SchemeOwner.Client
 {

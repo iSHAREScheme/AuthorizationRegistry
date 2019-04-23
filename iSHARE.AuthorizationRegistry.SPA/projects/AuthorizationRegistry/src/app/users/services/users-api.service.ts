@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs/internal/Observable';
-import { PagedResult, Query, EnvironmentModel } from 'common';
+import { EnvironmentModel, Query, PagedResult } from '@common/generic';
 import { User } from '../models/User';
 
 @Injectable({

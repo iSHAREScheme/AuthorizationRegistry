@@ -1,10 +1,8 @@
-﻿using iSHARE.Abstractions;
-using iSHARE.AuthorizationRegistry.Core.Requests;
-using iSHARE.AuthorizationRegistry.Core.Responses;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Security.Claims;
 using System.Threading.Tasks;
-using iSHARE.Models;
+using iSHARE.Abstractions;
+using iSHARE.Identity;
 
 namespace iSHARE.AuthorizationRegistry.Core.Api
 {
@@ -12,19 +10,8 @@ namespace iSHARE.AuthorizationRegistry.Core.Api
     /// Defines the use cases related to users retrieval and their management
     /// </summary>
     public interface IUsersService
-    {        
-        Task<UserModel> Get(Guid id);        
+    {
         Task<IReadOnlyCollection<(string, string)>> GetClaims(string identityUserId);
-        Task<PagedResult<UserModel>> GetAll(Query query);
-        Task<Response> MakeInactive(Guid id);
-        Task<Response<UserModel>> Create(CreateUserRequest request);
-        Task<Response<UserModel>> Update(UpdateUserRequest request);
-        Task<bool> Exists(Guid id);
-        Task<Response<UserModel>> ActivateAccountSendEmail(SendEmailActivationUserRequest request);
-        Task<Response<UserModel>> ChangePassword(ChangePasswordRequest request, string aspNetUserId);
-        Task<Response<UserModel>> ActivateAccountConfirm(ActivateAccountRequest request);
-        Task<Response<UserModel>> SendForgotPasswordEmail(ForgotPasswordUserRequest request);
-        Task<Response> ForcePasswordReset(Guid userId);
-        Task<Response<UserModel>> ConfirmPasswordReset(ConfirmPasswordResetRequest request);
+        Task<PagedResult<UserModel>> GetAll(UsersQuery query, ClaimsPrincipal principal);
     }
 }

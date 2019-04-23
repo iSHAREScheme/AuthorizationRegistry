@@ -1,13 +1,13 @@
-﻿using Manatee.Json;
+﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
+using Manatee.Json;
 using Manatee.Json.Schema;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace iSHARE.Api.Filters
 {

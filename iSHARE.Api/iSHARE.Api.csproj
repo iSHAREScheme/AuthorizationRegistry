@@ -17,7 +17,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <CodeAnalysisRuleSet>iSHARE.Api.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
-  
+
   <ItemGroup>
     <PackageReference Include="Manatee.Json" Version="9.9.5" />
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.1.4" />
@@ -31,7 +31,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\iSHARE.Abstractions\iSHARE.Abstractions.csproj" />    
-    <ProjectReference Include="..\iSHARE.Configuration\iSHARE.Configuration.csproj" />
+    <ProjectReference Include="..\iSHARE.Configuration\iSHARE.Configuration.csproj" />    
+    <ProjectReference Include="..\iSHARE.Identity.Data\iSHARE.Identity.Data.csproj" />
     <ProjectReference Include="..\iSHARE.IdentityServer\iSHARE.IdentityServer.csproj" />
     <ProjectReference Include="..\iSHARE.Identity\iSHARE.Identity.csproj" />
     <ProjectReference Include="..\iSHARE.Models\iSHARE.Models.csproj" />

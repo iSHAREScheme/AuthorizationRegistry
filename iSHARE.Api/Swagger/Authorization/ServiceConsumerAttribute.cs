@@ -5,6 +5,6 @@ namespace iSHARE.Api.Swagger.Authorization
 
     public class ServiceConsumerAttribute : ActionFilterAttribute
     {
-        
+
     }
 }

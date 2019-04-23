@@ -1,10 +1,10 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
+﻿using System;
 using iSHARE.Configuration;
+using iSHARE.Configuration.Configurations;
 using iSHARE.IdentityServer.Validation.Interfaces;
 using iSHARE.TokenClient;
-using System;
-using iSHARE.Configuration.Configurations;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace iSHARE.AuthorizationRegistry.Client
 {

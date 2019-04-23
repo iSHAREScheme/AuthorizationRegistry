@@ -1,1 +1,1 @@
-[ "SchemeOwner", "EntitledPartyCreator", "EntitledPartyViewer" ]
+[ "SchemeOwner", "AR.EntitledPartyCreator", "AR.EntitledPartyViewer", "AR.PartyAdmin" ]

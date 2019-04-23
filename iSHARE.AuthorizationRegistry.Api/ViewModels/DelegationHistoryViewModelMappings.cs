@@ -1,4 +1,4 @@
-﻿using iSHARE.AuthorizationRegistry.Data.Models;
+﻿using iSHARE.AuthorizationRegistry.Core.Models;
 
 namespace iSHARE.AuthorizationRegistry.Api.ViewModels
 {

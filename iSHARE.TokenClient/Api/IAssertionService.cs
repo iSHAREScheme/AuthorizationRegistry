@@ -1,4 +1,5 @@
-﻿using iSHARE.TokenClient.Models;
+﻿using System.Threading.Tasks;
+using iSHARE.TokenClient.Models;
 
 namespace iSHARE.TokenClient.Api
 {
@@ -7,6 +8,7 @@ namespace iSHARE.TokenClient.Api
     /// </summary>
     public interface IAssertionService
     {
-        string CreateJwtAssertion(ClientAssertion clientAssertion, string privateKey, string[] publicKeys);
+        string CreateJwtAssertion(ClientAssertion clientAssertion, string privateKey, string[] publicKeys, string alg = null, string typ = null);
+        Task<string> CreateJwtAssertion(ClientAssertion clientAssertion, string alg = null, string typ = null);
     }
 }

@@ -4,12 +4,12 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Flurl;
 using Flurl.Http;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using iSHARE.Configuration.Configurations;
 using iSHARE.IdentityServer.Models;
 using iSHARE.SchemeOwner.Client.Models;
 using iSHARE.TokenClient.Api;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace iSHARE.SchemeOwner.Client
 {
@@ -43,7 +43,7 @@ namespace iSHARE.SchemeOwner.Client
             var request = await _schemeOwnerClientOptions.BaseUri
                 .AppendPathSegment("parties")
                 .AppendPathSegment(partyId)
-                .WithOAuthBearerToken(accessToken)                
+                .WithOAuthBearerToken(accessToken)
                 .GetJsonAsync()
                 ;
 
@@ -75,12 +75,9 @@ namespace iSHARE.SchemeOwner.Client
 
             var accessToken = await _tokenClient
                 .GetAccessToken(_schemeOwnerClientOptions.BaseUri,
-                    _partyDetailsOptions.ClientId, 
-                    assertion,
-                    _partyDetailsOptions.PrivateKey,
-                    _partyDetailsOptions.PublicKeys)
-                .ConfigureAwait(false);
+                    _partyDetailsOptions.ClientId,
+                    assertion);
             return accessToken;
-        }        
+        }
     }
 }

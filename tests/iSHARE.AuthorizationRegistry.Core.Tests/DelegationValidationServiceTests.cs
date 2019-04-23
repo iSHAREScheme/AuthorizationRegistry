@@ -1,10 +1,10 @@
-﻿using Moq;
-using iSHARE.AuthorizationRegistry.Core.Api;
-using iSHARE.AuthorizationRegistry.Data.Models;
-using Shouldly;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Security.Claims;
+using iSHARE.AuthorizationRegistry.Core.Api;
+using iSHARE.AuthorizationRegistry.Core.Models;
 using iSHARE.Models;
+using Moq;
+using Shouldly;
 using Xunit;
 
 namespace iSHARE.AuthorizationRegistry.Core.Tests
@@ -316,7 +316,7 @@ namespace iSHARE.AuthorizationRegistry.Core.Tests
 
             var delegationServiceMock = new Mock<IDelegationService>();
             delegationServiceMock
-                .Setup(c => c.GetByArId(arId, claimsPrincipal.GetPartyId()))
+                .Setup(c => c.GetByPolicyId(arId, claimsPrincipal.GetPartyId()))
                 .ReturnsAsync(new Delegation
                 {
                     PolicyIssuer = "EU.EORI.NL812972715",
@@ -355,7 +355,7 @@ namespace iSHARE.AuthorizationRegistry.Core.Tests
 
             var delegationServiceMock = new Mock<IDelegationService>();
             delegationServiceMock
-                .Setup(c => c.GetByArId(arId, claimsPrincipal.GetPartyId()))
+                .Setup(c => c.GetByPolicyId(arId, claimsPrincipal.GetPartyId()))
                 .ReturnsAsync(new Delegation
                 {
                     PolicyIssuer = "EU.EORI.NL812972715",

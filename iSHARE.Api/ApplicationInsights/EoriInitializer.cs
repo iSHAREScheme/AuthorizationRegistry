@@ -1,10 +1,10 @@
-﻿using IdentityServer4.Extensions;
+﻿using System.Collections.Generic;
+using System.Diagnostics;
+using IdentityServer4.Extensions;
+using iSHARE.Models;
 using Microsoft.ApplicationInsights.Channel;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.Http;
-using System.Collections.Generic;
-using System.Diagnostics;
-using iSHARE.Models;
 
 namespace iSHARE.Api.ApplicationInsights
 {

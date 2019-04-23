@@ -13,7 +13,12 @@ const routes: Routes = [
     component: PoliciesOverviewComponent,
     canActivate: [RoleGuard],
     data: {
-      allowedRoles: [constants.roles.EntitledPartyCreator, constants.roles.EntitledPartyViewer, constants.roles.SchemeOwner]
+      allowedRoles: [
+        constants.roles.ArEntitledPartyCreator,
+        constants.roles.ArEntitledPartyViewer,
+        constants.roles.ArPartyAdmin,
+        constants.roles.SchemeOwner
+      ]
     }
   },
   {
@@ -21,26 +26,31 @@ const routes: Routes = [
     component: ViewPolicyComponent,
     canActivate: [RoleGuard, AppInsightsInterceptor],
     data: {
-      allowedRoles: [constants.roles.EntitledPartyCreator, constants.roles.EntitledPartyViewer, constants.roles.SchemeOwner]
+      allowedRoles: [
+        constants.roles.ArEntitledPartyCreator,
+        constants.roles.ArEntitledPartyViewer,
+        constants.roles.ArPartyAdmin,
+        constants.roles.SchemeOwner
+      ]
     }
   },
   {
     path: 'copy/:id',
     component: CopyPolicyComponent,
     canActivate: [RoleGuard, AppInsightsInterceptor],
-    data: { allowedRoles: [constants.roles.EntitledPartyCreator] }
+    data: { allowedRoles: [constants.roles.ArEntitledPartyCreator] }
   },
   {
     path: 'edit/:id',
     component: EditPolicyComponent,
     canActivate: [RoleGuard, AppInsightsInterceptor],
-    data: { allowedRoles: [constants.roles.EntitledPartyCreator] }
+    data: { allowedRoles: [constants.roles.ArEntitledPartyCreator] }
   },
   {
     path: 'create',
     component: CreatePolicyComponent,
     canActivate: [RoleGuard, AppInsightsInterceptor],
-    data: { allowedRoles: [constants.roles.EntitledPartyCreator] }
+    data: { allowedRoles: [constants.roles.ArEntitledPartyCreator] }
   }
 ];
 

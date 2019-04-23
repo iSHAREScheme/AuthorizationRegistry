@@ -1,8 +1,9 @@
 ﻿using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
 using iSHARE.Api.Filters;
 using iSHARE.Api.Interfaces;
 using iSHARE.Models.Capabilities;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace iSHARE.Api.Controllers
@@ -16,9 +17,9 @@ namespace iSHARE.Api.Controllers
             _capabilitiesService = capabilitiesService;
         }
 
-        [HttpGet]
+        [HttpGet, AllowAnonymous]
         [Route("capabilities")]
-        [SignResponse("capabilities_token", "capabilities_info", "Capabilities")]
+        [SignResponse("capabilities_token", "capabilities_info", "Capabilities", AnonymousUsage = true)]
         [SwaggerOperation(
             Summary = "Retrieves iSHARE capabilities",
             Description = "Retrieves the iSHARE capabilities (supported versions & optional features) of the iSHARE party.")]

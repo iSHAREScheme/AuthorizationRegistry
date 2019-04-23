@@ -1,8 +1,8 @@
-using System;
+﻿using System;
 using IdentityServer4.EntityFramework.DbContexts;
+using iSHARE.EntityFramework.Migrations.Seed;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using iSHARE.EntityFramework.Migrations.Seed;
 
 namespace iSHARE.IdentityServer.Data.Migrations.Seed
 {
@@ -23,8 +23,9 @@ namespace iSHARE.IdentityServer.Data.Migrations.Seed
         {
             Logger.LogInformation("IdentityServer clients seed for {environment}", Environment);
 
-            SeedClients("clients.json");
             SeedApiResources("api-resources.json");
+            SeedIdentityResources("identity-resources.json");
+            SeedClients("clients.json");
 
             Context.SaveChanges();
         }

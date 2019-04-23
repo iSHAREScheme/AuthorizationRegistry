@@ -6,8 +6,11 @@ import {
   ForbiddenPageComponent,
   NotFoundPageComponent,
   AuthCallbackComponent,
-  AccessDeniedComponent
+  AccessDeniedComponent,
+  LoginIdpComponent,
+  LoginComponent
 } from 'common';
+import { SelfAuthGuard } from '@common/generic/guards/self-auth.guard';
 
 const routes: Routes = [
   {
@@ -22,7 +25,7 @@ const routes: Routes = [
     children: [
       {
         path: 'users',
-        canActivate: [AppInsightsInterceptor],
+        canActivate: [AppInsightsInterceptor, SelfAuthGuard],
         loadChildren: './users/users.module#UsersModule'
       },
       {
@@ -39,6 +42,7 @@ const routes: Routes = [
   },
   {
     path: 'account',
+    canActivate: [SelfAuthGuard],
     loadChildren: 'common/account/account.module#AccountModule'
   },
   {
@@ -55,6 +59,11 @@ const routes: Routes = [
     path: 'forbidden',
     canActivate: [AppInsightsInterceptor],
     component: ForbiddenPageComponent
+  },
+  {
+    path: 'account',
+    runGuardsAndResolvers: 'always',
+    loadChildren: './login-dispatch/login-dispatch.module#LoginDispatchModule'
   },
   {
     path: '**',

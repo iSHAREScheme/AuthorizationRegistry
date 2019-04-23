@@ -1,8 +1,9 @@
-﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
-using System;
+﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Net;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 
 namespace iSHARE.Api.Configurations
 {
@@ -16,7 +17,7 @@ namespace iSHARE.Api.Configurations
                 {
                     if (DateTime.TryParse(context.Request.Query["date_time"], CultureInfo.CurrentCulture, DateTimeStyles.None, out _))
                     {
-                        context.Response.Headers.Add("Cache-Control", "max-age=31536000");
+                        context.Response.Headers.TryAdd("Cache-Control", "max-age=31536000");
                     }
                     else
                     {
@@ -27,8 +28,8 @@ namespace iSHARE.Api.Configurations
                 }
                 else
                 {
-                    context.Response.Headers.Add("Cache-Control", "no-store");
-                    context.Response.Headers.Add("Pragma", "no-cache");
+                    context.Response.Headers.TryAdd("Cache-Control", "no-store");
+                    context.Response.Headers.TryAdd("Pragma", "no-cache");
                 }
 
                 await next();

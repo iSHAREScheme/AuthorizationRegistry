@@ -18,5 +18,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\iSHARE.Abstractions\iSHARE.Abstractions.csproj" />
+    <ProjectReference Include="..\iSHARE.Configuration\iSHARE.Configuration.csproj" />
   </ItemGroup>
 </Project>

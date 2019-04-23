@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Microsoft.AspNetCore.Mvc;
+using iSHARE.Api.Attributes;
+using iSHARE.Api.Swagger;
 using iSHARE.Models;
+using Microsoft.AspNetCore.Mvc;
 
 namespace iSHARE.Api.Controllers
 {
@@ -17,7 +19,8 @@ namespace iSHARE.Api.Controllers
         /// <returns></returns>
         [Route("me")]
         [HttpGet]
-        [ApiExplorerSettings(GroupName = "testSpec")]
+        [ApiExplorerSettings(GroupName = SwaggerGroups.TestSpec)]
+        [ServiceFilter(typeof(HideApiMethodAttribute))]
         public ActionResult<IReadOnlyCollection<ClientClaim>> Me()
         {
             var claims = User.Claims.Select(c => new ClientClaim { Type = c.Type, Value = c.Value }).ToList();

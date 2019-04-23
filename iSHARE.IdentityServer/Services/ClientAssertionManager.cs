@@ -1,12 +1,11 @@
-﻿using IdentityServer4.Validation;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-
-using System;
+﻿using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Threading.Tasks;
+using IdentityServer4.Validation;
 using iSHARE.IdentityServer.Models;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace iSHARE.IdentityServer.Services
 {
@@ -44,6 +43,7 @@ namespace iSHARE.IdentityServer.Services
                     return new AssertionModel
                     {
                         Certificates = chain,
+                        Typ = jwtToken.Header.Typ,
                         Exp = expiration,
                         Iat = issuedAt,
                         JwtToken = jwtToken
@@ -84,6 +84,12 @@ namespace iSHARE.IdentityServer.Services
                 return fail;
             }
 
+            if (assertion.Typ == null || !assertion.Typ.Equals("jwt", StringComparison.InvariantCultureIgnoreCase))
+            {
+                _logger.LogError("Client assertion \"typ\" header is not \"JWT\".");
+                return fail;
+            }
+
             if (assertion.Exp - assertion.Iat > 30)
             {
                 _logger.LogError("Client assertion validity exceeds the maximum authorized.");
@@ -98,7 +104,7 @@ namespace iSHARE.IdentityServer.Services
 
             try
             {
-                if (!_certificateValidator.IsValidAtMoment(DateTime.UtcNow, assertion.Certificates.ToArray()))
+                if (!await _certificateValidator.IsValid(DateTime.UtcNow, assertion.Certificates.ToArray()))
                 {
                     _logger.LogInformation("Certificate chain is not valid");
                     return fail;

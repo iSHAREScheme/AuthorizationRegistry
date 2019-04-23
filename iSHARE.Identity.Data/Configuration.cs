@@ -1,10 +1,10 @@
 ﻿using System.Reflection;
+using iSHARE.EntityFramework;
+using iSHARE.Models;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using iSHARE.EntityFramework;
-using iSHARE.Models;
 
 namespace iSHARE.Identity.Data
 {

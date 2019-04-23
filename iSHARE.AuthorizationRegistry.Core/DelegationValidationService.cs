@@ -36,7 +36,7 @@ namespace iSHARE.AuthorizationRegistry.Core
                 return validationResult;
             }
 
-            if (await _delegationService.DelegationExists(newPolicyIssuer, newAccessSubject).ConfigureAwait(false))
+            if (await _delegationService.DelegationExists(newPolicyIssuer, newAccessSubject))
             {
                 return ValidationResult.Invalid("The combination policyIssuer - accessSubject already exists.");
             }
@@ -55,7 +55,7 @@ namespace iSHARE.AuthorizationRegistry.Core
                 return ValidationResult.Invalid("Policy issuer and access subject are required.");
             }
 
-            var existingEntity = await _delegationService.GetByArId(arId, currentUser.GetPartyId()).ConfigureAwait(false);
+            var existingEntity = await _delegationService.GetByPolicyId(arId, currentUser.GetPartyId());
 
             if (existingEntity.PolicyIssuer != newPolicyIssuer || existingEntity.AccessSubject != newAccessSubject)
             {

@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc.Authorization;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace iSHARE.Api.Swagger
 {
@@ -12,6 +12,7 @@ namespace iSHARE.Api.Swagger
         {
             var filterDescriptors = context.ApiDescription.ActionDescriptor.FilterDescriptors;
             var isAuthorizeAttribute = filterDescriptors.Select(fd => fd.Filter).Any(f => f is AuthorizeFilter);
+            var isAnonymousFilter = filterDescriptors.Any(fd => fd.Filter is AllowAnonymousFilter);
 
             if (!isAuthorizeAttribute)
             {
@@ -28,7 +29,7 @@ namespace iSHARE.Api.Swagger
                 Name = "Authorization",
                 In = "header",
                 Description = "Oauth 2.0 authorization based on bearer token. MUST contain ”Bearer” + access token value",
-                Required = true,
+                Required = !isAnonymousFilter,
                 Type = "string"
             });
         }

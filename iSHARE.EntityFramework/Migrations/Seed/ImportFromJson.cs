@@ -9,7 +9,7 @@ namespace iSHARE.EntityFramework.Migrations.Seed
 {
     public static class ImportFromJson
     {
-        private static JsonSerializerSettings Settings = new JsonSerializerSettings
+        private static readonly JsonSerializerSettings Settings = new JsonSerializerSettings
         {
             ContractResolver = new PrivateOrInternalPropertiesResolver()
         };

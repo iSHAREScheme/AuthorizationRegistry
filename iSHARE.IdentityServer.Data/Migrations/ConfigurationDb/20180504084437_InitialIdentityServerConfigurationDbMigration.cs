@@ -1,6 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
-using System;
 
 namespace iSHARE.IdentityServer.Data.Migrations.ConfigurationDb
 {

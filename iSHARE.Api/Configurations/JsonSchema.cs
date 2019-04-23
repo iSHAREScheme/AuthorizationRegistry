@@ -1,8 +1,8 @@
-﻿using Manatee.Json;
+﻿using System;
+using System.IO;
+using Manatee.Json;
 using Manatee.Json.Schema;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.IO;
 
 namespace iSHARE.Api.Configurations
 {

@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using iSHARE.Api.Configurations;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
-using iSHARE.Api.Configurations;
 
 namespace iSHARE.Api.Controllers
 {

@@ -9,10 +9,6 @@
   "PartyDetails": {
     "BaseUri": "http://localhost:61433/"
   },
-  "Pki": {
-    "CARootThumbprint": "<<<< CA root thumbprint >>>>",
-    "IAThumbprint": "<<<< Intermediary root thumbprint >>>>"
-  },
   "ConnectionStrings": {
     "Main": "<<<< SQL Server ConnectionString >>>>"
   },
@@ -31,5 +27,9 @@
     "BaseUri": "http://localhost:4201/admin/",
     "ApplicationName": "Authorization-Registry-Dev",
     "TwoFactorEnabled": false
+  },
+  "DigitalSigner": {
+    "PrivateKey": "<<<< RSA Private Key used for signing tokens >>>>",
+    "RawPublicKey": "<<<< Public Key used for validating tokens >>>>"
   }
 }

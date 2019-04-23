@@ -1,4 +1,5 @@
 ﻿using System;
+using iSHARE.Configuration;
 using Microsoft.AspNetCore.Hosting;
 
 namespace iSHARE.Api
@@ -11,8 +12,8 @@ namespace iSHARE.Api
             var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 
             var showDetailedErrors =
-                !string.Equals(env, "Live", StringComparison.OrdinalIgnoreCase)                
-                && !string.Equals(env, "Test", StringComparison.OrdinalIgnoreCase)
+                !string.Equals(env, Environments.Test, StringComparison.OrdinalIgnoreCase)
+                && !string.Equals(env, Environments.Live, StringComparison.OrdinalIgnoreCase)
                 ? "true" : "false";
 
             return builder

@@ -1,44 +1,45 @@
 //Warehouse13 delegates rights to ABC Trucking. W13 allows ABC READ access to the ETA of all of W13's containers.
 
 {
-	"delegationEvidence": {
-		"notBefore": 1529574873,
-		"notOnOrAfter": 1539574873,
-		"policyIssuer": "EU.EORI.NL000000003",
-		"target": {
-			"accessSubject": "EU.EORI.NL000000001"
-		},
-		"policySets": [
-			{
-                "maxDelegationDepth": 5,
-                "target": {
-                    "environment": {
-                        "licenses": ["ISHARE.0001"]
-                    }
-                },
-				"policies": [
-					{
-						"target": {
-							"resource": {
-								"type": "CONTAINER.DATA",
-								"identifiers": [
-									"*"
-								],
-								"attributes": [
-									"CONTAINER.DATA.ATTRIBUTE.ETA"
-								]
-							},
-							"actions": [
-								"ISHARE.READ"]
-						},
-						"rules": [
-							{
-								"effect": "Permit"
-							}
-						]
-					}
-				]
-			}
-		]
-	}
-}               
+  "delegationEvidence": {
+    "notBefore": 1529574873,
+    "notOnOrAfter": 1539574873,
+    "policyIssuer": "EU.EORI.NL000000003",
+    "target": {
+      "accessSubject": "EU.EORI.NL000000001"
+    },
+    "policySets": [
+      {
+        "maxDelegationDepth": 5,
+        "target": {
+          "environment": {
+            "licenses": [ "ISHARE.0001" ]
+          }
+        },
+        "policies": [
+          {
+            "target": {
+              "resource": {
+                "type": "CONTAINER.DATA",
+                "identifiers": [
+                  "*"
+                ],
+                "attributes": [
+                  "CONTAINER.DATA.ATTRIBUTE.ETA"
+                ]
+              },
+              "actions": [
+                "ISHARE.READ"
+              ]
+            },
+            "rules": [
+              {
+                "effect": "Permit"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

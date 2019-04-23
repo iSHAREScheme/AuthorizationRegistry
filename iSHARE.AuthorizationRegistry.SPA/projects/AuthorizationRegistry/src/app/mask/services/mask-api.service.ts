@@ -10,7 +10,7 @@ export class MaskApiService {
   baseUrl: string;
 
   constructor(private http: HttpClient, private environment: EnvironmentModel) {
-    this.baseUrl = `${this.environment.apiEndpoint}/delegation/test`;
+    this.baseUrl = `${this.environment.apiEndpoint}/delegations/test`;
   }
 
   test(mask: CreateDelegationMask): Observable<CreateDelegationMask> {

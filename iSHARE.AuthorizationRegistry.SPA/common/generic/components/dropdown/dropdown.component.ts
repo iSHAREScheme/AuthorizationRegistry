@@ -15,6 +15,9 @@ export class DropdownComponent implements ControlValueAccessor {
   items: any[] = [];
   @Input()
   title: string;
+  @Input()
+  disable: boolean;
+
   selectedValue: object;
   dropdownOpen = false;
 

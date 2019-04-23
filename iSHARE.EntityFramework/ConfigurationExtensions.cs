@@ -1,13 +1,14 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System;
+using System.Linq;
+using System.Reflection;
+using iSHARE.Configuration;
+using iSHARE.EntityFramework.Migrations.Seed;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Linq;
-using System.Reflection;
 using Microsoft.Extensions.Logging;
-using iSHARE.EntityFramework.Migrations.Seed;
 
 namespace iSHARE.EntityFramework
 {
@@ -49,7 +50,7 @@ namespace iSHARE.EntityFramework
             }
             return app;
         }
-       
+
         public static IServiceCollection AddSeedServices<TContext>(this IServiceCollection services,
             IHostingEnvironment environment,
             string @namespace,
@@ -74,6 +75,12 @@ namespace iSHARE.EntityFramework
 
             return services;
         }
+
+        public static IServiceCollection AddSeedFactory<TContext>(this IServiceCollection services,
+          Func<IServiceProvider, string, IDatabaseSeeder<TContext>> seederFactory, string environmentName)
+          where TContext : DbContext
+            => services.AddScoped(srv => seederFactory(srv, environmentName));
+
         public static IServiceCollection AddSeed<TContext>(this IServiceCollection services, IHostingEnvironment environment)
         {
             services.AddScoped((Func<IServiceProvider, Func<IDatabaseSeeder<TContext>>>)(opts => () =>

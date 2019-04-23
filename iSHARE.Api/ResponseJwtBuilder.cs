@@ -4,45 +4,46 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Security.Cryptography;
+using System.Threading.Tasks;
+using iSHARE.Abstractions;
+using iSHARE.IdentityServer;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
-using iSHARE.Abstractions;
-using iSHARE.Configuration.Configurations;
-using OpenSSL.PrivateKeyDecoder;
 
 namespace iSHARE.Api
 {
     public class ResponseJwtBuilder : IResponseJwtBuilder
     {
-        private readonly PartyDetailsOptions _partyDetailsOptions;
+        private readonly IDigitalSigner _digitalSigner;
+        private readonly ITokenGenerator _tokenGenerator;
 
-        public ResponseJwtBuilder(PartyDetailsOptions partyDetailsOptions)
+        public ResponseJwtBuilder(IDigitalSigner digitalSigner, ITokenGenerator tokenGenerator)
         {
-            _partyDetailsOptions = partyDetailsOptions;
+            _digitalSigner = digitalSigner;
+            _tokenGenerator = tokenGenerator;
         }
 
-        public string Create(object payloadObject, string subject, string issuer, string audience, string payloadObjectClaim, IContractResolver contractResolver = null)
+        public async Task<string> Create(object payloadObject, string subject, string issuer, string audience, string payloadObjectClaim, IContractResolver contractResolver = null)
         {
             var payload = BuildJwtPayload(payloadObject, issuer, subject, audience, payloadObjectClaim, contractResolver);
+            var header = await BuildJwtHeader();
 
-            var decoder = new OpenSSLPrivateKeyDecoder();
-            var rsaParams = decoder.DecodeParameters(_partyDetailsOptions.PrivateKey);
-            using (var rsa = RSA.Create())
-            {
-                rsa.ImportParameters(rsaParams);
+            var token = await _tokenGenerator.GenerateToken(header, payload);
+            return token;
+        }
 
-                var signingCredentials = new SigningCredentials(new RsaSecurityKey(rsa), SecurityAlgorithms.RsaSha256);
-                var tokenHandler = new JwtSecurityTokenHandler();
+        private async Task<JwtHeader> BuildJwtHeader()
+        {
+            var header = new JwtHeader();
 
-                var jwtToken = new JwtSecurityToken(new JwtHeader(signingCredentials), payload);
+            var publicKey = await _digitalSigner.GetPublicKey();
+            header.Add("x5c", new[] { publicKey });
+            header.Add("alg", SecurityAlgorithms.RsaSha256);
+            header.Add("typ", "JWT");
 
-                jwtToken.Header.Add("x5c", _partyDetailsOptions.PublicKeys);
-                var signedToken = tokenHandler.WriteToken(jwtToken);
-                return signedToken;
-            }
+            return header;
         }
 
         private JwtPayload BuildJwtPayload(object payloadObject, string issuer, string subject, string audience, string payloadObjectClaim, IContractResolver jsonResolver = null)
@@ -51,13 +52,15 @@ namespace iSHARE.Api
             {
                 new Claim("iss", issuer),
                 new Claim("sub", subject),
-                new Claim("aud", audience),
                 new Claim("jti", Guid.NewGuid().ToString("N", CultureInfo.CurrentCulture)),
-                new Claim("iat", ConvertDateTimeToTimestamp(DateTime.UtcNow), ClaimValueTypes.Integer),
-                new Claim("exp", ConvertDateTimeToTimestamp(DateTime.UtcNow.AddSeconds(30)), ClaimValueTypes.Integer)
+                new Claim("iat", DateTime.UtcNow.ToEpoch(), ClaimValueTypes.Integer),
+                new Claim("exp", DateTime.UtcNow.AddSeconds(30).ToEpoch(), ClaimValueTypes.Integer)
             };
 
-
+            if (audience != null)
+            {
+                claims.Add(new Claim("aud", audience));
+            }
 
             if (payloadObject is string stringPayload)
             {
@@ -102,14 +105,6 @@ namespace iSHARE.Api
 
             var internalPayload = JsonConvert.DeserializeObject<JObject>(internalJson).ToDictionary();
             return internalPayload;
-        }
-
-
-        private static string ConvertDateTimeToTimestamp(DateTime value)
-        {
-            var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-            var elapsedTime = value - epoch;
-            return ((long)elapsedTime.TotalSeconds).ToString(CultureInfo.CurrentCulture);
         }
     }
 }

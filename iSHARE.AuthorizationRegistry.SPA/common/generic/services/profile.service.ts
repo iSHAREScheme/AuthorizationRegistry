@@ -28,4 +28,13 @@ export class ProfileService {
     localStorage.removeItem(constants.storage.keys.profile);
     this.profileBehaviourSubject.next(undefined);
   }
+
+  getRole(role: string) {
+    switch (role) {
+        case constants.roles.ArEntitledPartyCreator: return constants.rolesNames.ArEntitledPartyCreator;
+        case constants.roles.ArEntitledPartyViewer: return constants.rolesNames.ArEntitledPartyViewer;
+        case constants.roles.ArPartyAdmin: return constants.rolesNames.ArPartyAdmin;
+        case constants.roles.SchemeOwner: return constants.rolesNames.SchemeOwner;
+    }
+  }
 }

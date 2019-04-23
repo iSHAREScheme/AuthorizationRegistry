@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
 using iSHARE.Abstractions;
+using Microsoft.EntityFrameworkCore;
 
 namespace iSHARE.EntityFramework
 {
@@ -11,7 +11,7 @@ namespace iSHARE.EntityFramework
         {
             return new PagedResult<TEntity>
             {
-                Data = await source.ToListAsync().ConfigureAwait(false),
+                Data = await source.ToListAsync(),
                 Count = total
             };
         }

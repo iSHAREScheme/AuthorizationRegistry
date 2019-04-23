@@ -6,6 +6,6 @@ namespace iSHARE.IdentityServer.Properties
 {
     public class AssemblyInfo
     {
-        
+
     }
 }

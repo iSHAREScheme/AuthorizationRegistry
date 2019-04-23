@@ -30,7 +30,7 @@ namespace iSHARE.Abstractions
             this IOrderedQueryable<TEntity> query,
             Expression<Func<TEntity, TKey>> orderByExpression,
             bool descending) =>
-            descending ? query.ThenByDescending(orderByExpression) : query.ThenBy(orderByExpression);   
+            descending ? query.ThenByDescending(orderByExpression) : query.ThenBy(orderByExpression);
 
         public static PagedResult<TEntity> ToPagedResult<TEntity>(this IEnumerable<TEntity> source, int total)
         {

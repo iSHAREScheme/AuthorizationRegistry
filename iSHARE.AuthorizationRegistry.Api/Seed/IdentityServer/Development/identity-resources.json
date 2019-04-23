@@ -1,0 +1,20 @@
+[
+  {
+    "Name": "openid",
+    "DisplayName": "openid",
+    "Scopes": [
+      {
+        "Name": "openid"
+      }
+    ]
+  },
+  {
+    "Name": "profile",
+    "DisplayName": "profile",
+    "Scopes": [
+      {
+        "Name": "profile"
+      }
+    ]
+  }
+]

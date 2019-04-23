@@ -1,6 +1,6 @@
-﻿using iSHARE.Abstractions.Email;
-using System;
+﻿using System;
 using System.Net.Mail;
+using iSHARE.Abstractions.Email;
 using iSHARE.Configuration.Configurations;
 
 namespace iSHARE.EmailClient

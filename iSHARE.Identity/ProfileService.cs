@@ -5,8 +5,8 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using IdentityServer4.Models;
 using IdentityServer4.Services;
-using Microsoft.AspNetCore.Identity;
 using iSHARE.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace iSHARE.Identity
 {
@@ -24,7 +24,7 @@ namespace iSHARE.Identity
 
         public async Task GetProfileDataAsync(ProfileDataRequestContext context)
         {
-            var identity = await _userManager.GetUserAsync(context.Subject).ConfigureAwait(false);
+            var identity = await _userManager.GetUserAsync(context.Subject);
 
             var claims = new List<Claim>();
 
@@ -33,7 +33,7 @@ namespace iSHARE.Identity
                 claims.Add(new Claim("email", identity.Email));
             }
 
-            var extraClaimsData = await _extraClaimsProvider(identity.Id).ConfigureAwait(false);
+            var extraClaimsData = await _extraClaimsProvider(identity.Id);
 
             foreach (var claim in extraClaimsData.Where(c => !string.IsNullOrEmpty(c.Item2)))
             {
@@ -43,7 +43,7 @@ namespace iSHARE.Identity
                 }
             }
 
-            var roles = await _userManager.GetRolesAsync(identity).ConfigureAwait(false);
+            var roles = await _userManager.GetRolesAsync(identity);
 
             foreach (var role in roles)
             {

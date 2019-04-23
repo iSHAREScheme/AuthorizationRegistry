@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
 import * as _ from 'lodash';
 import { Router } from '@angular/router';
-import { constants, AlertService } from 'common';
+import { AlertService, EnvironmentModel, AuthService } from '@common/generic';
+import { constants } from '@common/constants';
 import { UsersApiService } from '../../services/users-api.service';
 import { User } from '../../models/User';
+import { Utils } from '@app-ar/users/utils';
 
 @Component({
   selector: 'app-create-user',
@@ -13,30 +14,56 @@ import { User } from '../../models/User';
 })
 export class CreateUserComponent implements OnInit {
   serverError: string;
-  form: FormGroup;
-  unassignedRoles: string[];
-  roles: string[];
   isPartyHidden = false;
+  user: Partial<User> = {};
+  isSchemeOwner: boolean;
+  makeSchemeOwner: boolean;
+  selectedRoles: any[] = [];
+  roles = [];
+  environment: EnvironmentModel;
 
-  constructor(private api: UsersApiService, private router: Router, private alert: AlertService) {
-    this.buildForm();
+  rolesOptions = {
+    enableCheckAll: false,
+    allowSearchFilter: true,
+    idField: 'value',
+    textField: 'displayName',
+    itemsShowLimit: 1,
+    showSelectedItemsAtTop: false,
+    noDataAvailablePlaceholderText: 'Loading...'
+  };
+  constructor(
+    private api: UsersApiService,
+    private router: Router,
+    private alert: AlertService,
+    private auth: AuthService
+  ) {
     this.initRoles();
+    this.user.roles = [];
+  }
+  initRoles() {
+    const items = [];
+    if (this.auth.inRole([constants.roles.SchemeOwner])) {
+      this.isSchemeOwner = true;
+      Utils.addRole(items, constants.categories.AuthorizationRegistry);
+    } else {
+      if (this.auth.inRole([constants.roles.ArPartyAdmin])) {
+        Utils.addRole(items, constants.categories.AuthorizationRegistry);
+      }
+    }
+
+    this.roles = Utils.createRoleCategories(items);
   }
 
   save() {
-    if (this.form.valid) {
-      const user: Partial<User> = {
-        email: this.form.get('email').value,
-        username: this.form.get('username').value,
-        roles: this.roles
-      };
-
-      if (!this.isPartyHidden) {
-        user.partyId = this.form.get('partyId').value;
-        user.partyName = this.form.get('partyName').value;
+    if (this.user.email) {
+      this.user.username = this.user.email;
+      if (this.makeSchemeOwner) {
+        this.user.roles = [constants.roles.SchemeOwner];
+      } else {
+        this.user.roles = this.user.roles.concat(_.map(this.selectedRoles, r => r.value));
       }
 
-      this.api.create(user).subscribe(
+      this.api.create(this.user).subscribe(
         () => {
           this.alert.success('Creation performed successfully.');
           this.back();
@@ -46,56 +73,8 @@ export class CreateUserComponent implements OnInit {
     }
   }
 
-  addRole(role: string): void {
-    _.remove(this.unassignedRoles, i => i === role);
-    this.roles.push(role);
-    this.form.controls['roles'].patchValue(this.roles.join(','));
-    this.form.controls['roles'].markAsTouched();
-  }
-
-  removeRole(role: string): void {
-    _.remove(this.roles, i => i === role);
-    this.unassignedRoles.push(role);
-    this.form.controls['roles'].patchValue(this.roles.join(','));
-  }
-
-  emailChanging() {
-    const username = this.form.get('email').value.split('@')[0];
-    this.form.controls['username'].patchValue(username);
-  }
-
   back() {
     this.router.navigate(['users']);
-  }
-
-  private buildForm() {
-    this.form = new FormGroup({
-      username: new FormControl('', [Validators.required]),
-      email: new FormControl('', [Validators.required, Validators.email]),
-      partyId: new FormControl('', [Validators.required]),
-      partyName: new FormControl('', [Validators.required]),
-      roles: new FormControl('', [Validators.required])
-    });
-
-    this.form.get('roles').valueChanges.subscribe(value => {
-      const roles = value.split(',');
-      this.isPartyHidden = roles.length === 1 && roles[0] === constants.roles.SchemeOwner;
-      if (this.isPartyHidden) {
-        this.form.get('partyId').clearValidators();
-        this.form.get('partyName').clearValidators();
-      } else {
-        this.form.get('partyId').setValidators([Validators.required]);
-        this.form.get('partyName').setValidators([Validators.required]);
-      }
-      this.form.get('partyId').updateValueAndValidity();
-      this.form.get('partyName').updateValueAndValidity();
-    });
-  }
-
-  private initRoles() {
-    this.unassignedRoles = [];
-    this.roles = [];
-    _.forOwn(constants.roles, value => this.unassignedRoles.push(value));
   }
 
   ngOnInit() {}

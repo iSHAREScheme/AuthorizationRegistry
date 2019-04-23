@@ -1,12 +1,12 @@
 ﻿using System.Reflection;
 using IdentityServer4.EntityFramework.DbContexts;
+using iSHARE.EntityFramework;
+using iSHARE.IdentityServer.Data.Migrations.Seed;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using iSHARE.EntityFramework;
-using iSHARE.IdentityServer.Data.Migrations.Seed;
 
 namespace iSHARE.IdentityServer.Data
 {
@@ -52,6 +52,7 @@ namespace iSHARE.IdentityServer.Data
 
             services
                 .AddSeedServices(environment, @namespace, assembly, ApiResourcesSeeder.CreateSeeder)
+                .AddSeedServices(environment, @namespace, assembly, IdentityResourcesSeeder.CreateSeeder)
                 .AddSeedServices(environment, @namespace, assembly, ClientsDatabaseSeeder.CreateSeeder)
                 ;
 

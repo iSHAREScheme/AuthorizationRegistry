@@ -20,7 +20,7 @@ namespace iSHARE.IdentityServer.Validation
         {
             foreach (var validator in _validators)
             {
-                await validator.ValidateAsync(context).ConfigureAwait(false);
+                await validator.ValidateAsync(context);
                 if (context.Result.IsError)
                 {
                     break;

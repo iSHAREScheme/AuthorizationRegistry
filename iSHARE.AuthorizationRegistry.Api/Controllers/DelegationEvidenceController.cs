@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json.Serialization;
+﻿using System.Threading.Tasks;
 using iSHARE.Api.Controllers;
 using iSHARE.Api.Filters;
 using iSHARE.AuthorizationRegistry.Api.Attributes;
@@ -8,12 +7,13 @@ using iSHARE.IdentityServer.Delegation;
 using iSHARE.Models;
 using iSHARE.Models.DelegationEvidence;
 using iSHARE.Models.DelegationMask;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json.Serialization;
 
 namespace iSHARE.AuthorizationRegistry.Api.Controllers
 {
     [Route("delegation")]
-    [TypeFilter(typeof(JsonSchemaValidateAttribute), Arguments = new object[]{ "delegationMaskSchema.json" })]
+    [TypeFilter(typeof(JsonSchemaValidateAttribute), Arguments = new object[] { "delegationMaskSchema.json" })]
     public class DelegationEvidenceController : SchemeAuthorizedController
     {
         private readonly IDelegationService _delegationService;
@@ -55,21 +55,6 @@ namespace iSHARE.AuthorizationRegistry.Api.Controllers
             return result.Value.DelegationEvidence;
         }
 
-        /// <summary>
-        /// Obtains delegation evidence
-        /// </summary>
-        /// <remarks>
-        /// Used to obtain delegation evidence from an Authorization Registry. The response is a signed JSON Web Token. 
-        /// Please refer to the iSHARE language of delegation in order to understand the decoded response data model.
-        /// </remarks>
-        /// <param name="delegation_mask">iSHARE specific, optional, JSON structure that acts as a mask to delegation evidence</param>
-        /// <returns>The delegation evidence</returns>
-        [HttpPost, Route("test"), ApiExplorerSettings(IgnoreApi = true)]
-        public async Task<ActionResult<DelegationTranslationTestResponse>> TestDelegationTranslation([FromBody]DelegationMask delegation_mask)
-        {
-            return await TranslateDelegation(delegation_mask);
-        }
-
         private async Task<ActionResult<DelegationTranslationTestResponse>> TranslateDelegation(DelegationMask delegationMask)
         {
             var validationResult = _delegationMaskValidationService.Validate(delegationMask);
@@ -81,7 +66,7 @@ namespace iSHARE.AuthorizationRegistry.Api.Controllers
 
             var delegation = await _delegationService
                 .GetBySubject(delegationMask.DelegationRequest.Target.AccessSubject, delegationMask.DelegationRequest.PolicyIssuer)
-                .ConfigureAwait(false);
+                ;
 
             if (delegation == null)
             {

@@ -16,9 +16,9 @@
   <ItemGroup>
     <ProjectReference Include="..\iSHARE.Abstractions\iSHARE.Abstractions.csproj" />
     <ProjectReference Include="..\iSHARE.Api\iSHARE.Api.csproj" />
-    <ProjectReference Include="..\iSHARE.AuthorizationRegistry.Data\iSHARE.AuthorizationRegistry.Data.csproj" />
     <ProjectReference Include="..\iSHARE.Configuration\iSHARE.Configuration.csproj" />
     <ProjectReference Include="..\iSHARE.IdentityServer\iSHARE.IdentityServer.csproj" />
+    <ProjectReference Include="..\iSHARE.Identity\iSHARE.Identity.csproj" />
     <ProjectReference Include="..\iSHARE.Models\iSHARE.Models.csproj" />
   </ItemGroup>
 

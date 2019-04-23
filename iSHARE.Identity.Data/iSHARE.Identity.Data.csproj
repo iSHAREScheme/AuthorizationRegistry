@@ -18,6 +18,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\iSHARE.EntityFramework\iSHARE.EntityFramework.csproj" />
+    <ProjectReference Include="..\iSHARE.Identity\iSHARE.Identity.csproj" />
     <ProjectReference Include="..\iSHARE.Models\iSHARE.Models.csproj" />
   </ItemGroup>
 </Project>

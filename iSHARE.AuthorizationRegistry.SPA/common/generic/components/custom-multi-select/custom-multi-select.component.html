@@ -1,0 +1,35 @@
+<div tabindex="=0" (blur)="onTouched()" class="multiselect-dropdown" (clickOutside)="closeDropdown()">
+  <div [class.disabled]="disabled">
+    <span tabindex="-1" class="dropdown-btn" (click)="toggleDropdown($event)">
+      <span *ngIf="selectedItems.length == 0">{{_placeholder}}</span>
+      <span class="selected-item" *ngFor="let item of selectedItems;trackBy: trackByFn;let k = index" [hidden]="k > _settings.itemsShowLimit-1">
+        {{item.text}}
+        <a class="remove-entry" (click)="onItemClick($event,item)">x</a>
+      </span>
+      <span class="items-remaining-wrapper">
+        <span class="items-remaining" *ngIf="itemShowRemaining()>0">+{{itemShowRemaining()}}</span>
+        <span [ngClass]="_settings.defaultOpen ? 'dropdown-up' : 'dropdown-down'"></span>
+      </span>
+    </span>
+  </div>
+  <div class="dropdown-list" [hidden]="!_settings.defaultOpen">
+    <ul class="item1">
+      <li (click)="toggleSelectAll()" *ngIf="_data.length > 0 && !_settings.singleSelection && _settings.enableCheckAll && _settings.limitSelection===-1" class="multiselect-item-checkbox list-entry">
+        <input type="checkbox" aria-label="multiselect-select-all" [checked]="isAllItemsSelected()" [disabled]="disabled || isLimitSelectionReached()" />
+        <div>{{!isAllItemsSelected() ? _settings.selectAllText : _settings.unSelectAllText}}</div>
+      </li>
+      <li class="filter-textbox" *ngIf="_data.length>0 && _settings.allowSearchFilter">
+        <input type="text" aria-label="multiselect-search" [readOnly]="disabled" [placeholder]="_settings.searchPlaceholderText" [(ngModel)]="filter.text" (ngModelChange)="onFilterTextChange($event)">
+      </li>
+    </ul>
+    <ul class="item2" [style.maxHeight]="_settings.maxHeight+'px'">
+      <li *ngFor="let item of _data | ng2ListFilter:filter; let i = index;" (click)="onItemClick($event,item)" class="multiselect-item-checkbox">
+        <input *ngIf="!item.isHeader" type="checkbox" aria-label="multiselect-item" [checked]="isSelected(item)" [disabled]="item.isHeader || disabled || (isLimitSelectionReached() && !isSelected(item))" />
+        <div>{{item.text}}</div>
+      </li>
+      <li class='no-data' *ngIf="_data.length == 0">
+        <h5>{{_settings.noDataAvailablePlaceholderText}}</h5>
+      </li>
+    </ul>
+  </div>
+</div>

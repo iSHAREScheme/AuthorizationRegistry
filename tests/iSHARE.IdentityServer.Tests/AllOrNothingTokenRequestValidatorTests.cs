@@ -1,8 +1,8 @@
 ﻿using System.Threading.Tasks;
 using IdentityServer4.Validation;
+using iSHARE.IdentityServer.Validation;
 using Microsoft.Extensions.Logging;
 using Moq;
-using iSHARE.IdentityServer.Validation;
 using Shouldly;
 using Xunit;
 

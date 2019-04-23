@@ -1,17 +1,18 @@
 ﻿using System;
+using iSHARE.Identity.Api;
+using iSHARE.Identity.Login;
+using iSHARE.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using iSHARE.Identity.Login;
-using iSHARE.Models;
 
 namespace iSHARE.Identity
 {
     public static class Configuration
     {
         public static IIdentityServerBuilder AddIdentity<TUser, TUserStore>(this IIdentityServerBuilder identityServerBuilder)
-            where TUser: class, IAspNetUser
-            where TUserStore: DbContext
+            where TUser : class, IAspNetUser
+            where TUserStore : DbContext
         {
             var services = identityServerBuilder.Services;
 
@@ -32,12 +33,20 @@ namespace iSHARE.Identity
                 .AddEntityFrameworkStores<TUserStore>()
                 ;
 
-            
+
             identityServerBuilder
                 .AddAspNetIdentity<TUser>()
                 .AddProfileService<ProfileService<TUser>>()
                 ;
+
             return identityServerBuilder;
+        }
+
+        public static IServiceCollection AddDefaultTokenSignatureVerifier(this IServiceCollection services)
+        {
+            services.AddTransient<IIdentityProviderSignatureValidator, IdentityProviderSignatureValidator>();
+            services.AddTransient<ITokenSignatureVerifier, TokenSignatureVerifier>();
+            return services;
         }
     }
 }

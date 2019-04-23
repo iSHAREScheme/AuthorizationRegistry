@@ -1,7 +1,7 @@
 [
   {
     "Id": "0D5C8E0A-1BDD-4D86-972D-94BF9B150AE4",
-    "Name": "Administrator",
+    "Name": "Administrator@mailinator.com",
     "AspNetUserId": "20557D75-4FF1-4F6F-B8F6-DFB0264A2A86",
     "PartyId": "EU.EORI.NL000000000",
     "PartyName": "iSHARE Scheme Owner",
@@ -11,7 +11,7 @@
   },
   {
     "Id": "FBED39E2-6997-4E38-BC18-61FFF7627B00",
-    "Name": "John Doe",
+    "Name": "JohnDoe@mailinator.com",
     "AspNetUserId": "767ECA74-E8A9-485E-A69E-A6B99BE7C962",
     "PartyId": "EU.EORI.NL812972715",
     "PartyName": "Fictive Party",
@@ -21,7 +21,7 @@
   },
   {
     "Id": "45897B89-6377-463E-9E25-DD5A934B87B0",
-    "Name": "Jane Doe",
+    "Name": "JaneDoe@mailinator.com",
     "AspNetUserId": "9BB30FD0-5E7A-4A39-AF35-CDA7C6D93FBE",
     "PartyId": "EU.EORI.NL820599669",
     "PartyName": "Fictive Party",
@@ -31,7 +31,7 @@
   },
   {
     "Id": "2D41CAEA-CA88-4138-9926-196558AA3BC0",
-    "Name": "Jack Smith",
+    "Name": "JackSmith@mailinator.com",
     "AspNetUserId": "D4EDABC3-5ED6-42F4-A167-9C3FCBDED04E",
     "PartyId": "EU.EORI.NL850169513",
     "PartyName": "Fictive Party",
@@ -41,7 +41,7 @@
   },
   {
     "Id": "D6B4B9A7-3432-4FAE-8262-1A3DE9A1DD5F",
-    "Name": "Banana User",
+    "Name": "BananaUser@mailinator.com",
     "AspNetUserId": "CA2F2E80-91B6-4E8D-8368-326C94CFD38E",
     "PartyId": "EU.EORI.NL000000005",
     "PartyName": "Banana & Co BV",

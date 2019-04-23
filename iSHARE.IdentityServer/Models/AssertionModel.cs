@@ -9,10 +9,18 @@ namespace iSHARE.IdentityServer.Models
         /// Certificate chain used for siging this JWT
         /// </summary>
         public IReadOnlyCollection<string> Certificates { get; set; }
+
+
+        /// <summary>
+        /// Header parameter used to declare the media type of the JWS.
+        /// </summary>
+        public string Typ { get; set; }
+
         /// <summary>
         /// UNIX expiration timestamp 
         /// </summary>
         public int Exp { get; set; }
+
         /// <summary>
         /// UNIX "issued At" timestamp
         /// </summary>

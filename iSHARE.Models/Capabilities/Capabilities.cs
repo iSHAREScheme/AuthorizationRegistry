@@ -36,6 +36,21 @@
 
     public class SupportedFeature
     {
+        [JsonProperty("public", NullValueHandling = NullValueHandling.Ignore)]
+        public IReadOnlyCollection<FeatureObject> Public { get; set; }
+
+        [JsonProperty("restricted", NullValueHandling = NullValueHandling.Ignore)]
+        public IReadOnlyCollection<FeatureObject> Restricted { get; set; }
+
+        [JsonProperty("private", NullValueHandling = NullValueHandling.Ignore)]
+        public IReadOnlyCollection<FeatureObject> Private { get; set; }
+    }
+
+    public class FeatureObject
+    {
+        [JsonProperty("id")]
+        public string Id { get; set; }
+
         [JsonProperty("feature")]
         public string Feature { get; set; }
 
@@ -44,16 +59,19 @@
 
         [JsonProperty("url")]
         public Uri Url { get; set; }
+
+        [JsonProperty("token_endpoint", NullValueHandling = NullValueHandling.Ignore)]
+        public string TokenEndpoint { get; set; }
     }
 
     public partial class Capabilities
     {
-        public static Capabilities FromJson(string json) => JsonConvert.DeserializeObject<Capabilities>(json, iSHARE.Models.Capabilities.Converter.Settings);
+        public static Capabilities FromJson(string json) => JsonConvert.DeserializeObject<Capabilities>(json, Converter.Settings);
     }
 
     public static class Serialize
     {
-        public static string ToJson(this Capabilities self) => JsonConvert.SerializeObject(self, iSHARE.Models.Capabilities.Converter.Settings);
+        public static string ToJson(this Capabilities self) => JsonConvert.SerializeObject(self, Converter.Settings);
     }
 
     internal static class Converter
@@ -64,7 +82,7 @@
             DateParseHandling = DateParseHandling.None,
             Converters = {
                 new IsoDateTimeConverter { DateTimeStyles = DateTimeStyles.AssumeUniversal }
-            },
+            }
         };
     }
 }

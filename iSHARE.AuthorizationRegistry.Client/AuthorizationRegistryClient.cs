@@ -4,15 +4,15 @@ using System.Linq;
 using System.Threading.Tasks;
 using Flurl;
 using Flurl.Http;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using Newtonsoft.Json.Serialization;
 using iSHARE.Configuration.Configurations;
 using iSHARE.IdentityServer.Validation.Interfaces;
 using iSHARE.Models.DelegationEvidence;
 using iSHARE.Models.DelegationMask;
 using iSHARE.TokenClient.Api;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
 using ClientAssertion = iSHARE.IdentityServer.Models.ClientAssertion;
 
 namespace iSHARE.AuthorizationRegistry.Client
@@ -43,7 +43,7 @@ namespace iSHARE.AuthorizationRegistry.Client
 
             var accessToken = await GetAccessToken(new ClientAssertion(_partyDetailsOptions.ClientId,
                         _authorizationRegistryClientOptions.ClientId))
-                .ConfigureAwait(false);
+                ;
 
             JObject response;
             try
@@ -54,7 +54,7 @@ namespace iSHARE.AuthorizationRegistry.Client
                     .WithOAuthBearerToken(accessToken)
                     .PostJsonAsync(jObjectMask)
                     .ReceiveJson<JObject>()
-                    .ConfigureAwait(false);
+                    ;
 
                 return GetDelegationEvidenceFromResponse(response);
             }
@@ -107,10 +107,7 @@ namespace iSHARE.AuthorizationRegistry.Client
             var accessToken = await _tokenClient
                 .GetAccessToken(_authorizationRegistryClientOptions.BaseUri,
                     _partyDetailsOptions.ClientId,
-                    assertion,
-                    _partyDetailsOptions.PrivateKey,
-                    _partyDetailsOptions.PublicKeys)
-                .ConfigureAwait(false);
+                    assertion);
 
             return accessToken;
         }

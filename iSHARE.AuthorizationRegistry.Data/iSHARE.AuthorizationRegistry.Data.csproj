@@ -30,8 +30,16 @@
     <DotNetCliToolReference Include="Microsoft.EntityFrameworkCore" Version="2.0.0" />
     <DotNetCliToolReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.0.0" />
   </ItemGroup>
+
   <ItemGroup>
+    <ProjectReference Include="..\iSHARE.Abstractions\iSHARE.Abstractions.csproj" />
     <ProjectReference Include="..\iSHARE.EntityFramework\iSHARE.EntityFramework.csproj" />
+    <ProjectReference Include="..\iSHARE.Identity.Data\iSHARE.Identity.Data.csproj" />
+    <ProjectReference Include="..\iSHARE.Identity\iSHARE.Identity.csproj" />
     <ProjectReference Include="..\iSHARE.Models\iSHARE.Models.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\iSHARE.AuthorizationRegistry.Core\iSHARE.AuthorizationRegistry.Core.csproj" />
   </ItemGroup>
 </Project>

@@ -1,4 +1,4 @@
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using iSHARE.TokenClient.Models;
 
 namespace iSHARE.TokenClient.Api
@@ -8,7 +8,7 @@ namespace iSHARE.TokenClient.Api
     /// </summary>
     public interface ITokenClient
     {
-        Task<string> GetAccessToken(string source, string clientId, ClientAssertion assertion, string privateKey, string[] publicKeys);
+        Task<string> GetAccessToken(string source, string clientId, ClientAssertion assertion);
         Task<string> GetAccessToken(string source, string clientId, string assertion);
     }
 }

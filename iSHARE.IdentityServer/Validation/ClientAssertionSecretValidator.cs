@@ -3,8 +3,8 @@ using System.Threading.Tasks;
 using IdentityServer4;
 using IdentityServer4.Models;
 using IdentityServer4.Validation;
-using Microsoft.Extensions.Logging;
 using iSHARE.IdentityServer.Services;
+using Microsoft.Extensions.Logging;
 
 namespace iSHARE.IdentityServer.Validation
 {

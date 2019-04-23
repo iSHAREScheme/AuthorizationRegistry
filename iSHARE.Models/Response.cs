@@ -13,10 +13,10 @@ namespace iSHARE.Models
 
         public IReadOnlyCollection<string> Errors { get; private set; } = new string[] { };
 
-        public static Response ForError(string error) 
+        public static Response ForError(string error)
             => new Response { Errors = new[] { error } };
 
-        public static Response ForErrors(IEnumerable<string> errors) 
+        public static Response ForErrors(IEnumerable<string> errors)
             => new Response { Errors = errors.ToArray() };
 
         public static Response ForSuccess() => new Response();

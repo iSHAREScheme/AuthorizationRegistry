@@ -1,5 +1,5 @@
-﻿using iSHARE.Models.DelegationEvidence;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using iSHARE.Models.DelegationEvidence;
 
 namespace iSHARE.Models.DelegationMask
 {

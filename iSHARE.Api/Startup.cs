@@ -1,16 +1,16 @@
-﻿using System.Collections.Generic;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
+﻿using System.Reflection;
 using iSHARE.Api.ApplicationInsights;
+using iSHARE.Api.Attributes;
 using iSHARE.Api.Configurations;
 using iSHARE.Api.Convertors;
 using iSHARE.Api.Filters;
 using iSHARE.Api.Swagger;
 using iSHARE.Configuration;
-using iSHARE.Models;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace iSHARE.Api
 {
@@ -19,6 +19,7 @@ namespace iSHARE.Api
         protected internal string SwaggerName;
         protected internal string ApplicationInsightsName;
         protected internal string SpaScope;
+        protected internal Assembly[] DocumentingAssemblies;
 
         public Startup(IHostingEnvironment env, IConfiguration configuration, ILoggerFactory loggerFactory)
         {
@@ -47,18 +48,14 @@ namespace iSHARE.Api
                 .AddDataAnnotations()
                 .AddJsonOptions(options => { options.SerializerSettings.Converters.Add(new TrimmingConverter()); })
                 ;
-
-            var scopes = new List<string> { StandardScopes.iSHARE };
-            if (!string.IsNullOrEmpty(SpaScope))
-            {
-                scopes.Add(SpaScope);
-            }
-
             services.AddJwtAuthentication(HostingEnvironment, Configuration);
-            services.AddSwagger(SwaggerName, HostingEnvironment);
+            services.AddSwagger(SwaggerName, HostingEnvironment, DocumentingAssemblies);
             services.AddJsonSchema();
             services.AddFileProvider(HostingEnvironment);
             services.AddApplicationInsights(ApplicationInsightsName, HostingEnvironment);
+
+            services.AddTransient<HideApiMethodAttribute>();
+            services.AddTransient<ClientIdCheckFilter>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
