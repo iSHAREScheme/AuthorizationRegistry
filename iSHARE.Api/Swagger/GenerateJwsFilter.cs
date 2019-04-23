@@ -26,7 +26,7 @@ namespace iSHARE.Api.Swagger
                 {
                     In = "body",
                     Name = "RSA private key",
-                    Description = "PEM-format RSA private key that will sign the JWS assertion. The key is discarded once the operation has completed. MUST NOT be encrypted. The body of the request MUST start with -----BEGIN RSA PRIVATE KEY----- and end with -----END RSA PRIVATE KEY-----",                    
+                    Description = "PEM-format RSA private key that will sign the JWS assertion. The key is discarded once the operation has completed. MUST NOT be encrypted. The body of the request MUST start with -----BEGIN RSA PRIVATE KEY----- and end with -----END RSA PRIVATE KEY-----",
                     Required = true
                 });
             }

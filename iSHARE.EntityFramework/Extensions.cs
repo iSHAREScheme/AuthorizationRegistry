@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Microsoft.EntityFrameworkCore;
 using iSHARE.EntityFramework.Migrations.Seed;
+using Microsoft.EntityFrameworkCore;
 
 namespace iSHARE.EntityFramework
 {
@@ -45,7 +45,7 @@ namespace iSHARE.EntityFramework
         }
     }
 
-    static class HackyDbSetGetContextTrick
+    internal static class HackyDbSetGetContextTrick
     {
         internal static DbContext GetContext<TEntity>(this DbSet<TEntity> dbSet)
             where TEntity : class

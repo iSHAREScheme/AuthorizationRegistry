@@ -1,7 +1,7 @@
-﻿using iSHARE.Models.DelegationEvidence;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using iSHARE.Models.DelegationEvidence;
 
 namespace iSHARE.Models.DelegationMask
 {
@@ -12,11 +12,11 @@ namespace iSHARE.Models.DelegationMask
         {
         }
 
-        public DelegationMask(string containerId, 
-            string policyIssuer, 
+        public DelegationMask(string containerId,
+            string policyIssuer,
             string accessSubject,
-            IReadOnlyCollection<string> attributes, 
-            string action, 
+            IReadOnlyCollection<string> attributes,
+            string action,
             string resourceType = "CONTAINER.DATA")
         {
             var policy = new Policy
@@ -57,12 +57,12 @@ namespace iSHARE.Models.DelegationMask
             DelegationRequest = request;
         }
 
-        public DelegationMask(IReadOnlyCollection<string> identifiers, 
-            string policyIssuer, 
-            string accessSubject, 
-            IReadOnlyCollection<string> attributes, 
-            IReadOnlyCollection<string> actions, 
-            string resourceType, 
+        public DelegationMask(IReadOnlyCollection<string> identifiers,
+            string policyIssuer,
+            string accessSubject,
+            IReadOnlyCollection<string> attributes,
+            IReadOnlyCollection<string> actions,
+            string resourceType,
             string serviceProvider)
         {
             var policy = new Policy

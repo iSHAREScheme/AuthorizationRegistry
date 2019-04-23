@@ -11,7 +11,7 @@ namespace iSHARE.TokenClient.Models
             Audience = audience;
             JwtId = Guid.NewGuid().ToString("N");
             IssuedAt = DateTime.UtcNow;
-            Expiration = DateTime.UtcNow.AddSeconds(30);
+            Expiration = IssuedAt.AddSeconds(30);
         }
 
         public ClientAssertion()

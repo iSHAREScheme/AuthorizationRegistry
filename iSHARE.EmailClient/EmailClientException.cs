@@ -4,10 +4,10 @@ using System.Runtime.Serialization;
 namespace iSHARE.EmailClient
 {
     [Serializable]
-    public class EmailClientException: Exception
+    public class EmailClientException : Exception
     {
         public EmailClientException()
-        { 
+        {
         }
 
         public EmailClientException(string message) : base(message)

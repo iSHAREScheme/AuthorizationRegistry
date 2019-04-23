@@ -1,12 +1,13 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System.Reflection;
+using iSHARE.AuthorizationRegistry.Core.Api;
+using iSHARE.AuthorizationRegistry.Data.Migrations.Seed.Seeders;
+using iSHARE.EntityFramework;
+using iSHARE.Identity;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using iSHARE.EntityFramework;
-using System.Reflection;
-using iSHARE.AuthorizationRegistry.Data.Migrations.Seed.Seeders;
-
 
 namespace iSHARE.AuthorizationRegistry.Data
 {
@@ -19,10 +20,14 @@ namespace iSHARE.AuthorizationRegistry.Data
             var connectionString = configuration.GetConnectionString("Main");
             services.AddDbContext<AuthorizationRegistryDbContext>(options => options.UseSqlServer(connectionString));
 
-            services.AddSeedServices<AuthorizationRegistryDbContext>(environment,
+            services.AddSeedServices(environment,
                 "iSHARE.AuthorizationRegistry.Data.Migrations.Seed",
                 typeof(AuthorizationRegistryDbContext).GetTypeInfo().Assembly,
                 DatabaseSeeder.CreateSeeder);
+
+            services.AddTransient<IUsersRepository, UsersRepository>();
+            services.AddTransient<ITenantUsersRepository, TenantUsersRepository>();
+            services.AddTransient<IDelegationsRepository, DelegationsRepository>();
         }
 
         public static void UseMigrations(this IApplicationBuilder app,

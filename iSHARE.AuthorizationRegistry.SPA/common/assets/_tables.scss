@@ -27,12 +27,10 @@ table.app-table {
     }
 
     .actions-cell {
-      width: 220px;
+      width: 120px;
       .actions {
         padding: 0 10px;
-        text-align: right;
-        opacity: 0;
-        transition: 0.3s opacity ease-out;
+        text-align: right;        
         i.fa {
           width: 30px;
           height: 30px;

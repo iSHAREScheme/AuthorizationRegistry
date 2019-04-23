@@ -1,6 +1,6 @@
-﻿using Newtonsoft.Json;
-using iSHARE.IdentityServer.Delegation;
+﻿using iSHARE.IdentityServer.Delegation;
 using iSHARE.Models.DelegationMask;
+using Newtonsoft.Json;
 using Xunit;
 
 namespace iSHARE.IdentityServer.Tests

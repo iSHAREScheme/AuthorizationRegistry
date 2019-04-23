@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore;
+﻿using iSHARE.Api;
+using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
-using iSHARE.Api;
 
 namespace iSHARE.AuthorizationRegistry.Api
 {

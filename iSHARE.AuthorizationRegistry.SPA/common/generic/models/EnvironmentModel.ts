@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { EnvironmentType } from './EnvironmentType';
 
 @Injectable({
   providedIn: 'root'
@@ -13,4 +14,10 @@ export class EnvironmentModel {
   scope: string;
   spaUrl: string;
   clientId: string;
+  environmentType: EnvironmentType;
+  disablePartyUsersManagement?: boolean;
+  identityProvider: {
+    authorizeEndpoint: string;
+  };
+  userManagement: boolean;
 }

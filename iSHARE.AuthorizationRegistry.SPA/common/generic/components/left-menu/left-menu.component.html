@@ -1,4 +1,4 @@
-<div *ngIf="visible">
+<div *ngIf="visible && hasVisibleEntries">
   <div id="menu-toggler" (click)="toggleActive()">menu</div>
   <ul id="menu-items">
       <li *ngFor="let menuItem of activeMenuItems"

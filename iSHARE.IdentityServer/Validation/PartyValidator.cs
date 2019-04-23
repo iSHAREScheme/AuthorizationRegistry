@@ -3,8 +3,8 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Threading.Tasks;
 using IdentityServer4.Models;
 using IdentityServer4.Validation;
-using Microsoft.Extensions.Logging;
 using iSHARE.IdentityServer.Validation.Interfaces;
+using Microsoft.Extensions.Logging;
 
 namespace iSHARE.IdentityServer.Validation
 {
@@ -34,7 +34,7 @@ namespace iSHARE.IdentityServer.Validation
                 return fail;
             }
 
-            var isValid = await _partiesValidation.IsValidParty(issuer).ConfigureAwait(false);
+            var isValid = await _partiesValidation.IsValidParty(issuer);
 
             if (!isValid)
             {

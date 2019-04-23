@@ -3,9 +3,9 @@ using System.Threading.Tasks;
 using IdentityModel;
 using IdentityServer4.Models;
 using IdentityServer4.Stores;
-using Microsoft.Extensions.Logging;
 using iSHARE.Configuration;
 using iSHARE.Models;
+using Microsoft.Extensions.Logging;
 
 namespace iSHARE.IdentityServer.Stores
 {
@@ -25,10 +25,10 @@ namespace iSHARE.IdentityServer.Stores
 
         public async Task<Client> FindClientByIdAsync(string clientId)
         {
-            var client = await _clientStore.Instance.FindClientByIdAsync(clientId).ConfigureAwait(false);
+            var client = await _clientStore.Instance.FindClientByIdAsync(clientId);
 
             if (client != null)
-            {                
+            {
                 return client;
             }
 

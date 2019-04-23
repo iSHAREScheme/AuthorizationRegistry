@@ -1,5 +1,5 @@
-﻿using Swashbuckle.AspNetCore.Swagger;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Swashbuckle.AspNetCore.Swagger;
 
 
 namespace iSHARE.Api.Swagger

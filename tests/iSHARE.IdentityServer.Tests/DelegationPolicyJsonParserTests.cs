@@ -58,7 +58,7 @@ namespace iSHARE.IdentityServer.Tests
             accessSubject.ShouldBe("EU.EORI.NL000000001");
         }
 
-        [Fact]        
+        [Fact]
         public void DelegationPolicyJsonParser_ForEmptyJson_ThrowsDelegationPolicyFormatException()
         {
             //Arrange

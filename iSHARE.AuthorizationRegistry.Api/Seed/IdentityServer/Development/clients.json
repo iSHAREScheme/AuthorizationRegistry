@@ -9,11 +9,13 @@
     ],
     "AllowedGrantTypes": [
       {
-        "GrantType": "implicit"
+        "GrantType": "hybrid"
       }
     ],
     "AllowedScopes": [
-      { "Scope": "ar.api" }
+      { "Scope": "ar.api" },
+      { "Scope": "openid" },
+      { "Scope": "profile" }
     ],
     "RedirectUris": [
       {
@@ -22,22 +24,5 @@
     ],
     "AllowAccessTokensViaBrowser": true,
     "RequireConsent": false
-  },
-  {
-    "ClientId": "SPA",
-    "ClientSecrets": [
-      {
-        "Type": "SharedSecret",
-        "Value": "secret"
-      }
-    ],
-    "AllowedGrantTypes": [
-      {
-        "GrantType": "password"
-      }
-    ],
-    "AllowedScopes": [
-      { "Scope": "ar.api" }
-    ]
   }
 ]

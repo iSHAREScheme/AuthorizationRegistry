@@ -5,10 +5,10 @@ using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using IdentityServer4.Extensions;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Logging;
 using iSHARE.Configuration.Configurations;
 using iSHARE.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
 
 namespace iSHARE.Identity.Login
 {

@@ -1,9 +1,9 @@
 ﻿using System;
+using System.Threading.Tasks;
 using IdentityModel;
 using IdentityServer4.Validation;
-using Microsoft.Extensions.Logging;
-using System.Threading.Tasks;
 using iSHARE.Models;
+using Microsoft.Extensions.Logging;
 
 namespace iSHARE.IdentityServer.Validation
 {

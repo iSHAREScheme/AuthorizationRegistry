@@ -1,11 +1,11 @@
-﻿using IdentityServer4.Models;
-using IdentityServer4.Validation;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
-using System;
+﻿using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Threading.Tasks;
+using IdentityServer4.Models;
+using IdentityServer4.Validation;
 using iSHARE.Configuration;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 
 namespace iSHARE.IdentityServer.Validation
 {
@@ -17,7 +17,7 @@ namespace iSHARE.IdentityServer.Validation
         private readonly Decorator<ISecretParser> _secretParser;
         private readonly ILogger<X5CSecretParser> _logger;
 
-        public X5CSecretParser(Decorator<ISecretParser> secretParser, 
+        public X5CSecretParser(Decorator<ISecretParser> secretParser,
             ILogger<X5CSecretParser> logger)
         {
             _secretParser = secretParser;
@@ -30,7 +30,7 @@ namespace iSHARE.IdentityServer.Validation
 
             if (parsedSecret != null)
             {
-                var clientAssertion = parsedSecret.Credential as string;                
+                var clientAssertion = parsedSecret.Credential as string;
                 var x5c = GetX5cFromToken(clientAssertion);
 
                 if (string.IsNullOrEmpty(x5c))

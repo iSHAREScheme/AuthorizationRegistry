@@ -10,5 +10,6 @@ export * from './components/auth-callback/auth-callback.component';
 export * from './components/access-denied/access-denied.component';
 export * from './components/profile/profile.component';
 export * from './components/login/login.component';
+export * from './components/login-idp/login-idp.component';
 export * from './account.module';
 export * from './account-routing.module';

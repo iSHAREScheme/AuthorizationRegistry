@@ -1,13 +1,10 @@
-﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using iSHARE.Api;
+﻿using iSHARE.Api;
+using iSHARE.Api.Configurations;
 using iSHARE.AuthorizationRegistry.Api.Attributes;
 using iSHARE.AuthorizationRegistry.Core;
 using iSHARE.AuthorizationRegistry.Data;
-using iSHARE.AuthorizationRegistry.Data.Models;
+using iSHARE.AzureKeyVaultClient;
+using iSHARE.Configuration.Configurations;
 using iSHARE.EmailClient;
 using iSHARE.EntityFramework;
 using iSHARE.Identity;
@@ -15,6 +12,11 @@ using iSHARE.Identity.Data;
 using iSHARE.IdentityServer;
 using iSHARE.IdentityServer.Data;
 using iSHARE.TokenClient;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace iSHARE.AuthorizationRegistry.Api
 {
@@ -30,41 +32,53 @@ namespace iSHARE.AuthorizationRegistry.Api
 
         public override void ConfigureServices(IServiceCollection services)
         {
-
+            const string seedRoot = "iSHARE.AuthorizationRegistry.Api.Seed.";
+            var idpOptions = services.AddSchemeOwnerIdentityProviderOptions(Configuration);
             services.AddTokenClient();
             services.AddCore(Configuration);
             services.AddEmailClient(Configuration);
             services.AddDb(Configuration, HostingEnvironment);
 
-            const string seedRoot = "iSHARE.AuthorizationRegistry.Api.Seed.";
             IdentityServerBuilder = services.AddIdentityServer(Configuration, HostingEnvironment, LoggerFactory)
+                .AddPki(Configuration)
                 .AddIdentityServerDb(Configuration, HostingEnvironment, $"{seedRoot}IdentityServer", typeof(Startup).Assembly)
                 .AddConsumer()
-                .AddIdentity<AspNetUser, AspNetUserDbContext>()
                 .AddSchemeOwnerValidator(Configuration, HostingEnvironment)
                 ;
-
-            services.AddIdentityServices<AspNetUser, AspNetUserDbContext>(
-                Configuration,
-                HostingEnvironment,
-                $"{seedRoot}Identity",
-                typeof(Startup).Assembly
-            );
+            services.AddDigitalSigner(Configuration, HostingEnvironment, LoggerFactory);
+            services.AddDefaultTokenSignatureVerifier();
 
             services.ConfigureSwaggerGen(c => c.OperationFilter<SwaggerAuthorizeDelegationRequestFilter>());
 
-            base.ConfigureServices(services); // this needs to be called after .AddIdentity<TUser, TContext>
-                                              // since it configures the JwtAuth and will make that as the default challenge
-                                              // see https://stackoverflow.com/a/45853589/782754
+            base.ConfigureServices(services);
 
-            IdentityServerBuilder.AddIdentityServerSigningCredentials();
+            services.AddSpaAuthentication(HostingEnvironment);
+
+            if (!idpOptions.Enable)
+            {
+                IdentityServerBuilder.AddIdentity<AspNetUser, AspNetUserDbContext>();
+
+                services.AddIdentityServices<AspNetUser, AspNetUserDbContext>(
+                    Configuration,
+                    HostingEnvironment,
+                    $"{seedRoot}Identity",
+                    typeof(Startup).Assembly
+                );
+            }
+            AddSpaPolicy(idpOptions);
         }
 
         public override void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory)
         {
-
+            using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
+            {
+                var idpOptions = serviceScope.ServiceProvider.GetRequiredService<SchemeOwnerIdentityProviderOptions>();
+                if (!idpOptions.Enable)
+                {
+                    app.UseMigrations<AspNetUserDbContext>(Configuration).UseSeed<AspNetUserDbContext>(HostingEnvironment);
+                }
+            }
             app.UseMigrations(Configuration, HostingEnvironment);
-            app.UseMigrations<AspNetUserDbContext>(Configuration).UseSeed<AspNetUserDbContext>(HostingEnvironment);
             app.UseIdentityServer() // this calls UseAuth
                .UseIdentityServerDb(Configuration, HostingEnvironment);
 

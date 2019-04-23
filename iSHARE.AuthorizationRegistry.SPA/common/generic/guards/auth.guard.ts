@@ -3,11 +3,12 @@ import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angul
 import { Observable } from 'rxjs/internal/Observable';
 import { AuthService } from '../services/auth.service';
 import { constants } from '../../constants';
+import { LandingPage } from '../services/landing-page';
 
 @Injectable()
 export class AuthGuard implements CanActivate, OnDestroy {
   authKey: string;
-  constructor(private authService: AuthService) {
+  constructor(private authService: AuthService, private landingPage: LandingPage) {
     this.authKey = constants.storage.keys.auth;
     window.addEventListener('storage', this.storageEventListener.bind(this), false);
   }
@@ -16,7 +17,8 @@ export class AuthGuard implements CanActivate, OnDestroy {
     if (this.authService.isLoggedIn()) {
       return true;
     }
-    this.authService.goToLogin();
+    this.landingPage.navigate();
+    // this.authService.goToLogin();
     return false;
   }
 

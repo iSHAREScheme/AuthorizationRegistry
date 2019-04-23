@@ -1,7 +1,7 @@
-﻿using iSHARE.Abstractions.Email;
-using Shouldly;
-using System;
+﻿using System;
 using iSHARE.Abstractions;
+using iSHARE.Abstractions.Email;
+using Shouldly;
 using Xunit;
 
 namespace iSHARE.EmailClient.Tests
@@ -54,7 +54,7 @@ namespace iSHARE.EmailClient.Tests
             EmailAddress value;
 
             //Act
-            Action act = () => value = new EmailAddress("example_email@mailinator.com",null);
+            Action act = () => value = new EmailAddress("example_email@mailinator.com", null);
 
             //Assert
             Should.NotThrow(act);

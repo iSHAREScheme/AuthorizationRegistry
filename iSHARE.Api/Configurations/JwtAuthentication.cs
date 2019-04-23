@@ -1,14 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net.Http;
-using System.Security.Cryptography;
+﻿using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
+using iSHARE.Api.Services;
+using iSHARE.Configuration;
+using iSHARE.Configuration.Configurations;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using iSHARE.Configuration;
-using iSHARE.Configuration.Configurations;
+using Microsoft.IdentityModel.Tokens;
 using AuthenticationOptions = iSHARE.Configuration.AuthenticationOptions;
 
 namespace iSHARE.Api.Configurations
@@ -22,32 +22,30 @@ namespace iSHARE.Api.Configurations
             services.ConfigureRuntimeOptions(configuration, "Auth", new AuthenticationOptions());
             services
                 .AddAuthentication(opts => opts.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(options =>
+                .AddScheme<JwtBearerOptions, JwtAuthenticationHandler>(JwtBearerDefaults.AuthenticationScheme, options =>
                 {
                     var partyDetailsOptions = services.BuildServiceProvider().GetRequiredService<PartyDetailsOptions>();
                     options.Authority = partyDetailsOptions.BaseUri;
                     // name of the API resource
-                    options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+                    options.TokenValidationParameters = new TokenValidationParameters
                     {
                         ValidateIssuer = true,
-                        ValidAudiences = new List<string> { partyDetailsOptions.ClientId }
+                        ValidIssuer = partyDetailsOptions.BaseUri,
+                        ValidAudiences = new List<string> { partyDetailsOptions.ClientId },
+                        ValidateIssuerSigningKey = false,
+                        SignatureValidator = delegate (string token, TokenValidationParameters parameters)
+                        {
+                            var jwt = new JwtSecurityToken(token);
+                            return jwt;
+                        },
                     };
                     options.RequireHttpsMetadata = !hostingEnvironment.IsDevelopment();
                     options.IncludeErrorDetails = !hostingEnvironment.IsDevelopment();
-
-                    var handler = new SocketsHttpHandler();
-                    var authServerCertificateThumbprint = partyDetailsOptions.Thumbprint;
-                    if (!string.IsNullOrEmpty(authServerCertificateThumbprint))
-                    {
-                        handler.SslOptions.RemoteCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors)
-                            => string.Equals(cert.GetCertHashString(HashAlgorithmName.SHA1),
-                                authServerCertificateThumbprint, StringComparison.OrdinalIgnoreCase);
-                    }
-
-                    options.BackchannelHttpHandler = handler;
                 })
-                .AddScheme<AuthenticationSchemeOptions, TestAuthenticationHandler>(TestAuthenticationDefaults.AuthenticationScheme, _ => { })
-            ;
+
+                .AddScheme<AuthenticationSchemeOptions, TestAuthenticationHandler>(
+                    TestAuthenticationDefaults.AuthenticationScheme, _ => { })
+                ;
             return services;
         }
     }

@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Mime;
-using Microsoft.AspNetCore.Mvc;
 using iSHARE.Abstractions;
 using iSHARE.Models;
+using Microsoft.AspNetCore.Mvc;
 
 namespace iSHARE.Api.Controllers
 {

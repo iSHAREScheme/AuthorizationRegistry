@@ -6,67 +6,109 @@
   </div>
   <div class="row">
     <div class="col-md">
-      <form [formGroup]="form" (ngSubmit)="save()">
+      <form #form="ngForm" (ngSubmit)="save()">
         <div class="container p-0">
           <div class="row no-gutters">
             <div class="col-md-6">
               <div class="form-group">
-                <label>e-mail</label>
-                <input class="form-control" autofocus type="text" placeholder="e-mail" formControlName="email" (keyup)="emailChanging()">
-                <div class="error-message" *ngIf="form.get('email').hasError('required') && form.get('email').dirty">
-                  Email is required.
-                </div>
-                <div class="error-message" *ngIf="form.get('email').hasError('email') && form.get('email').dirty">
-                  Email format is required.
+                <label>email</label>
+                <input
+                  class="form-control"
+                  autofocus
+                  type="text"
+                  placeholder="email"
+                  [(ngModel)]="user.email"
+                  #emailInput="ngModel"
+                  name="emailInput"
+                  required
+                  email
+                />
+                <div
+                  class="error-message"
+                  *ngIf="
+                    (emailInput.hasError('email') || emailInput.hasError('required')) &&
+                    emailInput.dirty
+                  "
+                >
+                  Email address does not have a valid format.
                 </div>
               </div>
-              <div class="form-group" *ngIf="!isPartyHidden">
+              <div class="form-group">
+                  <label class="global-role" *ngIf="isSchemeOwner"
+                  ><input
+                    type="checkbox"
+                    name="checkbox"
+                    value="value"
+                    [(ngModel)]="makeSchemeOwner"
+                  /><span>Scheme Owner Administrator</span></label
+                >
+              </div>
+              <div class="form-group" *ngIf="!makeSchemeOwner && isSchemeOwner">
                 <label>party id</label>
-                <input class="form-control" type="text" placeholder="party id" formControlName="partyId">
-                <div class="error-message" *ngIf="form.get('partyId').hasError('required') && form.get('partyId').dirty">
-                  Party Id is required.
+                <input
+                  class="form-control"
+                  type="text"
+                  placeholder="party id"
+                  [(ngModel)]="user.partyId"
+                  #partyIdInput="ngModel"
+                  name="partyIdInput"
+                  required
+                />
+                <div
+                  class="error-message"
+                  *ngIf="partyIdInput.hasError('required') && partyIdInput.dirty"
+                >
+                  Party id is required.
                 </div>
               </div>
-              <div class="form-group" *ngIf="!isPartyHidden">
+              <div class="form-group" *ngIf="!makeSchemeOwner && isSchemeOwner">
                 <label>party name</label>
-                <input class="form-control" type="text" placeholder="party name" formControlName="partyName">
-                <div class="error-message" *ngIf="form.get('partyName').hasError('required') && form.get('partyName').dirty">
-                  Party name is required.
+                <input
+                  class="form-control"
+                  type="text"
+                  placeholder="party name"
+                  [(ngModel)]="user.partyName"
+                  #partyNameInput="ngModel"
+                  name="partyNameInput"
+                  required
+                />
+                <div
+                  class="error-message"
+                  *ngIf="partyNameInput.hasError('required') && partyNameInput.dirty"
+                >
+                  Party Name is required.
                 </div>
               </div>
-            </div>
-            <div class="col-md-6">
-              <div class="form-group">
-                <input type="hidden" formControlName="username">
-                <label>Username: </label>
-                {{form.get('username').value}}
-                <span class="form-info">(auto-generated)</span>
-              </div>
-              <div class="form-group">
-                <input type="hidden" formControlName="roles">
-                <label>Assign</label>
-                <div class="role" *ngFor="let role of unassignedRoles" (click)="addRole(role)">
-                  <i class="fa fa-plus" aria-hidden="true"></i>{{role | humanize}}</div>
-                <span *ngIf="unassignedRoles.length === 0" class="form-info">none</span>
-                <label>Roles</label>
-                <div class="role assigned" *ngFor="let role of roles">{{role | humanize}}
-                  <i class="fa fa-times" aria-hidden="true" (click)="removeRole(role)"></i>
+              <div class="form-group" *ngIf="!makeSchemeOwner">
+                  <label>roles</label>
+                  <app-custom-multi-select
+                    [data]="roles"
+                    [(ngModel)]="selectedRoles"
+                    name="rolesInput"
+                    [settings]="rolesOptions"
+                    [placeholder]="'Select Roles'"
+                  ></app-custom-multi-select>
+                  
                 </div>
-                <div class="error-message" *ngIf="form.get('roles').hasError('required') && form.get('roles').touched">
-                  At least one role is required.
-                </div>
-              </div>
             </div>
           </div>
           <div class="row">
             <div class="col-md">
-              <div [ngClass]="{'error-message': !!serverError}" *ngIf="!!serverError">
-                {{serverError}}
+              <div [ngClass]="{ 'error-message': !!serverError }" *ngIf="!!serverError">
+                {{ serverError }}
               </div>
               <button type="button" class="btn btn-primary" (click)="back()">
                 <i class="fa fa-arrow-left" aria-hidden="true"></i>back
               </button>
-              <button type="submit" class="btn btn-primary" [disabled]="form.pristine || form.dirty && !form.valid">
+              <button
+                type="submit"
+                class="btn btn-primary"
+                [disabled]="
+                  form.pristine ||
+                  (form.dirty && !form.valid) ||
+                  (!makeSchemeOwner && !selectedRoles.length)
+                "
+              >
                 <i class="fa fa-check" aria-hidden="true"></i>create
               </button>
             </div>

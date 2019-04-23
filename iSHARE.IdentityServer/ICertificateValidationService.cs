@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
+using System.Threading.Tasks;
 using iSHARE.Models;
 
 namespace iSHARE.IdentityServer
@@ -14,7 +15,7 @@ namespace iSHARE.IdentityServer
         /// <param name="certificate">Base64 encoded DER certificate</param>
         /// <param name="chain">optional certificate chain that the certificate will be checked against</param>
         /// <returns>validation state</returns>
-        bool IsValidAtMoment(DateTime validationMoment, string certificate, IReadOnlyCollection<string> chain);
+        Task<bool> IsValid(DateTime validationMoment, string certificate, IReadOnlyCollection<string> chain);
 
 
         /// <summary>
@@ -22,7 +23,7 @@ namespace iSHARE.IdentityServer
         /// </summary>
         /// <param name="validationMoment">moment in time for which validation occurs</param>
         /// <param name="chain">Base64 encoded DER certificates chain</param>
-        bool IsValidAtMoment(DateTime validationMoment, string[] chain);
+        Task<bool> IsValid(DateTime validationMoment, string[] chain);
 
         /// <summary>
         /// Checks if the provided certificate is valid for the provided moment in time.
@@ -31,7 +32,7 @@ namespace iSHARE.IdentityServer
         /// <param name="certificate">certificate to validate</param>
         /// <param name="chain">optional certificate chain that the certificate will be checked against</param>
         /// <returns>validation state</returns>
-        bool IsValidAtMoment(DateTime validationMoment, X509Certificate2 certificate, IReadOnlyCollection<X509Certificate2> chain);
+        Task<bool> IsValid(DateTime validationMoment, X509Certificate2 certificate);
 
         /// <summary>
         /// Validate a certificate. Return explicit errors messages.
@@ -41,7 +42,6 @@ namespace iSHARE.IdentityServer
         /// <param name="certificate">X509Certificate2</param>
         /// <param name="chain"></param>
         /// <returns></returns>
-        Response ValidateBetween(DateTime periodStart, DateTime periodEnd, X509Certificate2 certificate,
-            IReadOnlyCollection<X509Certificate2> chain);
+        Task<Response> ValidateBetween(DateTime periodStart, DateTime periodEnd, X509Certificate2 certificate);
     }
 }

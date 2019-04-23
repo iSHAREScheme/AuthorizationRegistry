@@ -1,5 +1,5 @@
-﻿using IdentityServer4.Validation;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using IdentityServer4.Validation;
 using iSHARE.IdentityServer.Models;
 
 namespace iSHARE.IdentityServer.Services

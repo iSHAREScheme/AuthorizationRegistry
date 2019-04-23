@@ -1,6 +1,6 @@
-﻿using iSHARE.Models.DelegationEvidence;
+﻿using System.Threading.Tasks;
+using iSHARE.Models.DelegationEvidence;
 using iSHARE.Models.DelegationMask;
-using System.Threading.Tasks;
 
 namespace iSHARE.IdentityServer.Validation.Interfaces
 {

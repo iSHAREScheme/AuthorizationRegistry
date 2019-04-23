@@ -1,9 +1,10 @@
 import { Observable, of } from 'rxjs';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { ProfileService, Query, Profile, constants, AlertService } from 'common';
+import { ProfileService, Query, Profile, AlertService, EnvironmentModel, AuthService } from '@common/generic';
 import { User } from '../../models/User';
 import { UsersApiService } from '../../services/users-api.service';
+import { constants } from '@common/constants';
 
 @Component({
   selector: 'app-users-overview',
@@ -14,13 +15,18 @@ export class UsersOverviewComponent implements OnInit {
   users: Observable<User[]>;
   query: Query;
   currentUser: Profile;
-
+  hidePartyColumns = true;
   constructor(
     private api: UsersApiService,
     private router: Router,
     private alert: AlertService,
-    private profile: ProfileService
-  ) {}
+    private profile: ProfileService,
+    private environment: EnvironmentModel,
+    private auth: AuthService
+  ) {
+    this.environment = environment;
+    this.hidePartyColumns = this.environment.disablePartyUsersManagement || !this.auth.inRole([constants.roles.SchemeOwner]);
+  }
 
   ngOnInit() {
     this.currentUser = this.profile.get();
@@ -66,5 +72,9 @@ export class UsersOverviewComponent implements OnInit {
         this.loadData();
       });
     }
+  }
+
+  getRole(role: string) {
+    return this.profile.getRole(role);
   }
 }

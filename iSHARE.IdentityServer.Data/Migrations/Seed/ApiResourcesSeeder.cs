@@ -1,8 +1,8 @@
-using System;
+﻿using System;
 using IdentityServer4.EntityFramework.DbContexts;
+using iSHARE.EntityFramework.Migrations.Seed;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using iSHARE.EntityFramework.Migrations.Seed;
 
 namespace iSHARE.IdentityServer.Data.Migrations.Seed
 {

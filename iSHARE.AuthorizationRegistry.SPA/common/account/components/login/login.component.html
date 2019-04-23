@@ -10,9 +10,9 @@
                 <div class="col-md">
                     <form class="form-horizontal" [formGroup]="form" (ngSubmit)="login()" style="display: inline-block">
                         <div class="form-group">
-                            <input autofocus type="text" placeholder="username" formControlName="username" class="form-control">
-                            <div class="error-message" *ngIf="form.get('username').hasError('required') && form.get('username').dirty">
-                                Username is required.
+                            <input autofocus type="text" placeholder="email" formControlName="email" class="form-control">
+                            <div class="error-message" *ngIf="form.get('email').hasError('required') && form.get('email').dirty">
+                                Email is required.
                             </div>
                         </div>
                         <div class="form-group">

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using iSHARE.IdentityServer.Services;
+using iSHARE.Models.DelegationMask;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -8,8 +10,6 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
-using iSHARE.IdentityServer.Services;
-using iSHARE.Models.DelegationMask;
 
 namespace iSHARE.AuthorizationRegistry.Api.Attributes
 {
@@ -19,7 +19,7 @@ namespace iSHARE.AuthorizationRegistry.Api.Attributes
 
         private readonly ILogger<AuthorizeDelegationRequestAttribute> _logger;
         private readonly IAssertionManager _assertionParser;
-        
+
 
         public AuthorizeDelegationRequestAttribute(ILogger<AuthorizeDelegationRequestAttribute> logger, IAssertionManager assertionParser)
         {
@@ -46,8 +46,8 @@ namespace iSHARE.AuthorizationRegistry.Api.Attributes
 
             await next();
         }
-        
-        private bool HasPreviousSteps(ActionExecutingContext context) 
+
+        private bool HasPreviousSteps(ActionExecutingContext context)
             => context.HttpContext.Request.Headers.ContainsKey(PreviousStepsParam) &&
                 !string.IsNullOrEmpty(context.HttpContext.Request.Headers[PreviousStepsParam]);
 

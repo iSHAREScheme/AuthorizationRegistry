@@ -6,29 +6,32 @@
 <table class="app-table">
     <thead>
         <tr>
-            <th>Username
+            <th>Email
                 <app-sorting (action)="sort($event)" by="username" order="asc"></app-sorting>
-            </th>
-            <th>Party Id
+            </th>            
+            <th *ngIf="!hidePartyColumns">Party Id
                 <app-sorting (action)="sort($event)" by="partyId" order="asc"></app-sorting>
             </th>
-            <th>Party Name
+            <th *ngIf="!hidePartyColumns">Party Name
                 <app-sorting (action)="sort($event)" by="partyName" order="asc"></app-sorting>
-            </th>
+            </th>            
             <th>Created
                 <app-sorting (action)="sort($event)" by="createdDate" order="asc"></app-sorting>
             </th>
-            <th>Roles</th>
-            <th>Is Active</th>
+            <th class="roles">Roles</th>
+            <th class="activity">Active</th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
         <tr *ngFor="let user of users | async | paginate: { id:'users-pagination', itemsPerPage: query.pageSize, currentPage: query.page, totalItems: query.total }">
             <td>{{user.username}}</td>
-            <td>{{user.partyId}}</td>
-            <td>{{user.partyName}}</td>
+            <td *ngIf="!hidePartyColumns">{{user.partyId}}</td>
+            <td *ngIf="!hidePartyColumns">{{user.partyName}}</td>
             <td>{{user.createdDate| date:'yyyy-MM-dd HH:mm'}}</td>
-            <td>{{user.roles | humanize}}</td>
+            <td>
+                <div *ngFor="let role of user.roles">{{ getRole(role) }}</div>
+            </td>
             <td>
                 <i [ngClass]="user.active ? 'fa fa-check-circle-o' : 'fa fa-times-circle-o'" aria-hidden="true"></i>
             </td>

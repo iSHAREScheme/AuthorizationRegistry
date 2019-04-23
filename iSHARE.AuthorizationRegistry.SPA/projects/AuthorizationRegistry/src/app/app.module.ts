@@ -4,10 +4,11 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
-import { GenericModule, AccountModule, constants, EnvironmentModel } from 'common';
+import { GenericModule, AccountModule, constants, EnvironmentModel, LandingPage } from 'common';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { environmentFactory } from '../environment';
+import { DefaultLandingPage } from './default-landing-page';
 
 export function jwtOptionsFactory(environment: EnvironmentModel) {
   return {
@@ -41,7 +42,8 @@ export function jwtOptionsFactory(environment: EnvironmentModel) {
     {
       provide: EnvironmentModel,
       useFactory: environmentFactory
-    }
+    },
+    { provide: LandingPage, useClass: DefaultLandingPage }
   ],
   bootstrap: [AppComponent]
 })

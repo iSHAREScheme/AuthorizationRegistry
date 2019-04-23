@@ -18,11 +18,8 @@ export class LeftMenuComponent implements OnInit {
   @HostBinding('class.active')
   active = false;
 
-  constructor(
-    private authService: AuthService,
-    private profileService: ProfileService
-  ) {
-  }
+  hasVisibleEntries = false;
+  constructor(private authService: AuthService, private profileService: ProfileService) {}
 
   ngOnInit() {
     this.applyPermissions();
@@ -34,6 +31,9 @@ export class LeftMenuComponent implements OnInit {
   private applyPermissions() {
     this.menuItems.forEach(menuItem => {
       menuItem.visible = this.authService.inRole(menuItem.roles);
+      if (menuItem.visible) {
+        this.hasVisibleEntries = true;
+      }
     });
     this.activeMenuItems = this.menuItems.filter(menuItem => menuItem.visible);
   }

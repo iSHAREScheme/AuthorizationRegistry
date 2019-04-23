@@ -1,11 +1,11 @@
-﻿using Microsoft.Extensions.Logging;
-using iSHARE.Abstractions;
-using iSHARE.Abstractions.Email;
-using SendGrid;
-using SendGrid.Helpers.Mail;
-using System;
+﻿using System;
 using System.Net;
 using System.Threading.Tasks;
+using iSHARE.Abstractions;
+using iSHARE.Abstractions.Email;
+using Microsoft.Extensions.Logging;
+using SendGrid;
+using SendGrid.Helpers.Mail;
 using EmailAddress = iSHARE.Abstractions.Email.EmailAddress;
 using SendGridEmailAddress = SendGrid.Helpers.Mail.EmailAddress;
 
@@ -37,7 +37,7 @@ namespace iSHARE.EmailClient
                 HtmlContent = body,
             };
             msg.AddTo(CreateEmailAddress(to));
-            var response = await client.SendEmailAsync(msg).ConfigureAwait(false);
+            var response = await client.SendEmailAsync(msg);
             if (response.StatusCode != HttpStatusCode.Accepted)
             {
                 _logger.LogInformation(response.ToString());
@@ -67,7 +67,7 @@ namespace iSHARE.EmailClient
                 HtmlContent = body,
             };
             msg.AddTo(CreateEmailAddress(to));
-            var response = await client.SendEmailAsync(msg).ConfigureAwait(false);
+            var response = await client.SendEmailAsync(msg);
             if (response.StatusCode != HttpStatusCode.Accepted)
             {
                 _logger.LogInformation(response.ToString());
@@ -92,7 +92,7 @@ namespace iSHARE.EmailClient
                 HtmlContent = body,
             };
             msg.AddTo(CreateEmailAddress(to.Address, to.DisplayName));
-            var response = await client.SendEmailAsync(msg).ConfigureAwait(false);
+            var response = await client.SendEmailAsync(msg);
             if (response.StatusCode != HttpStatusCode.Accepted)
             {
                 _logger.LogInformation(response.ToString());
@@ -122,21 +122,21 @@ namespace iSHARE.EmailClient
                 HtmlContent = body,
             };
             msg.AddTo(CreateEmailAddress(to.Address, to.DisplayName));
-            var response = await client.SendEmailAsync(msg).ConfigureAwait(false);
+            var response = await client.SendEmailAsync(msg);
             if (response.StatusCode != HttpStatusCode.Accepted)
             {
                 _logger.LogInformation(response.ToString());
             }
         }
 
-        
-        private SendGridClient CreateClient() 
+
+        private SendGridClient CreateClient()
             => new SendGridClient(_emailOptions.SendGridKey);
 
-        private static SendGridEmailAddress CreateEmailAddress(string address, string name) 
+        private static SendGridEmailAddress CreateEmailAddress(string address, string name)
             => new SendGridEmailAddress(address, name);
 
-        private static SendGridEmailAddress CreateEmailAddress(string address) 
+        private static SendGridEmailAddress CreateEmailAddress(string address)
             => new SendGridEmailAddress(address);
 
         private static bool IsValidEmail(string email)

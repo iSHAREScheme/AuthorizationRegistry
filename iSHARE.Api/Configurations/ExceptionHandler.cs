@@ -1,15 +1,15 @@
-﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Diagnostics;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore.Internal;
-using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore.Internal;
+using Newtonsoft.Json;
 
 namespace iSHARE.Api.Configurations
 {
@@ -22,6 +22,7 @@ namespace iSHARE.Api.Configurations
                 options.Run(
                     async context =>
                     {
+                        var live = hostingEnvironment.IsLive();
                         context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
                         context.Response.ContentType = "application/json";
                         var ex = context.Features.Get<IExceptionHandlerFeature>();
@@ -41,13 +42,13 @@ namespace iSHARE.Api.Configurations
                         {
                             c.GetType().FullName,
                             c.Message,
-                            c.StackTrace,
-                            c.Source,
-                            Data = c.Data.Any() ? c.Data.Cast<DictionaryEntry>()
-                                         .Aggregate(new StringBuilder(), (s, x) => s.Append(x.Key + ":" + x.Value + "|"), s => s.ToString(0, s.Length - 1)) : null
+                            StackTrace = !live ? c.StackTrace : null,
+                            Source = !live ? c.Source : null,
+                            Data = !live ? (c.Data.Any() ? c.Data.Cast<DictionaryEntry>()
+                                         .Aggregate(new StringBuilder(), (s, x) => s.Append(x.Key + ":" + x.Value + "|"), s => s.ToString(0, s.Length - 1)) : null) : null
                         })) : @"{ ""Errors"" : ""An error occurred, if you are a developer please check the logs."" }";
 
-                        await context.Response.WriteAsync(json).ConfigureAwait(false);
+                        await context.Response.WriteAsync(json);
                     });
             });
 

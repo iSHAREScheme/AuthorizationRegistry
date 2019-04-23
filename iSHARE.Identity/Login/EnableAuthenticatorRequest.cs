@@ -2,7 +2,7 @@
 
 namespace iSHARE.Identity.Login
 {
-    public class EnableAuthenticatorRequest: CredentialsRequest
+    public class EnableAuthenticatorRequest : CredentialsRequest
     {
         [Required]
         public string Code { get; set; }

@@ -1,17 +1,17 @@
 ﻿using IdentityServer4.Services;
 using IdentityServer4.Stores;
 using IdentityServer4.Validation;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.IdentityModel.Logging;
 using iSHARE.Configuration;
 using iSHARE.Configuration.Configurations;
 using iSHARE.IdentityServer.Delegation;
 using iSHARE.IdentityServer.Services;
 using iSHARE.IdentityServer.Stores;
 using iSHARE.IdentityServer.Validation;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Logging;
 
 namespace iSHARE.IdentityServer
 {
@@ -47,7 +47,7 @@ namespace iSHARE.IdentityServer
                 ;
 
             builder.AddSecretValidators(
-                typeof(ClientAssertionSecretValidator), 
+                typeof(ClientAssertionSecretValidator),
                 typeof(JwtSecretValidator),
                 typeof(PartyValidator)
                 );
@@ -79,6 +79,7 @@ namespace iSHARE.IdentityServer
                         {
                             IdentityModelEventSource.ShowPII = true;
                         }
+
                         options.IssuerUri = partyDetailsOptions.BaseUri;
 
                         var spaOptions = serviceProvider.GetService<SpaOptions>();
@@ -88,23 +89,17 @@ namespace iSHARE.IdentityServer
                             options.UserInteraction.ErrorUrl = spaOptions.BaseUri + "access-denied";
                         }
                     })
-                    .AddPki(configuration)
                     .AddDelegation()
                     .AddSecretParser<JwtBearerClientAssertionSecretParser>()
                     .AddCustomTokenRequestValidators(typeof(TokenRequestValidator))
                 ;
             builder.Services.AddTransient<ITokenService, TokenService>();
-
+            builder.Services.AddTransient<ITokenGenerator, TokenGenerator>();
+            builder.Services.AddTransient<ITokenCreationService, TokenCreationService>();
             return builder;
         }
 
-        public static IIdentityServerBuilder AddIdentityServerSigningCredentials(this IIdentityServerBuilder builder)
-        {
-            var serviceProvider = builder.Services.BuildServiceProvider();
-            var partyDetailsOptions = serviceProvider.GetRequiredService<PartyDetailsOptions>();
-            builder.AddSigningCredential(partyDetailsOptions.SigningCredential);
-            return builder;
-        }
+
 
         internal static IIdentityServerBuilder AddDelegation(this IIdentityServerBuilder identityServerBuilder)
         {

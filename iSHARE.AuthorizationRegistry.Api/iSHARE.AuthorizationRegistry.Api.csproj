@@ -3,8 +3,6 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
     <ProjectGuid>20010756-856B-43FC-9054-953047B7C1A9</ProjectGuid>
-    <ApplicationInsightsResourceId>/subscriptions/5042975c-809d-4429-b691-0c3e51f323e0/resourcegroups/iSHARE-QA/providers/microsoft.insights/components/ishare-local</ApplicationInsightsResourceId>
-    <ApplicationInsightsAnnotationResourceId>/subscriptions/5042975c-809d-4429-b691-0c3e51f323e0/resourceGroups/iSHARE-QA/providers/microsoft.insights/components/ishare-local</ApplicationInsightsAnnotationResourceId>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -36,6 +34,7 @@
     <ProjectReference Include="..\iSHARE.Api\iSHARE.Api.csproj" />
     <ProjectReference Include="..\iSHARE.AuthorizationRegistry.Core\iSHARE.AuthorizationRegistry.Core.csproj" />
     <ProjectReference Include="..\iSHARE.AuthorizationRegistry.Data\iSHARE.AuthorizationRegistry.Data.csproj" />
+    <ProjectReference Include="..\iSHARE.AzureKeyVaultClient\iSHARE.AzureKeyVaultClient.csproj" />
     <ProjectReference Include="..\iSHARE.Identity.Data\iSHARE.Identity.Data.csproj" />
     <ProjectReference Include="..\iSHARE.IdentityServer.Data\iSHARE.IdentityServer.Data.csproj" />
     <ProjectReference Include="..\iSHARE.EmailClient\iSHARE.EmailClient.csproj" />
@@ -64,9 +63,4 @@
   <ItemGroup>
     <EmbeddedResource Include="Seed\**\*.json" />
   </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Resources\*" />
-  </ItemGroup>
-
 </Project>

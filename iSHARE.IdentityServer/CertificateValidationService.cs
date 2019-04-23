@@ -2,24 +2,24 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
-using Microsoft.Extensions.Logging;
+using System.Threading.Tasks;
 using iSHARE.Models;
+using Microsoft.Extensions.Logging;
 
 namespace iSHARE.IdentityServer
 {
     public class CertificateValidationService : ICertificateValidationService
     {
         private readonly ILogger<CertificateValidationService> _logger;
-        private readonly ICertificateManager _certificateManager;
+        private readonly ICertificatesAuthorities _certificatesAuthorities;
 
-        public CertificateValidationService(ICertificateManager certificateManager, ILogger<CertificateValidationService> logger)
+        public CertificateValidationService(ICertificatesAuthorities certificatesAuthorities, ILogger<CertificateValidationService> logger)
         {
-            _certificateManager = certificateManager;
             _logger = logger;
+            _certificatesAuthorities = certificatesAuthorities;
         }
 
-        public Response ValidateBetween(DateTime periodStart, DateTime periodEnd, X509Certificate2 certificate,
-            IReadOnlyCollection<X509Certificate2> chain)
+        public async Task<Response> ValidateBetween(DateTime periodStart, DateTime periodEnd, X509Certificate2 certificate)
         {
             if (certificate == null)
             {
@@ -43,7 +43,7 @@ namespace iSHARE.IdentityServer
 
             var checks = new List<string>();
             AddCheck(checks, certificate.NotBefore <= periodStart && periodEnd <= certificate.NotAfter, "Certificate dates invalid.");
-            AddCheck(checks, IsCertificatePartOfChain(certificate, chain), "Certificate is not part of the chain.");
+            AddCheck(checks, await IsCertificatePartOfChain(certificate), "Certificate is not part of the chain.");
             AddCheck(checks, certificate.SignatureAlgorithm.FriendlyName == "sha256RSA", "Certificate signature invalid.");
             AddCheck(checks, certificate.PublicKey.Key.KeySize >= 2048, "Certificate public key size is smaller than 2048.");
             AddCheck(checks, !string.IsNullOrEmpty(certificate.SerialNumber), "Certificate has no serial number");
@@ -66,17 +66,17 @@ namespace iSHARE.IdentityServer
 
             return result;
         }
-        public bool IsValidAtMoment(DateTime validationMoment, X509Certificate2 certificate,
-            IReadOnlyCollection<X509Certificate2> chain)
-            => IsValidBetween(validationMoment, validationMoment, certificate, chain);
-        public bool IsValidAtMoment(DateTime validationMoment, string certificate, IReadOnlyCollection<string> chain)
-            => IsValidAtMoment(validationMoment, ConvertRaw(certificate), ConvertRaw(chain));
 
-        public bool IsValidAtMoment(DateTime validationMoment, string[] chain)
-            => IsValidAtMoment(validationMoment, chain[0], chain.Skip(1).ToList());
+        public async Task<bool> IsValid(DateTime validationMoment, X509Certificate2 certificate)
+            => await IsValidBetween(validationMoment, validationMoment, certificate);
+        public async Task<bool> IsValid(DateTime validationMoment, string certificate, IReadOnlyCollection<string> chain)
+            => await IsValid(validationMoment, ConvertRaw(certificate));
 
-        private bool IsValidBetween(DateTime periodStart, DateTime periodEnd, X509Certificate2 certificate, IReadOnlyCollection<X509Certificate2> chain)
-            => ValidateBetween(periodStart, periodEnd, certificate, chain).Success;
+        public async Task<bool> IsValid(DateTime validationMoment, string[] chain)
+            => await IsValid(validationMoment, chain[0], chain.Skip(1).ToList());
+
+        private async Task<bool> IsValidBetween(DateTime periodStart, DateTime periodEnd, X509Certificate2 certificate)
+            => (await ValidateBetween(periodStart, periodEnd, certificate)).Success;
 
         private static void AddCheck(ICollection<string> checks, bool valid, string label)
         {
@@ -86,7 +86,7 @@ namespace iSHARE.IdentityServer
             }
         }
 
-        private bool IsCertificatePartOfChain(X509Certificate2 clientCertificate, IReadOnlyCollection<X509Certificate2> certificatesChain)
+        private async Task<bool> IsCertificatePartOfChain(X509Certificate2 clientCertificate)
         {
             if (clientCertificate == null)
             {
@@ -95,20 +95,8 @@ namespace iSHARE.IdentityServer
 
             using (var chain = new X509Chain())
             {
-                var rootCertificate = _certificateManager.LoadRootCertificate();
-                var intermediateCertificateAuthority = _certificateManager.LoadIntermediateAuthorityCertificate();
-
-                if (rootCertificate != null && intermediateCertificateAuthority != null)
-                {
-                    chain.ChainPolicy.ExtraStore.Add(rootCertificate);
-                    chain.ChainPolicy.ExtraStore.Add(intermediateCertificateAuthority);
-                }
-
-                if (certificatesChain != null && certificatesChain.Any())
-                {
-                    _logger.LogInformation("Using chain {thumbprints}.", certificatesChain.Select(c => c.Thumbprint).ToArray());
-                    chain.ChainPolicy.ExtraStore.AddRange(certificatesChain.ToArray());
-                }
+                var certificates = await _certificatesAuthorities.GetCertificates();
+                chain.ChainPolicy.ExtraStore.AddRange(certificates.ToArray());
 
                 chain.ChainPolicy.RevocationMode = X509RevocationMode.NoCheck;
                 var isValidByPolicy = chain.Build(clientCertificate);

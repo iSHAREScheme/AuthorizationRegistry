@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using iSHARE.Configuration.Configurations;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using iSHARE.Configuration.Configurations;
 
 namespace iSHARE.Configuration
 {
@@ -22,7 +22,7 @@ namespace iSHARE.Configuration
             return options;
         }
 
-        
+
         public static TOptions ConfigureOptions<TOptions>(this IServiceCollection services,
             IConfiguration configuration,
             string sectionKey)

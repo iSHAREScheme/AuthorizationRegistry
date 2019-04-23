@@ -1,9 +1,9 @@
-using System.Linq;
+﻿using System.Linq;
 using IdentityServer4.EntityFramework.DbContexts;
 using IdentityServer4.EntityFramework.Entities;
+using iSHARE.EntityFramework.Migrations.Seed;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using iSHARE.EntityFramework.Migrations.Seed;
 
 namespace iSHARE.IdentityServer.Data.Migrations.Seed
 {
@@ -25,6 +25,10 @@ namespace iSHARE.IdentityServer.Data.Migrations.Seed
             Environment = environment;
         }
 
+        private DbSet<Client> Clients => Context.Set<Client>();
+        private DbSet<ApiResource> ApiResources => Context.Set<ApiResource>();
+        private DbSet<IdentityResource> IdentityResources => Context.Set<IdentityResource>();
+
         protected void SeedClients(string source)
         {
             var seedClients = SeedDataProvider.GetEntities<Client>(source, Environment);
@@ -44,12 +48,9 @@ namespace iSHARE.IdentityServer.Data.Migrations.Seed
                     secret.Value = IdentityServer4.Models.HashExtensions.Sha256(secret.Value);
                 }
 
-                Clients.Add(seedClient);                
+                Clients.Add(seedClient);
             }
         }
-
-        private DbSet<Client> Clients => Context.Set<Client>();
-        private DbSet<ApiResource> Resources => Context.Set<ApiResource>();
 
         protected void SeedApiResources(string source)
         {
@@ -57,12 +58,26 @@ namespace iSHARE.IdentityServer.Data.Migrations.Seed
 
             foreach (var apiResource in apiResources)
             {
-                var currentApiResource = Resources.FirstOrDefault(c => c.Name == apiResource.Name);
+                var currentApiResource = ApiResources.FirstOrDefault(c => c.Name == apiResource.Name);
                 if (currentApiResource != null)
                 {
-                    Resources.Remove(currentApiResource);
+                    ApiResources.Remove(currentApiResource);
                 }
                 Context.Set<ApiResource>().Add(apiResource);
+            }
+        }
+
+        protected void SeedIdentityResources(string source)
+        {
+            var identityResources = SeedDataProvider.GetEntities<IdentityResource>(source, Environment);
+            foreach (var identityResource in identityResources)
+            {
+                var currentIdentityResource = IdentityResources.FirstOrDefault(c => c.Name == identityResource.Name);
+                if (currentIdentityResource != null)
+                {
+                    IdentityResources.Remove(currentIdentityResource);
+                }
+                Context.Set<IdentityResource>().Add(identityResource);
             }
         }
     }

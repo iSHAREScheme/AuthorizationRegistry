@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using iSHARE.Api.Validation;
+﻿using iSHARE.Api.Validation;
 using iSHARE.IdentityServer.Validation.Interfaces;
 using iSHARE.SchemeOwner.Client;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace iSHARE.Api
 {

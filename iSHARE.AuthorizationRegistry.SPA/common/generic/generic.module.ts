@@ -34,9 +34,14 @@ import { MinLowercaseValidatorDirective } from './directives/min-lowercase.direc
 import { MinNumericValidatorDirective } from './directives/min-numeric.directive';
 import { MinSpecialCharsValidatorDirective } from './directives/min-special-characters.directive';
 import { MinUppercaseValidatorDirective } from './directives/min-uppercase.directive';
+import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
+import { CustomMultiSelectComponent } from './components/custom-multi-select/custom-multi-select.component';
+import { ClickOutsideDirective } from './directives/click-outside.directive';
+import { ListFilterPipe } from './pipes/list-filter.pipe';
+import { SelfAuthGuard } from './guards/self-auth.guard';
 
 @NgModule({
-  imports: [RouterModule, AngularCommonModule, FormsModule, ReactiveFormsModule],
+  imports: [RouterModule, AngularCommonModule, FormsModule, ReactiveFormsModule, NgMultiSelectDropDownModule ],
   declarations: [
     AuthorizedDirective,
     ForbiddenPageComponent,
@@ -52,7 +57,10 @@ import { MinUppercaseValidatorDirective } from './directives/min-uppercase.direc
     MinLowercaseValidatorDirective,
     MinNumericValidatorDirective,
     MinSpecialCharsValidatorDirective,
-    MinUppercaseValidatorDirective
+    MinUppercaseValidatorDirective,
+    CustomMultiSelectComponent,
+    ClickOutsideDirective,
+    ListFilterPipe
   ],
   exports: [
     AuthorizedDirective,
@@ -69,7 +77,10 @@ import { MinUppercaseValidatorDirective } from './directives/min-uppercase.direc
     MinLowercaseValidatorDirective,
     MinNumericValidatorDirective,
     MinSpecialCharsValidatorDirective,
-    MinUppercaseValidatorDirective
+    MinUppercaseValidatorDirective,
+    CustomMultiSelectComponent,
+    ClickOutsideDirective,
+    ListFilterPipe
   ]
 })
 export class GenericModule {
@@ -83,6 +94,7 @@ export class GenericModule {
         JSONService,
         AuthGuard,
         RoleGuard,
+        SelfAuthGuard,
         RuntimeConfigurationService,
         AppInsightsInterceptor,
         JwtHttpInterceptorProvider,

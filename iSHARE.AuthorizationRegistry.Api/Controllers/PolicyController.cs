@@ -1,14 +1,14 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
+﻿using System.Threading.Tasks;
 using iSHARE.Api.Controllers;
 using iSHARE.Api.Filters;
 using iSHARE.AuthorizationRegistry.Api.ViewModels;
 using iSHARE.AuthorizationRegistry.Core.Api;
 using iSHARE.AuthorizationRegistry.Core.Requests;
-using Swashbuckle.AspNetCore.Annotations;
-using System.Threading.Tasks;
 using iSHARE.Models;
+using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace iSHARE.AuthorizationRegistry.Api.Controllers
 {
@@ -40,7 +40,7 @@ namespace iSHARE.AuthorizationRegistry.Api.Controllers
             var partyId = User.GetRequestingClientId();
 
             var validationResult = _delegationValidationService.ValidateIssuer(
-                partyId, 
+                partyId,
                 delegationPolicy.DelegationEvidence.PolicyIssuer,
                 delegationPolicy.DelegationEvidence.Target.AccessSubject
                 );

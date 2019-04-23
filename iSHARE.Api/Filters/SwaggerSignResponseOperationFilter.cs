@@ -1,8 +1,8 @@
-﻿using iSHARE.Api.Swagger;
+﻿using System.Collections.Generic;
+using System.Linq;
+using iSHARE.Api.Swagger;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace iSHARE.Api.Filters
 {

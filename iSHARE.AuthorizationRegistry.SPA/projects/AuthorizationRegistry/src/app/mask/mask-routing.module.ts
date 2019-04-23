@@ -9,7 +9,12 @@ const routes: Routes = [
     component: DelegationMaskComponent,
     canActivate: [RoleGuard],
     data: {
-      allowedRoles: [constants.roles.EntitledPartyCreator, constants.roles.EntitledPartyViewer, constants.roles.SchemeOwner]
+      allowedRoles: [
+        constants.roles.ArEntitledPartyCreator,
+        constants.roles.ArEntitledPartyViewer,
+        constants.roles.ArPartyAdmin,
+        constants.roles.SchemeOwner
+      ]
     }
   }
 ];

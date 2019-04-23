@@ -23,7 +23,7 @@ namespace iSHARE.IdentityServer.Validation
             //SO though needs to validate both that the Jwt is valid and the extracted data is also valid            
             foreach (var validator in _secretValidators)
             {
-                var result = await validator.ValidateAsync(secrets, parsedSecret).ConfigureAwait(false);
+                var result = await validator.ValidateAsync(secrets, parsedSecret);
                 if (!result.Success)
                 {
                     return result;

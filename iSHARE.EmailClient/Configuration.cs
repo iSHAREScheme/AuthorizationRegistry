@@ -1,9 +1,9 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
+﻿using System.Collections.Generic;
 using iSHARE.Abstractions.Email;
 using iSHARE.Configuration;
 using iSHARE.Configuration.Configurations;
-using System.Collections.Generic;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace iSHARE.EmailClient
 {

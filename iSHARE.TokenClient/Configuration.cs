@@ -1,11 +1,11 @@
-﻿using Flurl.Http;
-using Flurl.Http.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Security.Cryptography;
+using Flurl.Http;
+using Flurl.Http.Configuration;
 using iSHARE.TokenClient.Api;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace iSHARE.TokenClient
 {
@@ -26,7 +26,7 @@ namespace iSHARE.TokenClient
             }
         }
 
-        public static void AddTokenClient(this IServiceCollection services) 
+        public static void AddTokenClient(this IServiceCollection services)
             => services.AddTokenClient(new TokenSource[] { });
 
         public static void AddTokenClient(this IServiceCollection services, TokenSource tokenSource)

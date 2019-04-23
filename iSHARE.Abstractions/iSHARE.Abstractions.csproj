@@ -15,6 +15,8 @@
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
-  </ItemGroup>
+    <PackageReference Include="OpenSSL.PrivateKeyDecoder" Version="1.3.0" />
+    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="5.2.4" />
+  </ItemGroup> 
 
 </Project>

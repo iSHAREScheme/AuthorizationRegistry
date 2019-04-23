@@ -1,19 +1,19 @@
 [
   {
-    "Name": "ar.api",
-    "DisplayName": "ar.api",
-    "Scopes": [
-      {
-        "Name": "ar.api"
-      }
-    ]
-  },
-  {
     "Name": "iSHARE",
     "DisplayName": "iSHARE",
     "Scopes": [
       {
         "Name": "iSHARE"
+      }
+    ]
+  },
+  {
+    "Name": "ar.api",
+    "DisplayName": "ar.api",
+    "Scopes": [
+      {
+        "Name": "ar.api"
       }
     ]
   }

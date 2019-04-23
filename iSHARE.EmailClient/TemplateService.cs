@@ -1,10 +1,10 @@
-﻿using Microsoft.AspNetCore.Hosting;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Threading.Tasks;
 using iSHARE.Abstractions.Email;
+using Microsoft.AspNetCore.Hosting;
 
 namespace iSHARE.EmailClient
 {

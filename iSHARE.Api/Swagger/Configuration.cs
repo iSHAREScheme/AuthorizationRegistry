@@ -1,10 +1,11 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
+using iSHARE.Api.Configurations;
+using iSHARE.Api.Filters;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
-using iSHARE.Api.Filters;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
@@ -21,7 +22,10 @@ namespace iSHARE.Api.Swagger
             });
         }
 
-        public static void AddSwagger(this IServiceCollection services, string title, IHostingEnvironment hostingEnvironment)
+        public static void AddSwagger(this IServiceCollection services,
+            string title,
+            IHostingEnvironment hostingEnvironment,
+            params Assembly[] supportingAssemblies)
         {
             services.AddSwaggerGen(c =>
             {
@@ -30,12 +34,14 @@ namespace iSHARE.Api.Swagger
 
                 c.DocInclusionPredicate((version, desc) =>
                 {
-                    var isLiveEnvironment = hostingEnvironment.EnvironmentName.StartsWith("live", StringComparison.OrdinalIgnoreCase);
+                    var isLiveEnvironment = hostingEnvironment.IsLive();
 
-                    return isLiveEnvironment ? desc.GroupName != "testSpec" : desc.GroupName == "testSpec" || string.IsNullOrEmpty(desc.GroupName);
+                    return isLiveEnvironment ? desc.GroupName != SwaggerGroups.TestSpec : desc.GroupName == SwaggerGroups.TestSpec || string.IsNullOrEmpty(desc.GroupName);
                 });
 
+                c.DescribeAllParametersInCamelCase();
                 c.OperationFilter<AuthorizationHeaderFilter>();
+                c.OperationFilter<GenerateJwsFilter>();
                 c.OperationFilter<DateTimeHeaderFilter>();
                 c.OperationFilter<SwaggerSignResponseOperationFilter>();
                 c.DocumentFilter<SwaggerSignResponseDocumentFilter>();
@@ -43,7 +49,15 @@ namespace iSHARE.Api.Swagger
                 IncludeXmlComments(Assembly.GetEntryAssembly(), c);
                 IncludeXmlComments(typeof(Configuration).Assembly, c);
 
-                c.CustomSchemaIds( type => SwaggerUtils.NormalizeModelName(type.FriendlyId()));
+                if (supportingAssemblies != null)
+                {
+                    foreach (var assembly in supportingAssemblies)
+                    {
+                        IncludeXmlComments(assembly, c);
+                    }
+                }
+
+                c.CustomSchemaIds(type => SwaggerUtils.NormalizeModelName(type.FriendlyId()));
             });
         }
 
@@ -51,6 +65,7 @@ namespace iSHARE.Api.Swagger
         {
             var xmlFile = $"{sourceAssembly.GetName().Name}.xml";
             var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+
             if (File.Exists(xmlPath))
             {
                 options.IncludeXmlComments(xmlPath);

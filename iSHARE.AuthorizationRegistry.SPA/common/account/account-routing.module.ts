@@ -7,7 +7,6 @@ import { ForgotPasswordComponent } from './components/forgot-password/forgot-pas
 import { ChangePasswordComponent } from './components/change-password/change-password.component';
 import { ProfileComponent } from './components/profile/profile.component';
 import { ActivateAccountComponent } from './components/activate-account/activate-account.component';
-import { LoginComponent } from './components/login/login.component';
 import { ResetPasswordComponent } from '@common/account/components/reset-password/reset-password.component';
 
 const routes: Routes = [
@@ -33,12 +32,6 @@ const routes: Routes = [
     path: 'forgot-password',
     component: ForgotPasswordComponent,
     canActivate: [AppInsightsInterceptor]
-  },
-  {
-    path: 'login',
-    component: LoginComponent,
-    canActivate: [AppInsightsInterceptor],
-    runGuardsAndResolvers: 'always'
   },
   {
     path: 'reset-password',

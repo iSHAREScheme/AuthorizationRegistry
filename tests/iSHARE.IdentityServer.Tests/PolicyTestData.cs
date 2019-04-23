@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace iSHARE.IdentityServer.Tests
+﻿namespace iSHARE.IdentityServer.Tests
 {
     public static class PolicyTestData
     {

@@ -1,3 +1,3 @@
 export class ForgotPasswordModel {
-    public username: string;
+    public email: string;
 }

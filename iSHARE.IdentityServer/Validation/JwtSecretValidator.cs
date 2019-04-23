@@ -7,20 +7,26 @@ using System.Threading.Tasks;
 using IdentityServer4;
 using IdentityServer4.Models;
 using IdentityServer4.Validation;
+using iSHARE.Configuration.Configurations;
+using iSHARE.IdentityServer.Models;
+using iSHARE.IdentityServer.Services;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
-using iSHARE.Configuration.Configurations;
 
 namespace iSHARE.IdentityServer.Validation
 {
-    public class JwtSecretValidator: ISecretValidator
+    public class JwtSecretValidator : ISecretValidator
     {
         private readonly ILogger<JwtSecretValidator> _logger;
         private readonly PartyDetailsOptions _partyDetailsOptions;
+        private readonly IAssertionManager _assertionManager;
 
-        public JwtSecretValidator(ILogger<JwtSecretValidator> logger, PartyDetailsOptions partyDetailsOptions)
+        public JwtSecretValidator(ILogger<JwtSecretValidator> logger,
+            PartyDetailsOptions partyDetailsOptions,
+            IAssertionManager assertionManager)
         {
             _partyDetailsOptions = partyDetailsOptions;
+            _assertionManager = assertionManager;
             _logger = logger;
         }
 
@@ -42,12 +48,12 @@ namespace iSHARE.IdentityServer.Validation
                 return fail;
             }
 
-            var enumeratedSecrets = secrets.ToList().AsReadOnly();
+            var assertion = _assertionManager.Parse(jwtTokenString);
 
             List<SecurityKey> trustedKeys;
             try
             {
-                trustedKeys = GetTrustedKeys(enumeratedSecrets);
+                trustedKeys = GetTrustedKeys(assertion);
             }
             catch (Exception e)
             {
@@ -96,26 +102,19 @@ namespace iSHARE.IdentityServer.Validation
             }
         }
 
-        private List<SecurityKey> GetTrustedKeys(IReadOnlyCollection<Secret> secrets)
+        private List<SecurityKey> GetTrustedKeys(AssertionModel assertion)
         {
-            var trustedKeys = GetAllTrustedCertificates(secrets)
+            var trustedKeys = GetAllTrustedCertificates(assertion)
                                 .Select(c => (SecurityKey)new X509SecurityKey(c))
                                 .ToList();
-
-            if (!trustedKeys.Any()
-                && secrets.Any(s => s.Type == IdentityServerConstants.SecretTypes.X509CertificateThumbprint))
-            {
-                _logger.LogWarning("Cannot validate client assertion token using only thumbprint. Client must be configured with X509CertificateBase64 secret.");
-            }
 
             return trustedKeys;
         }
 
-        private List<X509Certificate2> GetAllTrustedCertificates(IEnumerable<Secret> secrets)
+        private List<X509Certificate2> GetAllTrustedCertificates(AssertionModel model)
         {
-            return secrets
-                .Where(s => s.Type == IdentityServerConstants.SecretTypes.X509CertificateBase64)
-                .Select(s => GetCertificateFromString(s.Value))
+            return model.Certificates
+                .Select(s => GetCertificateFromString(s))
                 .Where(c => c != null)
                 .ToList();
         }

@@ -1,6 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
-using iSHARE.AuthorizationRegistry.Data.Models;
+﻿using iSHARE.AuthorizationRegistry.Core.Models;
 using iSHARE.EntityFramework.Migrations;
+using iSHARE.Identity.Data.Configurations;
+using Microsoft.EntityFrameworkCore;
 
 namespace iSHARE.AuthorizationRegistry.Data
 {
@@ -19,6 +20,7 @@ namespace iSHARE.AuthorizationRegistry.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.RegisterConfigurations<AuthorizationRegistryDbContext>();
+            modelBuilder.ApplyConfiguration(new UserConfiguration<User>());
         }
     }
 }

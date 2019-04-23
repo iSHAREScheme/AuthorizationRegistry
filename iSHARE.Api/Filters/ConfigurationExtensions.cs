@@ -1,5 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using iSHARE.Abstractions;
+﻿using iSHARE.Abstractions;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace iSHARE.Api.Filters
 {

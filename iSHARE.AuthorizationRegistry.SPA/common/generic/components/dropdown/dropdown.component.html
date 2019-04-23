@@ -1,8 +1,8 @@
 <div class="dropdown role" [ngClass]="{ 'open': dropdownOpen }">
-  <button type="button" class="btn btn-primary dropdown-button" (click)="dropdownOpen = !dropdownOpen">
-    <i class="fa fa-circle" aria-hidden="true"></i>{{ (viewValue(selectedValue) || title || 'select item') | humanize }}
+  <button type="button" class="btn btn-primary dropdown-button" (click)="dropdownOpen = !dropdownOpen" [disabled]="disable">
+    <i class="fa fa-circle" aria-hidden="true"></i>{{ (viewValue(selectedValue) || title || 'select item') }}
   </button>
   <div class="dropdown-content">
-    <div class="dropdown-entry" *ngFor="let item of items; let j = index" (click)="selectItem(j); dropdownOpen = !dropdownOpen;">{{ viewValue(item) | humanize }}</div>
+    <div class="dropdown-entry" *ngFor="let item of items; let j = index" (click)="selectItem(j); dropdownOpen = !dropdownOpen;">{{ viewValue(item) }}</div>
   </div>
 </div>

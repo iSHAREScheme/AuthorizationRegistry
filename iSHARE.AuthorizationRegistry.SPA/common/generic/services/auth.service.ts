@@ -26,20 +26,37 @@ export class AuthService {
     const params = {
       client_id: this.options.clientId,
       redirect_uri: this.options.redirectEndpoint,
-      response_type: 'token',
-      scope: this.options.scope
+      response_type: 'code token',
+      scope: `${this.options.scope} openid profile`,
+      nonce: this.generateNonce()
     };
     const query = Object.keys(params)
       .map(key => `${key}=${encodeURIComponent(params[key])}`)
       .join('&');
-    const result = this.options.authorizeEndpoint + '?' + query;
+    const result = this.config.identityProvider.authorizeEndpoint + '?' + query;
+    return result;
+  }
+
+  generateNonce() {
+    const length = 40;
+    const chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    let result = '';
+    for (let i = length; i > 0; --i) {
+      result += chars[Math.floor(Math.random() * chars.length)];
+    }
     return result;
   }
 
   goToLogin() {
     window.location.href = this.getAuthorizationUrl();
   }
+
+  goToLoginPage() {
+    this.router.navigate(['account', 'login']);
+  }
   login(username, password) {
+    username = encodeURIComponent(username);
+    password = encodeURIComponent(password);
     const body = new HttpParams().set('username', username).set('password', password);
     return this.http.post<any>(this.options.loginEndpoint, body.toString(), {
       headers: new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded'),
@@ -75,9 +92,7 @@ export class AuthService {
 
   logout(): void {
     this.clearLogout();
-    this.http.post<any>(this.options.logoutEndpoint, null, { withCredentials: true }).subscribe(() => {
-      this.goToLogin();
-    });
+    this.goToLoginPage();
   }
   clearLogout(): void {
     this.profileService.clear();

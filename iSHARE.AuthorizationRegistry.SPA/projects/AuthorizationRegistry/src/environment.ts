@@ -5,7 +5,7 @@
  * because it will have performance impact when throw error
  */
 // import 'zone.js/dist/zone-error'; // Included with Angular CLI.import { EnvironmentModel } from '@common/';
-import { EnvironmentModel, AppConfigService } from 'common';
+import { EnvironmentModel, AppConfigService, EnvironmentType } from 'common';
 
 // This file can be replaced during build by using the `fileReplacements` array.
 // `ng build ---prod` replaces `environment.ts` with `environment.prod.ts`.
@@ -21,7 +21,13 @@ export const environmentConfigurationMap: EnvironmentModel[] = [
     apiEndpoint: 'http://localhost:61433/',
     scope: 'ar.api',
     spaUrl: 'http://localhost:4201',
-    clientId: 'AR_SPA'
+    clientId: 'AR_SPA',
+    disablePartyUsersManagement: false,
+    environmentType: EnvironmentType.Development,
+    identityProvider: {
+      authorizeEndpoint: 'http://localhost:61433/connect/authorize',
+    },
+    userManagement: true
   }
 ];
 export function environmentFactory() {

@@ -33,7 +33,7 @@ namespace iSHARE.Models
                     }
                 }
                 return $"{prefix}.{result.ToString().ToUpper(CultureInfo.CurrentCulture)}";
-            } 
+            }
         }
     }
 }

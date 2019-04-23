@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
-using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using IdentityModel;
@@ -10,22 +9,24 @@ using IdentityServer4.Extensions;
 using IdentityServer4.Models;
 using IdentityServer4.Services;
 using IdentityServer4.Stores;
+using iSHARE.Abstractions;
+using iSHARE.Configuration.Configurations;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using iSHARE.Configuration.Configurations;
 
 namespace iSHARE.IdentityServer.Services
 {
-    public class TokenService: ITokenService
+    public class TokenService : ITokenService
     {
-        private readonly ILogger<TokenService> Logger;
-        private readonly IHttpContextAccessor Context;
-        private readonly IClaimsService ClaimsProvider;
-        private readonly IReferenceTokenStore ReferenceTokenStore;
-        private readonly ITokenCreationService CreationService;
-        private readonly ISystemClock Clock;
-        private readonly PartyDetailsOptions _partyDetailsOptions; 
+        private readonly PartyDetailsOptions _partyDetailsOptions;
+        private readonly IClaimsService _claimsProvider;
+        private readonly ISystemClock _clock;
+        private readonly IHttpContextAccessor _context;
+        private readonly ITokenCreationService _creationService;
+        private readonly ILogger<TokenService> _logger;
+        private readonly IReferenceTokenStore _referenceTokenStore;
+        private readonly SchemeOwnerIdentityProviderOptions _idpOptions;
         public TokenService(
             IClaimsService claimsProvider,
             IReferenceTokenStore referenceTokenStore,
@@ -33,21 +34,22 @@ namespace iSHARE.IdentityServer.Services
             IHttpContextAccessor contextAccessor,
             ISystemClock clock,
             ILogger<TokenService> logger,
-            PartyDetailsOptions partyDetailsOptions)
+            PartyDetailsOptions partyDetailsOptions,
+            SchemeOwnerIdentityProviderOptions idpOptions)
         {
-            Context = contextAccessor;
-            ClaimsProvider = claimsProvider;
-            ReferenceTokenStore = referenceTokenStore;
-            CreationService = creationService;
-            Clock = clock;
-            Logger = logger;
+            _context = contextAccessor;
+            _claimsProvider = claimsProvider;
+            _referenceTokenStore = referenceTokenStore;
+            _creationService = creationService;
+            _clock = clock;
+            _logger = logger;
             _partyDetailsOptions = partyDetailsOptions;
-
+            _idpOptions = idpOptions;
         }
 
         public virtual async Task<Token> CreateIdentityTokenAsync(TokenCreationRequest request)
         {
-            Logger.LogTrace("Creating identity token");
+            _logger.LogTrace("Creating identity token");
             Validate(request);
 
             // host provided claims
@@ -60,7 +62,8 @@ namespace iSHARE.IdentityServer.Services
             }
 
             // add iat claim
-            claims.Add(new Claim(JwtClaimTypes.IssuedAt, Clock.UtcNow.ToEpochTime().ToString(), ClaimValueTypes.Integer));
+            claims.Add(
+                new Claim(JwtClaimTypes.IssuedAt, _clock.UtcNow.ToEpochTime().ToString(), ClaimValueTypes.Integer));
 
             // add at_hash claim
             if (!string.IsNullOrWhiteSpace(request.AccessTokenToHash))
@@ -71,7 +74,8 @@ namespace iSHARE.IdentityServer.Services
             // add c_hash claim
             if (!string.IsNullOrWhiteSpace(request.AuthorizationCodeToHash))
             {
-                claims.Add(new Claim(JwtClaimTypes.AuthorizationCodeHash, HashAdditionalData(request.AuthorizationCodeToHash)));
+                claims.Add(new Claim(JwtClaimTypes.AuthorizationCodeHash,
+                    HashAdditionalData(request.AuthorizationCodeToHash)));
             }
 
             // add sid if present
@@ -80,17 +84,17 @@ namespace iSHARE.IdentityServer.Services
                 claims.Add(new Claim(JwtClaimTypes.SessionId, request.ValidatedRequest.SessionId));
             }
 
-            claims.AddRange(await ClaimsProvider.GetIdentityTokenClaimsAsync(
+            claims.AddRange(await _claimsProvider.GetIdentityTokenClaimsAsync(
                 request.Subject,
                 request.Resources,
                 request.IncludeAllIdentityClaims,
                 request.ValidatedRequest));
 
-            var issuer = Context.HttpContext.GetIdentityServerIssuerUri();
+            var issuer = _context.HttpContext.GetIdentityServerIssuerUri();
 
             var token = new Token(OidcConstants.TokenTypes.IdentityToken)
             {
-                CreationTime = Clock.UtcNow.UtcDateTime,
+                CreationTime = _clock.UtcNow.UtcDateTime,
                 Audiences = { request.ValidatedRequest.Client.ClientId },
                 Issuer = issuer,
                 Lifetime = request.ValidatedRequest.Client.IdentityTokenLifetime,
@@ -104,11 +108,11 @@ namespace iSHARE.IdentityServer.Services
 
         public virtual async Task<Token> CreateAccessTokenAsync(TokenCreationRequest request)
         {
-            Logger.LogTrace("Creating access token");
+            _logger.LogTrace("Creating access token");
             Validate(request);
 
             var claims = new List<Claim>();
-            claims.AddRange(await ClaimsProvider.GetAccessTokenClaimsAsync(
+            claims.AddRange(await _claimsProvider.GetAccessTokenClaimsAsync(
                 request.Subject,
                 request.Resources,
                 request.ValidatedRequest));
@@ -118,11 +122,18 @@ namespace iSHARE.IdentityServer.Services
                 claims.Add(new Claim(JwtClaimTypes.JwtId, CryptoRandom.CreateUniqueId(16)));
             }
 
-            var issuer = Context.HttpContext.GetIdentityServerIssuerUri();
+            var issuer = _context.HttpContext.GetIdentityServerIssuerUri();
+
+            var clientId = _idpOptions.Enable && request.ValidatedRequest
+                .Client
+                .AllowedGrantTypes
+                .Any(g => g == GrantTypes.Hybrid.FirstOrDefault())
+                    ? request.ValidatedRequest.Client.ClientId : _partyDetailsOptions.ClientId;
+
             var token = new Token(OidcConstants.TokenTypes.AccessToken)
             {
-                CreationTime = Clock.UtcNow.UtcDateTime,
-                Audiences = { _partyDetailsOptions.ClientId },
+                CreationTime = _clock.UtcNow.UtcDateTime,
+                Audiences = { clientId },
                 Issuer = issuer,
                 Lifetime = request.ValidatedRequest.AccessTokenLifetime,
                 Claims = claims,
@@ -141,24 +152,22 @@ namespace iSHARE.IdentityServer.Services
             {
                 if (token.AccessTokenType == AccessTokenType.Jwt)
                 {
-                    Logger.LogTrace("Creating JWT access token");
+                    _logger.LogTrace("Creating JWT access token");
 
-                    tokenResult = await CreationService.CreateTokenAsync(token);
+                    tokenResult = await _creationService.CreateTokenAsync(token);
                 }
                 else
                 {
-                    Logger.LogTrace("Creating reference access token");
+                    _logger.LogTrace("Creating reference access token");
 
-                    var handle = await ReferenceTokenStore.StoreReferenceTokenAsync(token);
-
-                    tokenResult = handle;
+                    tokenResult = await _referenceTokenStore.StoreReferenceTokenAsync(token);
                 }
             }
             else if (token.Type == OidcConstants.TokenTypes.IdentityToken)
             {
-                Logger.LogTrace("Creating JWT identity token");
+                _logger.LogTrace("Creating JWT identity token");
 
-                tokenResult = await CreationService.CreateTokenAsync(token);
+                tokenResult = await _creationService.CreateTokenAsync(token);
             }
             else
             {
@@ -170,22 +179,24 @@ namespace iSHARE.IdentityServer.Services
 
         protected virtual string HashAdditionalData(string tokenToHash)
         {
-            using (var sha = SHA256.Create())
-            {
-                var hash = sha.ComputeHash(Encoding.ASCII.GetBytes(tokenToHash));
+            var hash = Encoding.ASCII.GetBytes(tokenToHash).ToSha256();
+            var leftPart = new byte[16];
+            Array.Copy(hash, leftPart, 16);
 
-                var leftPart = new byte[16];
-                Array.Copy(hash, leftPart, 16);
-
-                return Base64Url.Encode(leftPart);
-            }
+            return Base64Url.Encode(leftPart);
         }
 
         public void Validate(TokenCreationRequest request)
         {
-            if (request.Resources == null) throw new ArgumentNullException(nameof(request.Resources));
-            if (request.ValidatedRequest == null) throw new ArgumentNullException(nameof(request.ValidatedRequest));
-        }
-    }  
-}
+            if (request.Resources == null)
+            {
+                throw new ArgumentNullException(nameof(request.Resources));
+            }
 
+            if (request.ValidatedRequest == null)
+            {
+                throw new ArgumentNullException(nameof(request.ValidatedRequest));
+            }
+        }
+    }
+}

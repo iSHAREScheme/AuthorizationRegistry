@@ -1,7 +1,28 @@
 <h3>Profile</h3>
 <div class="container p-0">
   <div class="row no-gutters">
-    <div class="col">
+    <div class="col-md">
+      <form class="form-horizontal">
+        <div class="form-group">
+          <label>email</label>
+          <input class="form-control" type="text" [value]="email" disabled />
+        </div>
+        <div class="form-group" *ngIf="partyId">
+          <label>party id</label>
+          <input class="form-control" type="text" [value]="partyId" disabled />
+        </div>
+        <div class="form-group" *ngIf="partyName">
+          <label>party name</label>
+          <input class="form-control" type="text" [value]="partyName" disabled />
+        </div>
+        <div class="form-group">
+          <label>roles</label>
+          <label *ngIf="schemeOwnerRoles?.length">{{ schemeOwnerRoles.join(', ') }}</label>
+          <label *ngIf="authorizationRegistryRoles.length"
+            >Authorization Registry: {{ authorizationRegistryRoles.join(', ') }}</label
+          >
+        </div>
+      </form>
       <button type="button" class="btn btn-primary" (click)="changePassword()">
         <i class="fa fa-gear" aria-hidden="true"></i>change password
       </button>

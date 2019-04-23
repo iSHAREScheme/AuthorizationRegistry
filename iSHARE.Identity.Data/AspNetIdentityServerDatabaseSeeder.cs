@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Threading.Tasks;
+using iSHARE.EntityFramework.Migrations.Seed;
+using iSHARE.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using iSHARE.EntityFramework.Migrations.Seed;
-using iSHARE.Models;
 
 namespace iSHARE.Identity.Data
 {
@@ -49,13 +49,13 @@ namespace iSHARE.Identity.Data
 
             foreach (var seedRole in seedRoles)
             {
-                var exists = await RoleManager.RoleExistsAsync(seedRole).ConfigureAwait(false);
+                var exists = await RoleManager.RoleExistsAsync(seedRole);
                 if (!exists)
                 {
                     await RoleManager.CreateAsync(new IdentityRole
                     {
                         Name = seedRole
-                    }).ConfigureAwait(false);
+                    });
                 }
             }
         }
@@ -66,24 +66,30 @@ namespace iSHARE.Identity.Data
 
             foreach (var seedUser in seedUsers)
             {
-                var user = await UserManager.FindByNameAsync(seedUser.UserName).ConfigureAwait(false);
+                var user = await UserManager.FindByIdAsync(seedUser.Id);
                 if (user != null)
                 {
+                    await UpdateRoles(seedUser, user);
                     continue;
                 }
 
                 user = seedUser;
-                var result = await UserManager.CreateAsync(user, seedUser.Password).ConfigureAwait(false);
+                var result = await UserManager.CreateAsync(user, seedUser.Password);
 
                 if (!result.Succeeded)
                 {
                     Logger.LogInformation("Creating {user} did not succeed because of {errors}", seedUser.UserName, result.Errors);
                     continue;
                 }
-                foreach (var role in seedUser.Roles)
-                {
-                    await UserManager.AddToRoleAsync(user, role).ConfigureAwait(false);
-                }
+                await UpdateRoles(seedUser, user);
+            }
+        }
+
+        private async Task UpdateRoles(TUser seedUser, TUser user)
+        {
+            foreach (var role in seedUser.Roles)
+            {
+                await UserManager.AddToRoleAsync(user, role);
             }
         }
 

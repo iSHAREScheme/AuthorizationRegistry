@@ -1,5 +1,5 @@
-﻿using iSHARE.AuthorizationRegistry.Data.Models;
-using System.Linq;
+﻿using System.Linq;
+using iSHARE.AuthorizationRegistry.Core.Models;
 
 namespace iSHARE.AuthorizationRegistry.Api.ViewModels
 {

@@ -1,71 +1,92 @@
 <div class="container p-0" *ngIf="!loading">
   <div class="row">
     <div class="col-md">
-      <h3>Edit user {{model.username}}</h3>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-md">
-      <form [formGroup]="form" (ngSubmit)="save()">
+      <form #form="ngForm" (ngSubmit)="save()">
         <div class="container p-0">
           <div class="row no-gutters">
             <div class="col-md-6">
               <div class="form-group">
-                <label>Email</label>
-                <span class="form-info">{{model.email}}</span>
+                <label>email</label>
+                <input
+                  class="form-control"
+                  type="text"
+                  placeholder="email"
+                  [(ngModel)]="user.email"
+                  #emailInput="ngModel"
+                  name="emailInput"
+                  disabled
+                />
               </div>
               <div class="form-group">
-                <label>username</label>
-                <span class="form-info">{{model.username}}</span>
+                <label class="global-role" *ngIf="isSchemeOwner"
+                  ><input
+                    type="checkbox"
+                    name="checkbox"
+                    value="value"
+                    [(ngModel)]="makeSchemeOwner"
+                  /><span>Scheme Owner Administrator</span></label
+                >
               </div>
-              <div class="form-group" *ngIf="!isPartyHidden">
-                <label>Party Id</label>
-                <input class="form-control" autofocus type="text" placeholder="party id" formControlName="partyId">
-                <div class="error-message" *ngIf="form.get('partyId').hasError('required') && form.get('partyId').dirty">
-                  Party Id is required.
+              <div class="form-group" *ngIf="!makeSchemeOwner && isSchemeOwner">
+                <label>party id</label>
+                <input
+                  class="form-control"
+                  type="text"
+                  placeholder="party id"
+                  [(ngModel)]="user.partyId"
+                  #partyIdInput="ngModel"
+                  name="partyIdInput"
+                  required
+                />
+                <div
+                  class="error-message"
+                  *ngIf="partyIdInput.hasError('required') && partyIdInput.dirty"
+                >
+                  Party id is required.
                 </div>
               </div>
-              <div class="form-group" *ngIf="!isPartyHidden">
-                <label>Party Name</label>
-                <input class="form-control" type="text" placeholder="party name" formControlName="partyName">
+              <div class="form-group" *ngIf="!makeSchemeOwner && isSchemeOwner">
+                <label>party name</label>
+                <input
+                  class="form-control"
+                  type="text"
+                  placeholder="party name"
+                  [(ngModel)]="user.partyName"
+                  #partyNameInput="ngModel"
+                  name="partyNameInput"
+                  required
+                />
+                <div
+                  class="error-message"
+                  *ngIf="partyNameInput.hasError('required') && partyNameInput.dirty"
+                >
+                  Party Name is required.
+                </div>
+              </div>
+              <div class="form-group" *ngIf="!makeSchemeOwner">
+                <label>roles</label>
 
-                <div class="error-message" *ngIf="form.get('partyName').hasError('required') && form.get('partyName').dirty">
-                  Party name is required.
-                </div>
-              </div>
-              <div class="row no-gutters">
-                <div class="col-md-4">
-                  <label>Activation state</label>
-                  <span class="form-info">{{model.active ? 'active' : 'inactive'}}
-                  </span>
-                </div>
+                <app-custom-multi-select
+                  [data]="roles"
+                  [(ngModel)]="selectedRoles"
+                  name="rolesInput"
+                  [settings]="rolesOptions"
+                  [placeholder]="'Select Roles'"
+                >
+                </app-custom-multi-select>
               </div>
             </div>
             <div class="col-md-6">
-              <div class="row">
-                <div class="col-md">
-                  <div class="form-group">
-                    <input type="hidden" formControlName="roles">
-                    <label>Assign</label>
-                    <div class="role" *ngFor="let role of unassignedRoles" (click)="addRole(role)">
-                      <i class="fa fa-plus" aria-hidden="true"></i>{{role | humanize}}</div>
-                    <span *ngIf="unassignedRoles.length === 0" class="form-info">none</span>
-                    <label>Roles</label>
-                    <div class="role assigned" *ngFor="let role of roles">{{role | humanize}}
-                      <i class="fa fa-times" aria-hidden="true" (click)="removeRole(role)"></i>
-                    </div>
-                    <div class="error-message" *ngIf="form.get('roles').hasError('required') && form.get('roles').touched">
-                      At least one role is required.
-                    </div>
-                  </div>
-                </div>
+              <div class="form-group">
+                <label>Activation state</label>
+                <span class="form-info">{{ user.active ? 'active' : 'inactive' }} </span>
               </div>
             </div>
           </div>
           <div class="row">
             <div class="col-md">
-              <div [ngClass]="{'error-message': !!serverError}" *ngIf="!!serverError">
-                {{serverError}}
+              <div [ngClass]="{ 'error-message': !!serverError }" *ngIf="!!serverError">
+                {{ serverError }}
               </div>
             </div>
           </div>
@@ -76,15 +97,34 @@
               </button>
             </div>
             <div class="col-md-6">
-              <button [disabled]="model.active" type="button" class="btn btn-primary wideButton" (click)="sendActivationEmail()">
+              <button
+                [disabled]="user.active"
+                type="button"
+                class="btn btn-primary wideButton"
+                (click)="sendActivationEmail()"
+              >
                 <span>send activation email</span>
               </button>
-              <button type="button" class="btn btn-primary wideButton" [disabled]="!model.active || !passwordResetEnabled" (click)="resetUserPassword(); passwordResetEnabled=!passwordResetEnabled">
+              <button
+                type="button"
+                class="btn btn-primary wideButton"
+                [disabled]="!user.active || !passwordResetEnabled"
+                (click)="resetUserPassword(); passwordResetEnabled = !passwordResetEnabled"
+              >
                 <span>reset password</span>
               </button>
             </div>
             <div class="col-md-3">
-              <button type="submit" class="btn btn-primary right" [disabled]="form.pristine || form.dirty && !form.valid">
+              <button
+                type="submit"
+                class="btn btn-primary right"
+                [disabled]="
+                  form.pristine ||
+                  !form.dirty ||
+                  (form.dirty && !form.valid) ||
+                  (!makeSchemeOwner && !selectedRoles.length)
+                "
+              >
                 <i class="fa fa-check" aria-hidden="true"></i>update
               </button>
             </div>

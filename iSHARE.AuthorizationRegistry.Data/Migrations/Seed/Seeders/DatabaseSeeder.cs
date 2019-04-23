@@ -1,10 +1,10 @@
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using iSHARE.AuthorizationRegistry.Data.Models;
+﻿using System;
+using System.Linq;
+using iSHARE.AuthorizationRegistry.Core.Models;
 using iSHARE.EntityFramework;
 using iSHARE.EntityFramework.Migrations.Seed;
-using System;
-using System.Linq;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace iSHARE.AuthorizationRegistry.Data.Migrations.Seed.Seeders
 {

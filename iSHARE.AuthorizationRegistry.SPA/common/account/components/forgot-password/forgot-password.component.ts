@@ -10,7 +10,6 @@ import { AuthService } from '@generic/index';
   styleUrls: ['./forgot-password.component.scss']
 })
 export class ForgotPasswordComponent implements OnInit {
-  username: string;
   emailAddress: string;
   serverError: string;
   success = false;
@@ -18,7 +17,7 @@ export class ForgotPasswordComponent implements OnInit {
   ngOnInit(): void {}
 
   constructor(private api: AccountService, private router: Router, private auth: AuthService) {
-    this.username = '';
+    this.emailAddress = '';
   }
 
   login(): void {
@@ -27,7 +26,7 @@ export class ForgotPasswordComponent implements OnInit {
 
   sendForgotPasswordEmail(): void {
     const user: ForgotPasswordModel = {
-      username: this.username
+      email: this.emailAddress
     };
 
     this.api.sendForgotPasswordEmail(user).subscribe(

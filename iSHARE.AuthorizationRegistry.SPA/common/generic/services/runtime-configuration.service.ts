@@ -6,7 +6,7 @@ export class RuntimeConfigurationService {
   private config = new BehaviorSubject<ConfigurationModel>(new ConfigurationModel());
   currentConfig = this.config.asObservable();
 
-  contructor() {}
+  contructor() { }
 
   init(configuration: ConfigurationModel) {
     this.config.next(configuration);
@@ -15,4 +15,8 @@ export class RuntimeConfigurationService {
 
 export class ConfigurationModel {
   enableForgotPassword: boolean;
+
+  constructor() {
+    this.enableForgotPassword = true;
+  }
 }

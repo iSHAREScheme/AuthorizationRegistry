@@ -42,6 +42,16 @@ namespace iSHARE.Models
         /// </summary>
         /// <param name="principal">The principal object that holds the claims </param>
         /// <returns>The value of the requested claim</returns>
+        public static string TryGetRequestingClientId(this ClaimsPrincipal principal)
+        {
+            return ((ClaimsIdentity)principal.Identity).Claims.FirstOrDefault(c => c.Type == "client_id")?.Value;
+        }
+
+        /// <summary>
+        /// Retrieves the value of the claim which is type is client_id
+        /// </summary>
+        /// <param name="principal">The principal object that holds the claims </param>
+        /// <returns>The value of the requested claim</returns>
         public static string GetRequestingClientId(this ClaimsPrincipal principal)
         {
             return ((ClaimsIdentity)principal.Identity).Claims.First(c => c.Type == "client_id").Value;
@@ -50,6 +60,22 @@ namespace iSHARE.Models
         public static string GetRole(this ClaimsPrincipal principal)
         {
             return ((ClaimsIdentity)principal.Identity).Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
+        }
+
+        public static string GetNameIdentifier(this ClaimsPrincipal principal)
+        {
+            return principal.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        }
+
+        public static string GetPartyName(this ClaimsPrincipal principal)
+        {
+            return ((ClaimsIdentity)principal.Identity).Claims.FirstOrDefault(c => c.Type == "partyName")?.Value;
+        }
+
+        public static bool IsSchemeOwner(this ClaimsPrincipal principal)
+        {
+            var userRoles = principal.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value);
+            return userRoles.Contains(Constants.Roles.SchemeOwner);
         }
     }
 }

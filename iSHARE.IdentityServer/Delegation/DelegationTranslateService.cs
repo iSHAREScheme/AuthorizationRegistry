@@ -1,9 +1,9 @@
-﻿using Newtonsoft.Json;
+﻿using System.Collections.Generic;
+using System.Linq;
 using iSHARE.Models;
 using iSHARE.Models.DelegationEvidence;
 using iSHARE.Models.DelegationMask;
-using System.Collections.Generic;
-using System.Linq;
+using Newtonsoft.Json;
 
 namespace iSHARE.IdentityServer.Delegation
 {
