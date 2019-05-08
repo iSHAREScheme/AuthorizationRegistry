@@ -7,7 +7,7 @@
 The **Authorization Registry**:
 
 - Manages records of Delegation and Authorization of Entitled Party (role) and/or Service Consumer (role);
-- Checks on the basis of the registered permission(s) whether a Human Service Consumer (role) or Machine Service Consumer (role) is authorized to take delivery of the requested service, and;
+- Checks on the basis of the registered permission(s) whether a Machine Service Consumer (role) is authorized to take delivery of the requested service, and;
 - Confirms the established powers towards the Service Provider (role).
 
 Within the iSHARE Scheme, the term Authorization Registry always refers to an external Authorization Registry (not part of the Service Provider (role) or Entitled Party (role)).
