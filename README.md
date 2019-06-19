@@ -29,7 +29,7 @@ The **Authorization Registry**-code that is in this repository is not a 'product
 ### Setup the development environment
 
 1. Create environment variable 'ENVIRONMENT' with the value 'Development'
-2. Navigate to iSHARE.ServiceProvider.Api.Warehouse13 and create a new file named 'appsettings.Development.json'
+2. Navigate to iSHARE.AuthorizationRegistry.Api and create a new file named 'appsettings.Development.json'
 3. Copy the content of 'appsettings.Development.json.template' into 'appsettings.Development.json' and complete all fields with the necessary information and save the changes
 4. Into appsettings.Development.json file: 
     1. Change DigitalSigner -> PrivateKey value to the valid RSA private key value with the following format: "-----BEGIN RSA PRIVATE KEY-----\n...\n-----END RSA PRIVATE KEY-----". For this, you can use OpenSSL:
