@@ -40,6 +40,7 @@
     "ng-multiselect-dropdown": "^0.2.1",
     "ng2-ace-editor": "^0.3.8",
     "ng2-datepicker": "^3.1.1",
+    "ngx-cookie-service": "^2.2.0",
     "ngx-daterangepicker": "^2.1.0",
     "ngx-json-viewer": "^2.3.1",
     "ngx-pagination": "^3.2.0",

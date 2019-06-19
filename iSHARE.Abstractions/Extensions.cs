@@ -43,5 +43,17 @@ namespace iSHARE.Abstractions
         {
             return source.Any(c => c.Has(value, comparison));
         }
+
+        /// <summary>
+        /// Determines if the value is present in any of element from the source and the is the only one
+        /// </summary>
+        /// <param name="source">The source of elements where the value is present in any of the element</param>
+        /// <param name="value">The value that is searched</param>
+        /// <param name="comparison">The search policy that can be set, which by default is StringComparison.OrdinalIgnoreCase</param>
+        /// <returns>True if value is present in any of the source elements and the source has this single element, otherwise false</returns>
+        public static bool HasOnly(this IEnumerable<string> source, string value, StringComparison comparison = StringComparison.OrdinalIgnoreCase)
+        {
+            return source.Any(c => c.Has(value, comparison)) && source.Count() == 1;
+        }
     }
 }

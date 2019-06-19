@@ -36,7 +36,7 @@ namespace iSHARE.AuthorizationRegistry.Client
             _partyDetailsOptions = partyDetailsOptions;
         }
 
-        public async Task<DelegationEvidence> GetDelegation(DelegationMask mask, string client_assertion)
+        public async Task<DelegationEvidence> GetDelegation(DelegationMask mask)
         {
             _logger.LogInformation("Get delegation for {policyIssuer} and {target}", mask?.DelegationRequest?.PolicyIssuer, mask?.DelegationRequest?.Target?.AccessSubject);
             var jObjectMask = TransformToJObject(mask);
@@ -50,7 +50,6 @@ namespace iSHARE.AuthorizationRegistry.Client
             {
                 response = await _authorizationRegistryClientOptions.BaseUri
                     .AppendPathSegment("delegation")
-                    .WithHeader("previous_steps", JsonConvert.SerializeObject(new[] { client_assertion }))
                     .WithOAuthBearerToken(accessToken)
                     .PostJsonAsync(jObjectMask)
                     .ReceiveJson<JObject>()

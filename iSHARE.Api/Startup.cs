@@ -20,6 +20,7 @@ namespace iSHARE.Api
         protected internal string ApplicationInsightsName;
         protected internal string SpaScope;
         protected internal Assembly[] DocumentingAssemblies;
+        protected internal string ApiVersion = "v1.9";
 
         public Startup(IHostingEnvironment env, IConfiguration configuration, ILoggerFactory loggerFactory)
         {
@@ -41,7 +42,17 @@ namespace iSHARE.Api
             services.AddSigning();
 
 
-            MvcCoreBuilder = services.AddMvcCore()
+            MvcCoreBuilder = services.AddMvcCore(o =>
+                    {
+                        if (!HostingEnvironment.IsDevelopment())
+                        {
+                            var genericErrorMessage = "Invalid value.";
+                            o.ModelBindingMessageProvider.SetValueIsInvalidAccessor((x) => genericErrorMessage);
+                            o.ModelBindingMessageProvider.SetValueMustNotBeNullAccessor((x) => genericErrorMessage);
+                            o.ModelBindingMessageProvider.SetAttemptedValueIsInvalidAccessor((x, y) => genericErrorMessage);
+                            o.ModelBindingMessageProvider.SetNonPropertyAttemptedValueIsInvalidAccessor((x) => genericErrorMessage);
+                        }
+                    })
                 .AddApiExplorer() //see https://github.com/domaindrivendev/Swashbuckle.AspNetCore#swashbuckle--apiexplorer
                 .AddJsonFormatters()
                 .AddAuthorization()
@@ -49,12 +60,13 @@ namespace iSHARE.Api
                 .AddJsonOptions(options => { options.SerializerSettings.Converters.Add(new TrimmingConverter()); })
                 ;
             services.AddJwtAuthentication(HostingEnvironment, Configuration);
-            services.AddSwagger(SwaggerName, HostingEnvironment, DocumentingAssemblies);
+            services.AddSwagger(SwaggerName, HostingEnvironment, ApiVersion, DocumentingAssemblies);
             services.AddJsonSchema();
             services.AddFileProvider(HostingEnvironment);
             services.AddApplicationInsights(ApplicationInsightsName, HostingEnvironment);
 
-            services.AddTransient<HideApiMethodAttribute>();
+            services.AddTransient<HideLiveApiMethodAttribute>();
+            services.AddTransient<HideProductionMethodAttribute>();
             services.AddTransient<ClientIdCheckFilter>();
         }
 
@@ -62,6 +74,14 @@ namespace iSHARE.Api
         public virtual void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory)
         {
             loggerFactory.AddLoggers(Configuration);
+
+            app.UseExceptionHandler(HostingEnvironment);
+            app.UseSwagger(SwaggerName, ApiVersion);
+            app.UseMvc();
+        }
+
+        protected void ConfigureCors(IApplicationBuilder app)
+        {
             app.UseCors(builder =>
                 builder
                     .AllowAnyOrigin()
@@ -69,9 +89,6 @@ namespace iSHARE.Api
                     .AllowAnyMethod()
                     .AllowCredentials()
             );
-            app.UseExceptionHandler(HostingEnvironment);
-            app.UseSwagger(SwaggerName);
-            app.UseMvc();
         }
     }
 }

@@ -28,25 +28,6 @@ table.app-table {
 
     .actions-cell {
       width: 120px;
-      .actions {
-        padding: 0 10px;
-        text-align: right;        
-        i.fa {
-          width: 30px;
-          height: 30px;
-          text-align: center;
-          line-height: 30px;
-          color: #61385f;
-          background-color: transparent;
-          transition: 0.5s all;
-          &:hover {
-            color: #fff;
-            background-color: #61385f;
-            transition: 0.5s all;
-            cursor: pointer;
-          }
-        }
-      }
     }
 
     tr {

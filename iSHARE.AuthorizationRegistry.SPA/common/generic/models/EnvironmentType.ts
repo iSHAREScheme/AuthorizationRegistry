@@ -1,7 +1,7 @@
 export enum EnvironmentType {
-    Development,
-    QATest,
-    QALive,
-    Test,
-    Live
+  Development = 'Development',
+  QATest = 'QA Test',
+  QALive = 'QA Live',
+  Test = 'Test',
+  Live = 'Live'
 }

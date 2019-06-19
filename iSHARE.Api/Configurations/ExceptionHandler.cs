@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Text;
+using iSHARE.Configuration;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore.Internal;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 
 namespace iSHARE.Api.Configurations
@@ -22,37 +19,26 @@ namespace iSHARE.Api.Configurations
                 options.Run(
                     async context =>
                     {
-                        var live = hostingEnvironment.IsLive();
                         context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
                         context.Response.ContentType = "application/json";
-                        var ex = context.Features.Get<IExceptionHandlerFeature>();
-                        var exceptions = new List<Exception>();
-                        if (ex != null)
+                        var errorResponse = new
                         {
-                            exceptions.Add(ex.Error);
-                            var innerException = ex.Error.InnerException;
-                            while (innerException != null)
-                            {
-                                exceptions.Add(innerException);
-                                innerException = innerException.InnerException;
-                            }
-                        }
+                            error = "server_error",
+                            error_description = "The server encountered an unexpected condition that prevented it from fulfilling the request."
+                        };
 
-                        var json = exceptions.Any() ? JsonConvert.SerializeObject(exceptions.Select(c => new
-                        {
-                            c.GetType().FullName,
-                            c.Message,
-                            StackTrace = !live ? c.StackTrace : null,
-                            Source = !live ? c.Source : null,
-                            Data = !live ? (c.Data.Any() ? c.Data.Cast<DictionaryEntry>()
-                                         .Aggregate(new StringBuilder(), (s, x) => s.Append(x.Key + ":" + x.Value + "|"), s => s.ToString(0, s.Length - 1)) : null) : null
-                        })) : @"{ ""Errors"" : ""An error occurred, if you are a developer please check the logs."" }";
-
-                        await context.Response.WriteAsync(json);
+                        await context.Response.WriteAsync(JsonConvert.SerializeObject(errorResponse));
                     });
             });
 
-            if (hostingEnvironment.IsDevelopment() || hostingEnvironment.IsQa())
+
+            var configuration = app.ApplicationServices.GetService<IConfiguration>();
+            var detailedErrors = configuration.GetValue<string>(Environments.Variables.AspNetCoreDetailedErrors);
+            var enableDeveloperPage = detailedErrors?.Equals("1", StringComparison.OrdinalIgnoreCase) ?? false;
+            enableDeveloperPage |= detailedErrors?.Equals("true", StringComparison.OrdinalIgnoreCase) ?? false;
+            enableDeveloperPage |= hostingEnvironment.IsDevelopment();
+
+            if (enableDeveloperPage)
             {
                 app.UseDeveloperExceptionPage();
             }

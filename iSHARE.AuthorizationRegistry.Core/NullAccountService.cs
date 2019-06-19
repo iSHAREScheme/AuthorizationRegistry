@@ -9,7 +9,8 @@ namespace iSHARE.AuthorizationRegistry.Core
     {
         public Task<Response<TIdentity>> CheckCredentials(string username, string password)
         {
-            return Task.FromResult(Response<TIdentity>.ForError(""));
+            Response<TIdentity> response = Response.ForError("");
+            return Task.FromResult(response);
         }
 
         public Task<Response> EnableAuthenticator(EnableAuthenticatorRequest request, string userId)
@@ -19,12 +20,14 @@ namespace iSHARE.AuthorizationRegistry.Core
 
         public Task<Response<AuthenticatorKey>> GetAuthenticatorKey(string userId)
         {
-            return Task.FromResult(Response<AuthenticatorKey>.ForError(""));
+            Response<AuthenticatorKey> response = Response.ForError("");
+            return Task.FromResult(response);
         }
 
         public Task<Response<TIdentity>> Login(LoginRequest request)
         {
-            return Task.FromResult(Response<TIdentity>.ForError(""));
+            Response<TIdentity> response = Response.ForError("");
+            return Task.FromResult(response);
         }
     }
 }

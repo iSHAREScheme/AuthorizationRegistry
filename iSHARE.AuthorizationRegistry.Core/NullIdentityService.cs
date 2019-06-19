@@ -12,7 +12,8 @@ namespace iSHARE.AuthorizationRegistry.Core
     {
         public Task<Response<UserModel>> ConfirmPasswordReset(ConfirmPasswordResetRequest request)
         {
-            return Task.FromResult(Response<UserModel>.ForError(""));
+            Response<UserModel> response = Response.ForError("");
+            return Task.FromResult(response);
         }
 
         public Task<Response> ForcePasswordReset(Guid userId, ClaimsPrincipal principal)
@@ -22,7 +23,8 @@ namespace iSHARE.AuthorizationRegistry.Core
 
         public Task<Response<UserModel>> ChangePassword(ChangePasswordRequest request, string aspNetUserId)
         {
-            return Task.FromResult(Response<UserModel>.ForError(""));
+            Response<UserModel> response = Response.ForError("");
+            return Task.FromResult(response);
         }
 
         public Task<bool> Exists(Guid id)
@@ -30,24 +32,27 @@ namespace iSHARE.AuthorizationRegistry.Core
             return Task.FromResult(false);
         }
 
-        public Task<Response> MakeInactive(Guid id)
+        public Task<Response> MakeInactive(Guid id, ClaimsPrincipal principal)
         {
             return Task.FromResult(Response.ForError(""));
         }
 
         public Task<Response<UserModel>> ActivateAccountConfirm(ActivateAccountRequest request)
         {
-            return Task.FromResult(Response<UserModel>.ForError(""));
+            Response<UserModel> response = Response.ForError("");
+            return Task.FromResult(response);
         }
 
         public Task<Response<UserModel>> ActivateAccountSendEmail(SendEmailActivationUserRequest request, ClaimsPrincipal principal)
         {
-            return Task.FromResult(Response<UserModel>.ForError(""));
+            Response<UserModel> response = Response.ForError("");
+            return Task.FromResult(response);
         }
 
         public Task<Response<UserModel>> SendForgotPasswordEmail(ForgotPasswordUserRequest request)
         {
-            return Task.FromResult(Response<UserModel>.ForError(""));
+            Response<UserModel> response = Response.ForError("");
+            return Task.FromResult(response);
         }
 
         public Task<UserModel> Get(Guid id, ClaimsPrincipal principal)
@@ -64,12 +69,14 @@ namespace iSHARE.AuthorizationRegistry.Core
 
         public Task<Response<UserModel>> Create(CreateUserRequest request, ClaimsPrincipal principal)
         {
-            return Task.FromResult(Response<UserModel>.ForError(""));
+            Response<UserModel> response = Response.ForError("");
+            return Task.FromResult(response);
         }
 
         public Task<Response<UserModel>> Update(UpdateUserRequest request, ClaimsPrincipal principal)
         {
-            return Task.FromResult(Response<UserModel>.ForError(""));
+            Response<UserModel> response = Response.ForError("");
+            return Task.FromResult(response);
         }
     }
 }

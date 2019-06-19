@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
+    <ProjectGuid>306d1d55-f6db-4ada-a1b5-b1506f116b71</ProjectGuid>
   </PropertyGroup>
 
   <ItemGroup>
@@ -11,6 +12,6 @@
   <ItemGroup>
     <ProjectReference Include="..\iSHARE.Abstractions\iSHARE.Abstractions.csproj" />
     <ProjectReference Include="..\iSHARE.Configuration\iSHARE.Configuration.csproj" />
-	<ProjectReference Include="..\iSHARE.IdentityServer\iSHARE.IdentityServer.csproj" />
+    <ProjectReference Include="..\iSHARE.IdentityServer\iSHARE.IdentityServer.csproj" />
   </ItemGroup>
 </Project>

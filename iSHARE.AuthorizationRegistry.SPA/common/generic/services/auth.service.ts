@@ -5,9 +5,10 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable, ReplaySubject } from 'rxjs';
 import * as _ from 'lodash';
 import { ProfileService } from '../services/profile.service';
-import { constants } from '../../constants';
 import { AuthServiceOptions } from '../models/AuthServiceOptions';
 import { EnvironmentModel } from '../models/EnvironmentModel';
+import { StorageKeysModel } from '../models/StorageKeysModel';
+import { StorageService } from './storage.service';
 
 @Injectable()
 export class AuthService {
@@ -17,7 +18,9 @@ export class AuthService {
     private jwtHelperService: JwtHelperService,
     private router: Router,
     private profileService: ProfileService,
-    private config: EnvironmentModel
+    private config: EnvironmentModel,
+    private storageKeys: StorageKeysModel,
+    private storageService: StorageService
   ) {
     this.options = new AuthServiceOptions(this.config);
   }
@@ -26,14 +29,14 @@ export class AuthService {
     const params = {
       client_id: this.options.clientId,
       redirect_uri: this.options.redirectEndpoint,
-      response_type: 'code token',
+      response_type: 'code id_token',
       scope: `${this.options.scope} openid profile`,
       nonce: this.generateNonce()
     };
     const query = Object.keys(params)
       .map(key => `${key}=${encodeURIComponent(params[key])}`)
       .join('&');
-    const result = this.config.identityProvider.authorizeEndpoint + '?' + query;
+    const result = this.config.identityProvider.authorityUrl + 'connect/authorize' + '?' + query;
     return result;
   }
 
@@ -75,33 +78,54 @@ export class AuthService {
     });
   }
 
-  setAccessToken(accessToken: string, expirationTime: string) {
-    const decodedToken = this.jwtHelperService.decodeToken(accessToken);
+  setAccessToken(accessToken: string, identityToken: string, expirationTime: string) {
+    const decodedIdentityToken = this.jwtHelperService.decodeToken(identityToken);
     this.profileService.set({
-      email: decodedToken.email,
-      partyId: decodedToken.partyId,
-      partyName: decodedToken.partyName,
-      role: decodedToken.role,
-      id: decodedToken.sub
+      email: decodedIdentityToken.email,
+      partyId: decodedIdentityToken.partyId,
+      partyName: decodedIdentityToken.partyName,
+      role: decodedIdentityToken.role,
+      id: decodedIdentityToken.sub
     });
-    localStorage.setItem(constants.storage.keys.auth, accessToken);
+    this.storageService.setItem(this.storageKeys.auth, accessToken);
     const tokenExpiringDate = Date.now() + <any>expirationTime * 1000;
-    localStorage.setItem(constants.storage.keys.authExpiration, JSON.stringify(tokenExpiringDate));
+    this.storageService.setItem(this.storageKeys.authExpiration, JSON.stringify(tokenExpiringDate));
+    this.triggerRefresh();
     this.router.navigate(['']);
   }
 
   logout(): void {
-    this.clearLogout();
-    this.goToLoginPage();
+    this.http
+      .post<any>(this.options.logoutEndpoint, null, { withCredentials: true })
+      .subscribe(() => {
+        this.clearLogout();
+        this.triggerRefresh();
+        this.goToLoginPage();
+      });
   }
+  triggerRefresh() {
+    localStorage.setItem('refresh', 'true');
+    localStorage.removeItem('refresh');
+  }
+  registerReload(host: any) {
+    window.addEventListener('storage', this.storageEventListener.bind(host), false);
+  }
+  storageEventListener(event: StorageEvent) {
+    if (event.storageArea === localStorage && event.key === 'refresh') {
+      window.location.reload();
+    }
+  }
+
   clearLogout(): void {
     this.profileService.clear();
-    localStorage.removeItem(constants.storage.keys.authExpiration);
-    localStorage.removeItem(constants.storage.keys.auth);
+    this.storageService.removeItem(this.storageKeys.authExpiration);
+    this.storageService.removeItem(this.storageKeys.auth);
   }
 
   isLoggedIn(): boolean {
-    const expiringDate = JSON.parse(localStorage.getItem(constants.storage.keys.authExpiration));
+    const expiringDate = JSON.parse(
+      this.storageService.getItem(this.storageKeys.authExpiration) || '{}'
+    );
     if (expiringDate && Date.now() > expiringDate) {
       return false;
     }
@@ -109,7 +133,7 @@ export class AuthService {
   }
 
   getToken() {
-    return localStorage.getItem(constants.storage.keys.auth);
+    return this.storageService.getItem(this.storageKeys.auth);
   }
 
   authorize(roles: string[]): Observable<boolean> {

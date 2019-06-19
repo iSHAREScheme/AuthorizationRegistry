@@ -52,9 +52,7 @@ namespace iSHARE.IdentityServer.Services
             _logger.LogTrace("Creating identity token");
             Validate(request);
 
-            // host provided claims
             var claims = new List<Claim>();
-
             // if nonce was sent, must be mirrored in id token
             if (!string.IsNullOrWhiteSpace(request.Nonce))
             {
@@ -84,21 +82,31 @@ namespace iSHARE.IdentityServer.Services
                 claims.Add(new Claim(JwtClaimTypes.SessionId, request.ValidatedRequest.SessionId));
             }
 
-            claims.AddRange(await _claimsProvider.GetIdentityTokenClaimsAsync(
+            claims.AddRange(await _claimsProvider.GetAccessTokenClaimsAsync(
                 request.Subject,
                 request.Resources,
-                request.IncludeAllIdentityClaims,
                 request.ValidatedRequest));
 
+            if (request.ValidatedRequest.Client.IncludeJwtId)
+            {
+                claims.Add(new Claim(JwtClaimTypes.JwtId, CryptoRandom.CreateUniqueId(16)));
+            }
+
             var issuer = _context.HttpContext.GetIdentityServerIssuerUri();
+
+            var clientId = _idpOptions.Enable && request.ValidatedRequest
+                               .Client
+                               .AllowedGrantTypes
+                               .Any(g => g == GrantTypes.Hybrid.FirstOrDefault())
+                ? request.ValidatedRequest.Client.ClientId : _partyDetailsOptions.ClientId;
 
             var token = new Token(OidcConstants.TokenTypes.IdentityToken)
             {
                 CreationTime = _clock.UtcNow.UtcDateTime,
-                Audiences = { request.ValidatedRequest.Client.ClientId },
+                Audiences = { clientId },
                 Issuer = issuer,
-                Lifetime = request.ValidatedRequest.Client.IdentityTokenLifetime,
-                Claims = claims.Distinct(new ClaimComparer()).ToList(),
+                Lifetime = request.ValidatedRequest.AccessTokenLifetime,
+                Claims = claims,
                 ClientId = request.ValidatedRequest.Client.ClientId,
                 AccessTokenType = request.ValidatedRequest.AccessTokenType
             };
@@ -140,6 +148,11 @@ namespace iSHARE.IdentityServer.Services
                 ClientId = request.ValidatedRequest.Client.ClientId,
                 AccessTokenType = request.ValidatedRequest.AccessTokenType
             };
+
+            if (_partyDetailsOptions.IdPEnabled)
+            {
+                token.Audiences.Add($"{_partyDetailsOptions.BaseUri}resources");
+            }
 
             return token;
         }

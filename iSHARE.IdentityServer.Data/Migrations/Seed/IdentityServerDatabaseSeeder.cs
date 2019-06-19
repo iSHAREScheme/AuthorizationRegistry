@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using IdentityServer4.EntityFramework.DbContexts;
 using IdentityServer4.EntityFramework.Entities;
 using iSHARE.EntityFramework.Migrations.Seed;
@@ -62,6 +63,12 @@ namespace iSHARE.IdentityServer.Data.Migrations.Seed
                 if (currentApiResource != null)
                 {
                     ApiResources.Remove(currentApiResource);
+                }
+
+                var secrets = apiResource.Secrets?.Where(c => c.Type == "SharedSecret");
+                foreach (var secret in secrets ?? new List<ApiSecret>())
+                {
+                    secret.Value = IdentityServer4.Models.HashExtensions.Sha256(secret.Value);
                 }
                 Context.Set<ApiResource>().Add(apiResource);
             }

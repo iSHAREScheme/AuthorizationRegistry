@@ -7,15 +7,6 @@ export class Field {
   }
 }
 export const constants = {
-  storage: {
-    keys: {
-      auth: 'iSHARE.auth',
-      profile: 'iSHARE.profile',
-      logging: 'iSHARE.logging',
-      authExpiration: 'iSHARE.authExpiration',
-      settings: 'iSHARE.settings'
-    }
-  },
   roles: {
     SchemeOwner: 'SchemeOwner',
     ArPartyAdmin: 'AR.PartyAdmin',

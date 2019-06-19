@@ -26,6 +26,7 @@ export * from './models/ResponseModel';
 export * from './models/CreateDelegationMask';
 export * from './models/DelegationResponse';
 export * from './models/EnvironmentType';
+export * from './models/StorageKeysModel';
 
 export * from './interceptors/AppInsights.interceptor';
 export * from './interceptors/JwtHttp.interceptor';

@@ -1,6 +1,4 @@
 ﻿using iSHARE.Api;
-using iSHARE.Api.Configurations;
-using iSHARE.AuthorizationRegistry.Api.Attributes;
 using iSHARE.AuthorizationRegistry.Core;
 using iSHARE.AuthorizationRegistry.Data;
 using iSHARE.AzureKeyVaultClient;
@@ -8,6 +6,7 @@ using iSHARE.Configuration.Configurations;
 using iSHARE.EmailClient;
 using iSHARE.EntityFramework;
 using iSHARE.Identity;
+using iSHARE.Identity.Api;
 using iSHARE.Identity.Data;
 using iSHARE.IdentityServer;
 using iSHARE.IdentityServer.Data;
@@ -40,7 +39,7 @@ namespace iSHARE.AuthorizationRegistry.Api
             services.AddDb(Configuration, HostingEnvironment);
 
             IdentityServerBuilder = services.AddIdentityServer(Configuration, HostingEnvironment, LoggerFactory)
-                .AddPki(Configuration)
+                .AddPki()
                 .AddIdentityServerDb(Configuration, HostingEnvironment, $"{seedRoot}IdentityServer", typeof(Startup).Assembly)
                 .AddConsumer()
                 .AddSchemeOwnerValidator(Configuration, HostingEnvironment)
@@ -48,11 +47,10 @@ namespace iSHARE.AuthorizationRegistry.Api
             services.AddDigitalSigner(Configuration, HostingEnvironment, LoggerFactory);
             services.AddDefaultTokenSignatureVerifier();
 
-            services.ConfigureSwaggerGen(c => c.OperationFilter<SwaggerAuthorizeDelegationRequestFilter>());
 
             base.ConfigureServices(services);
 
-            services.AddSpaAuthentication(HostingEnvironment);
+            services.AddDefaultSpaAuthentication(HostingEnvironment);
 
             if (!idpOptions.Enable)
             {
@@ -78,6 +76,8 @@ namespace iSHARE.AuthorizationRegistry.Api
                     app.UseMigrations<AspNetUserDbContext>(Configuration).UseSeed<AspNetUserDbContext>(HostingEnvironment);
                 }
             }
+            ConfigureCors(app);
+
             app.UseMigrations(Configuration, HostingEnvironment);
             app.UseIdentityServer() // this calls UseAuth
                .UseIdentityServerDb(Configuration, HostingEnvironment);

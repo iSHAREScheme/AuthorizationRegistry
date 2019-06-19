@@ -13,7 +13,7 @@ namespace iSHARE.Identity
         Task<Response> ForcePasswordReset(Guid userId, ClaimsPrincipal principal);
         Task<Response<UserModel>> ChangePassword(ChangePasswordRequest request, string aspNetUserId);
         Task<bool> Exists(Guid id);
-        Task<Response> MakeInactive(Guid id);
+        Task<Response> MakeInactive(Guid id, ClaimsPrincipal principal);
         Task<Response<UserModel>> ActivateAccountConfirm(ActivateAccountRequest request);
         Task<Response<UserModel>> ActivateAccountSendEmail(SendEmailActivationUserRequest request, ClaimsPrincipal principal);
         Task<Response<UserModel>> SendForgotPasswordEmail(ForgotPasswordUserRequest request);

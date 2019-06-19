@@ -20,7 +20,7 @@ namespace iSHARE.Api.Controllers
         [Route("me")]
         [HttpGet]
         [ApiExplorerSettings(GroupName = SwaggerGroups.TestSpec)]
-        [ServiceFilter(typeof(HideApiMethodAttribute))]
+        [ServiceFilter(typeof(HideLiveApiMethodAttribute))]
         public ActionResult<IReadOnlyCollection<ClientClaim>> Me()
         {
             var claims = User.Claims.Select(c => new ClientClaim { Type = c.Type, Value = c.Value }).ToList();

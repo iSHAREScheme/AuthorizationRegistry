@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Security.Claims;
+using System.Threading.Tasks;
 using iSHARE.AuthorizationRegistry.Core.Api;
 using iSHARE.AuthorizationRegistry.Core.Models;
 using iSHARE.Models;
@@ -114,7 +115,7 @@ namespace iSHARE.AuthorizationRegistry.Core.Tests
         }
 
         [Fact]
-        public void ValidateCreate_WhenPartyIdAndAccessSubjectEmpty_ReturnsNotValid()
+        public async Task ValidateCreate_WhenPartyIdAndAccessSubjectEmpty_ReturnsNotValid()
         {
             //Arrange
             var policyJson = @"
@@ -141,14 +142,14 @@ namespace iSHARE.AuthorizationRegistry.Core.Tests
             var sut = new DelegationValidationService(delegationServiceMock.Object);
 
             //Act
-            var result = sut.ValidateCreate(policyJson, claimsPrincipal).Result;
+            var result = await sut.ValidateCreate(policyJson, claimsPrincipal);
 
             //Assert
             result.Error.ShouldBe("Policy issuer and access subject are required.");
         }
 
         [Fact]
-        public void ValidateCreate_ForNotMatchingPartyIdWithEPRole_ReturnsNotValid()
+        public async Task ValidateCreate_ForNotMatchingPartyIdWithEPRole_ReturnsNotValid()
         {
             //Arrange
             var policyJson = @"
@@ -175,14 +176,14 @@ namespace iSHARE.AuthorizationRegistry.Core.Tests
             var sut = new DelegationValidationService(delegationServiceMock.Object);
 
             //Act
-            var result = sut.ValidateCreate(policyJson, claimsPrincipal).Result;
+            var result = await sut.ValidateCreate(policyJson, claimsPrincipal);
 
             //Assert
             result.Error.ShouldBe("Policy issuer must be equal to your party id.");
         }
 
         [Fact]
-        public void ValidateCreate_WhenDelegationExists_ReturnsNotValid()
+        public async Task ValidateCreate_WhenDelegationExists_ReturnsNotValid()
         {
             //Arrange
             var policyJson = @"
@@ -214,14 +215,14 @@ namespace iSHARE.AuthorizationRegistry.Core.Tests
             var sut = new DelegationValidationService(delegationServiceMock.Object);
 
             //Act
-            var result = sut.ValidateCreate(policyJson, claimsPrincipal).Result;
+            var result = await sut.ValidateCreate(policyJson, claimsPrincipal);
 
             //Assert
             result.Error.ShouldBe("The combination policyIssuer - accessSubject already exists.");
         }
 
         [Fact]
-        public void ValidateCreate_ForPolicyIssuerAndAccessSubjectNotEmptyOnMatchinEPRole_ReturnsValid()
+        public async Task ValidateCreate_ForPolicyIssuerAndAccessSubjectNotEmptyOnMatchinEPRole_ReturnsValid()
         {
             //Arrange
             var policyJson = @"
@@ -248,14 +249,14 @@ namespace iSHARE.AuthorizationRegistry.Core.Tests
             var sut = new DelegationValidationService(delegationServiceMock.Object);
 
             //Act
-            var result = sut.ValidateCreate(policyJson, claimsPrincipal).Result;
+            var result = await sut.ValidateCreate(policyJson, claimsPrincipal);
 
             //Assert
             result.Success.ShouldBe(true);
         }
 
         [Fact]
-        public void ValidateEdit_WhenPolicyIssuerAndAccessSubjectEmpty_ReturnsNotValid()
+        public async Task ValidateEdit_WhenPolicyIssuerAndAccessSubjectEmpty_ReturnsNotValid()
         {
             //Arrange
             var policyJson = @"
@@ -283,14 +284,14 @@ namespace iSHARE.AuthorizationRegistry.Core.Tests
             var sut = new DelegationValidationService(delegationServiceMock.Object);
 
             //Act
-            var result = sut.ValidateEdit(arId, policyJson, claimsPrincipal).Result;
+            var result = await sut.ValidateEdit(arId, policyJson, claimsPrincipal);
 
             //Assert
             result.Error.ShouldBe("Policy issuer and access subject are required.");
         }
 
         [Fact]
-        public void ValidateEdit_WhenCombinationPolicyIssuerAccessSubjectIsModified_ReturnsNotValid()
+        public async Task ValidateEdit_WhenCombinationPolicyIssuerAccessSubjectIsModified_ReturnsNotValid()
         {
             //Arrange
             var policyJson = @"
@@ -326,14 +327,14 @@ namespace iSHARE.AuthorizationRegistry.Core.Tests
             var sut = new DelegationValidationService(delegationServiceMock.Object);
 
             //Act
-            var result = sut.ValidateEdit(arId, policyJson, claimsPrincipal).Result;
+            var result = await sut.ValidateEdit(arId, policyJson, claimsPrincipal);
 
             //Assert
             result.Error.ShouldBe("The combination policyIssuer - accessSubject must remain unmodified.");
         }
 
         [Fact]
-        public void ValidateEdit_ForPolicyIssuerAndAccessSubjectNotModified_ReturnsValid()
+        public async Task ValidateEdit_ForPolicyIssuerAndAccessSubjectNotModified_ReturnsValid()
         {
             //Arrange
             var policyJson = @"
@@ -365,7 +366,7 @@ namespace iSHARE.AuthorizationRegistry.Core.Tests
             var sut = new DelegationValidationService(delegationServiceMock.Object);
 
             //Act
-            var result = sut.ValidateEdit(arId, policyJson, claimsPrincipal).Result;
+            var result = await sut.ValidateEdit(arId, policyJson, claimsPrincipal);
 
             //Assert
             result.Success.ShouldBe(true);

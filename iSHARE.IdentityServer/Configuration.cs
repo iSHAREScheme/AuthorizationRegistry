@@ -7,6 +7,7 @@ using iSHARE.IdentityServer.Delegation;
 using iSHARE.IdentityServer.Services;
 using iSHARE.IdentityServer.Stores;
 using iSHARE.IdentityServer.Validation;
+using iSHARE.IdentityServer.Validation.Interfaces;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -92,10 +93,14 @@ namespace iSHARE.IdentityServer
                     .AddDelegation()
                     .AddSecretParser<JwtBearerClientAssertionSecretParser>()
                     .AddCustomTokenRequestValidators(typeof(TokenRequestValidator))
+                    .AddCustomAuthorizeRequestValidators(typeof(AuthorizeRequestValidator))
                 ;
             builder.Services.AddTransient<ITokenService, TokenService>();
             builder.Services.AddTransient<ITokenGenerator, TokenGenerator>();
             builder.Services.AddTransient<ITokenCreationService, TokenCreationService>();
+            builder.Services.AddTransient<IDefaultJwtValidator, DefaultJwtValidator>();
+            builder.Services.AddTransient<IValidationKeysStore, ValidationKeysStore>();
+            builder.Services.AddTransient<IPreviousStepsValdiationService, PreviousStepsValidationService>();
             return builder;
         }
 

@@ -25,7 +25,7 @@ namespace iSHARE.Api.Controllers
             Description = "Retrieves the iSHARE capabilities (supported versions & optional features) of the iSHARE party.")]
         public async Task<ActionResult<Capabilities>> Get()
         {
-            return Ok(await _capabilitiesService.Get());
+            return FromResponse(await _capabilitiesService.Get());
         }
     }
 }

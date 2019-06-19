@@ -17,7 +17,7 @@ export class EnvironmentModel {
   environmentType: EnvironmentType;
   disablePartyUsersManagement?: boolean;
   identityProvider: {
-    authorizeEndpoint: string;
+    authorityUrl: string;
   };
   userManagement: boolean;
 }

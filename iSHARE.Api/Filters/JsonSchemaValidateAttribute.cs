@@ -1,6 +1,6 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
+using iSHARE.Api.Configurations;
 using Manatee.Json;
 using Manatee.Json.Schema;
 using Microsoft.AspNetCore.Mvc;
@@ -13,12 +13,12 @@ namespace iSHARE.Api.Filters
 {
     public class JsonSchemaValidateAttribute : ActionFilterAttribute
     {
-        private IJsonSchema _schema;
-        private ILogger<JsonSchemaValidateAttribute> _logger;
+        private readonly IJsonSchema _schema;
+        private readonly ILogger<JsonSchemaValidateAttribute> _logger;
 
-        public JsonSchemaValidateAttribute(string schemaFile, Func<string, IJsonSchema> schemaFactory, ILogger<JsonSchemaValidateAttribute> logger)
+        public JsonSchemaValidateAttribute(string schemaFile, IJsonSchemaStore schemaStore, ILogger<JsonSchemaValidateAttribute> logger)
         {
-            _schema = schemaFactory(schemaFile);
+            _schema = schemaStore.GetSchema(schemaFile);
             _logger = logger;
         }
 
@@ -34,11 +34,11 @@ namespace iSHARE.Api.Filters
                 return;
             }
 
-            var result = _schema.Validate(JsonValue.Parse(objectModel));
+            var response = _schema.Validate(JsonValue.Parse(objectModel));
 
-            if (!result.Valid)
+            if (!response.Valid)
             {
-                var errors = result.Errors.Select(e => e.Message + " " + e.PropertyName).ToList();
+                var errors = response.Errors.Select(e => e.Message + " " + e.PropertyName).ToList();
                 var errorMessage = errors.Aggregate("", (s, i) => "" + s + "," + i);
                 _logger.LogWarning($"Errors during JSON schema validation: {errorMessage}");
                 context.Result = new BadRequestObjectResult(new { error = errors });

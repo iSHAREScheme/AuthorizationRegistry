@@ -1,5 +1,5 @@
-﻿using iSHARE.Api.Controllers;
-using iSHARE.Identity;
+﻿using iSHARE.Identity;
+using iSHARE.Identity.Api.Controllers;
 using iSHARE.Identity.Login;
 
 namespace iSHARE.AuthorizationRegistry.Api.Controllers.Spa

@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Configuration;
@@ -27,28 +26,13 @@ namespace iSHARE.Api.Filters
             var remoteIp = context.HttpContext.Connection.RemoteIpAddress;
             _logger.LogDebug($"Request from Remote IP address: {remoteIp}");
 
-            var ip = _safeList.Split(';').Where(c => !string.IsNullOrEmpty(c)).ToList();
-            if (ip.Any())
+            var ips = _safeList.Split(';').Where(c => !string.IsNullOrEmpty(c)).ToList();
+            if (!remoteIp.IsAllowed(ips))
             {
-                var bytes = remoteIp.GetAddressBytes();
-                var badIp = true;
-                foreach (var address in ip)
-                {
-                    var testIp = IPAddress.Parse(address);
-                    if (testIp.GetAddressBytes().SequenceEqual(bytes))
-                    {
-                        badIp = false;
-                        break;
-                    }
-                }
-
-                if (badIp)
-                {
-                    _logger.LogInformation(
-                        $"Forbidden Request from Remote IP address: {remoteIp}");
-                    context.Result = new StatusCodeResult(401);
-                    return;
-                }
+                _logger.LogInformation(
+                    $"Forbidden Request from Remote IP address: {remoteIp}");
+                context.Result = new StatusCodeResult(401);
+                return;
             }
 
             base.OnActionExecuting(context);

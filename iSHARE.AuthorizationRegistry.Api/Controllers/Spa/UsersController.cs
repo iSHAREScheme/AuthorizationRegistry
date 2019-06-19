@@ -1,9 +1,9 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using iSHARE.Abstractions;
-using iSHARE.Api.Controllers;
-using iSHARE.Api.Models;
 using iSHARE.AuthorizationRegistry.Core.Api;
+using iSHARE.Identity.Api.Controllers;
+using iSHARE.Identity.Api.Models;
 using iSHARE.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,7 +11,6 @@ using Microsoft.AspNetCore.Mvc;
 namespace iSHARE.AuthorizationRegistry.Api.Controllers.Spa
 {
     [Route("users")]
-    [ApiExplorerSettings(IgnoreApi = true)]
     [Authorize(Roles = Constants.Roles.SchemeOwner + "," +
                        Constants.Roles.AuthorizationRegistry.PartyAdmin)]
     public class UsersController : SpaAuthorizedController

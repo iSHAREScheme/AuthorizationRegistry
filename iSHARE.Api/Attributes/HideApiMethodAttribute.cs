@@ -5,23 +5,49 @@ using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace iSHARE.Api.Attributes
 {
-    public class HideApiMethodAttribute : ActionFilterAttribute
+    public class HideLiveApiMethodAttribute : HideApiMethodAttribute
     {
         private readonly IHostingEnvironment _environment;
 
-        public HideApiMethodAttribute(IHostingEnvironment environment)
+        public HideLiveApiMethodAttribute(IHostingEnvironment environment) : base(environment)
+        {
+            _environment = environment;
+        }
+
+        protected override bool ShouldHide => _environment.IsLiveOrQaLive();
+    }
+
+    public class HideProductionMethodAttribute : HideApiMethodAttribute
+    {
+        private readonly IHostingEnvironment _environment;
+
+        public HideProductionMethodAttribute(IHostingEnvironment environment) : base(environment)
+        {
+            _environment = environment;
+        }
+
+        protected override bool ShouldHide => _environment.IsLiveOrQaLive() || _environment.IsTest();
+    }
+
+    public abstract class HideApiMethodAttribute : ActionFilterAttribute
+    {
+        private readonly IHostingEnvironment _environment;
+
+        protected HideApiMethodAttribute(IHostingEnvironment environment)
         {
             _environment = environment;
         }
 
         public override void OnActionExecuting(ActionExecutingContext context)
         {
-            if (_environment.IsLive())
+            if (ShouldHide)
             {
                 context.Result = new NotFoundResult();
             }
 
             base.OnActionExecuting(context);
         }
+
+        protected abstract bool ShouldHide { get; }
     }
 }

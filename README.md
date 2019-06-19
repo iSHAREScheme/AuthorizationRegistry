@@ -29,12 +29,21 @@ The **Authorization Registry**-code that is in this repository is not a 'product
 ### Setup the development environment
 
 1. Create environment variable 'ENVIRONMENT' with the value 'Development'
-2. Navigate to iSHARE.AuthorizationRegistry.Api and create a new file named 'appsettings.Development.json'
+2. Navigate to iSHARE.ServiceProvider.Api.Warehouse13 and create a new file named 'appsettings.Development.json'
 3. Copy the content of 'appsettings.Development.json.template' into 'appsettings.Development.json' and complete all fields with the necessary information and save the changes
 4. Into appsettings.Development.json file: 
-    1. Change DigitalSigner -> PrivateKey value to the valid RSA private key value with the following format: "-----BEGIN RSA PRIVATE KEY-----\n...\n-----END RSA PRIVATE KEY-----" (with line separators)
-    2. Change DigitalSigner -> RawPublicKey value to the valid public key value with the following format: "-----BEGIN CERTIFICATE-----...-----END CERTIFICATE-----" (without line separators)
+    1. Change DigitalSigner -> PrivateKey value to the valid RSA private key value with the following format: "-----BEGIN RSA PRIVATE KEY-----\n...\n-----END RSA PRIVATE KEY-----". For this, you can use OpenSSL:
+        1. Extract the private key from the certificate: `openssl pkcs12 -in "certificate.p12" -out "certificate.key.pem" -nodes -nocerts -password pass:your_password_here`
+        2. Decrypt private key: `openssl rsa -in certificate.key.pem -out certificate.key.decr.pem`
+        3. Extract the content from `certificate.key.decr.pem` and replace the endline characters with "\n"
+    2. Change DigitalSigner -> RawPublicKey value to the valid certificate value with the following format: "-----BEGIN CERTIFICATE-----...-----END CERTIFICATE-----". For this you can use OpenSSL:
+        1. Extract .pem: `openssl pkcs12 -in certificate.p12 -clcerts -nokeys -out certificate.pem -password pass:your_password_here`
+        2. Extract the content from `certificate.pem` and remove the endline characters
     3. Save changes
+5. Go to Resources\Development
+    1. Open certificate_authorities.json
+    2. Add the necessary certificate authorities in the following format: "-----BEGIN CERTIFICATE-----...-----END CERTIFICATE-----" (this value can be obtained from a .pem certificate by extracting the content and removing the line separators/endlines)
+    3. Save
 
 ## Build API
 

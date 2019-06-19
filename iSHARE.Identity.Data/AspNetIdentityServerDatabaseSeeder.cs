@@ -69,20 +69,47 @@ namespace iSHARE.Identity.Data
                 var user = await UserManager.FindByIdAsync(seedUser.Id);
                 if (user != null)
                 {
+                    await UpdateUser(seedUser, user);
                     await UpdateRoles(seedUser, user);
                     continue;
                 }
 
                 user = seedUser;
-                var result = await UserManager.CreateAsync(user, seedUser.Password);
-
-                if (!result.Succeeded)
+                try
                 {
-                    Logger.LogInformation("Creating {user} did not succeed because of {errors}", seedUser.UserName, result.Errors);
+                    var result = await UserManager.CreateAsync(user, seedUser.Password);
+
+                    if (!result.Succeeded)
+                    {
+                        Logger.LogInformation("Creating {user} did not succeed because of {errors}", seedUser.UserName,
+                            result.Errors);
+                        continue;
+                    }
+
+                }
+                catch (DbUpdateException exception)
+                    when (exception.InnerException != null
+                          && exception
+                              .InnerException
+                              .Message
+                              .Contains($"The duplicate key value is ({seedUser.Id})"))
+                {
+                    // Even if we catch this exception, UserManager will still try to add this user
+                    // when a let's say an Update operation is made for a different user, as it still tracks it
+                    // The call on DeleteAsync here is made in order to remove the user from context's tracking changes
+                    await UserManager.DeleteAsync(user);
+                    Logger.LogWarning("The user cannot be inserted as it might have been soft deleted, since it already exists in the database.", exception);
                     continue;
                 }
                 await UpdateRoles(seedUser, user);
             }
+        }
+
+        private async Task UpdateUser(TUser seedUser, TUser user)
+        {
+            user.Email = seedUser.Email;
+            user.UserName = seedUser.UserName;
+            await UserManager.UpdateAsync(user);
         }
 
         private async Task UpdateRoles(TUser seedUser, TUser user)

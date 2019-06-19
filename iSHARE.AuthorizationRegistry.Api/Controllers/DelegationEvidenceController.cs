@@ -1,7 +1,6 @@
 ﻿using System.Threading.Tasks;
 using iSHARE.Api.Controllers;
 using iSHARE.Api.Filters;
-using iSHARE.AuthorizationRegistry.Api.Attributes;
 using iSHARE.AuthorizationRegistry.Core.Api;
 using iSHARE.IdentityServer.Delegation;
 using iSHARE.Models;
@@ -19,16 +18,18 @@ namespace iSHARE.AuthorizationRegistry.Api.Controllers
         private readonly IDelegationService _delegationService;
         private readonly IDelegationTranslateService _delegationTranslateService;
         private readonly IDelegationMaskValidationService _delegationMaskValidationService;
+        private readonly IPreviousStepsValdiationService _previousStepsValdiationService;
 
         public DelegationEvidenceController(
             IDelegationService delegationService,
             IDelegationTranslateService delegationTranslateService,
-            IDelegationMaskValidationService delegationMaskValidationService
-        )
+            IDelegationMaskValidationService delegationMaskValidationService,
+            IPreviousStepsValdiationService previousStepsValdiationService)
         {
             _delegationService = delegationService;
             _delegationTranslateService = delegationTranslateService;
             _delegationMaskValidationService = delegationMaskValidationService;
+            _previousStepsValdiationService = previousStepsValdiationService;
         }
 
         /// <summary>
@@ -41,7 +42,6 @@ namespace iSHARE.AuthorizationRegistry.Api.Controllers
         /// <param name="delegation_mask">iSHARE specific, optional, JSON structure that acts as a mask to delegation evidence</param>
         /// <returns>JWT encoded delegation evidence</returns>
         [HttpPost]
-        [TypeFilter(typeof(AuthorizeDelegationRequestAttribute))]
         [SignResponse("delegation_token", "delegationEvidence", "DelegationEvidence", JsonContractType = typeof(CamelCasePropertyNamesContractResolver))]
         public async Task<ActionResult<DelegationEvidence>> Translate([FromBody]DelegationMask delegation_mask)
         {
@@ -57,6 +57,12 @@ namespace iSHARE.AuthorizationRegistry.Api.Controllers
 
         private async Task<ActionResult<DelegationTranslationTestResponse>> TranslateDelegation(DelegationMask delegationMask)
         {
+            var stepsValidation = await _previousStepsValdiationService.Validate(delegationMask);
+            if (!stepsValidation.Succeeded)
+            {
+                return BadRequest(stepsValidation.Errors);
+            }
+
             var validationResult = _delegationMaskValidationService.Validate(delegationMask);
 
             if (!validationResult.Success)

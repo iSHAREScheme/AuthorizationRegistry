@@ -26,7 +26,7 @@ namespace iSHARE.Identity
 
             var digest = Encoding.UTF8.GetBytes(jws.EncodedHeader + "." + jws.EncodedPayload).ToSha256();
 
-            byte[] signature = null;
+            byte[] signature;
             try
             {
                 signature = Base64UrlEncoder.DecodeBytes(jws.RawSignature);

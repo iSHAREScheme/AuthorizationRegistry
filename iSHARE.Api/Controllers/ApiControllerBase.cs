@@ -17,19 +17,29 @@ namespace iSHARE.Api.Controllers
 
         }
 
-        protected ActionResult OkOrBadRequest(Response response)
+        protected ActionResult FromResponse(Response response)
         {
             if (response.Success)
             {
                 return Ok();
             }
 
-            return BadRequest(response.Errors);
+            return Fail(response);
         }
 
-        protected ActionResult OkOrNotFound<TModel>(TModel model)
+        protected ActionResult FromResponse<TModel>(Response<TModel> response)
         {
-            if (object.Equals(model, default(TModel)))
+            if (response.Success)
+            {
+                return Ok(response.Model);
+            }
+
+            return Fail(response);
+        }
+
+        protected ActionResult OkOrNotFound(object model)
+        {
+            if (model == null)
             {
                 return NotFound();
             }
@@ -37,58 +47,77 @@ namespace iSHARE.Api.Controllers
             return Ok(model);
         }
 
-        protected ActionResult OkOrBadRequest<TModel>(Response<TModel> response)
-        {
-            if (response.Success)
-            {
-                return Ok(response.Model);
-            }
-
-            return BadRequest(response.Errors);
-        }
-
-        protected ActionResult OkOrBadRequest<TModel>(Response<TModel> response, Func<TModel, object> map)
-        {
-            if (response.Success)
-            {
-                return Ok(map(response.Model));
-            }
-
-            return BadRequest(response.Errors);
-        }
-
-        protected ActionResult OkOrBadRequest<TModel>(Response<IReadOnlyCollection<TModel>> response, Func<TModel, object> map)
-        {
-            if (response.Success)
-            {
-                return Ok(response.Model.Select(map));
-            }
-
-            return BadRequest(response.Errors);
-        }
-
-        protected ActionResult OkOrBadRequest<TModel, TProject>(Response<PagedResult<TModel>> response, Func<TModel, TProject> map)
+        protected ActionResult FromResponse<TModel>(Response<TModel> response, Func<TModel, object> map)
         {
             if (!response.Success)
             {
-                return BadRequest(response.Errors);
+                return Fail(response);
             }
 
-            return Ok(new PagedResult<TProject>
+            if (Equals(response.Model, default(TModel)))
             {
-                Data = response.Model.Data.Select(map),
-                Count = response.Model.Count
-            });
+                return Ok();
+            }
+
+            return Ok(map(response.Model));
         }
 
-        protected ActionResult OkOrNotFound<TModel>(Response<TModel> response, Func<TModel, object> map)
+        protected ActionResult FromResponse<TModel>(Response<IReadOnlyCollection<TModel>> response, Func<TModel, object> map)
+        {
+            if (!response.Success)
+            {
+                return Fail(response);
+            }
+
+            if (response.Model == null)
+            {
+                return Ok();
+            }
+
+            return Ok(response.Model.Select(map));
+
+        }
+
+        protected ActionResult FromResponse<TModel, TProject>(Response<PagedResult<TModel>> response, Func<TModel, TProject> map)
         {
             if (response.Success)
             {
-                return Ok(map(response.Model));
+                return Ok(new PagedResult<TProject>
+                {
+                    Data = response.Model.Data.Select(map),
+                    Count = response.Model.Count
+                });
             }
 
-            return NotFound(response.Errors);
+            return Fail(response);
+        }
+
+
+        private ActionResult Fail<TItem>(Response<TItem> response)
+        {
+            return BuildFailAction(response.Status, response.Errors);
+        }
+
+        private ActionResult Fail(Response result)
+        {
+            return BuildFailAction(result.Status, result.Errors);
+        }
+
+        private ActionResult BuildFailAction(ResponseStatus status, IReadOnlyCollection<string> errors)
+        {
+            switch (status)
+            {
+                case ResponseStatus.NotFound when errors.Any():
+                    return NotFound(errors);
+                case ResponseStatus.NotFound:
+                    return NotFound();
+                case ResponseStatus.NotAuthorized:
+                    return Unauthorized();
+                case ResponseStatus.InvalidOperation:
+                    return BadRequest(errors);
+                default:
+                    return null;
+            }
         }
 
         protected FileStreamResult BuildJsonDownloadFileResult(string fileName, string jsonData)

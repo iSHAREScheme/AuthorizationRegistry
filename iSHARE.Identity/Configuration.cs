@@ -15,7 +15,6 @@ namespace iSHARE.Identity
             where TUserStore : DbContext
         {
             var services = identityServerBuilder.Services;
-
             services.AddTransient(typeof(IAccountService<TUser>), typeof(AccountService<TUser>));
             services.Configure<DataProtectionTokenProviderOptions>(options =>
             {
@@ -28,6 +27,9 @@ namespace iSHARE.Identity
                     options.Password.RequireLowercase = true;
                     options.Password.RequireUppercase = true;
                     options.Password.RequiredLength = 8;
+                    options.Lockout.AllowedForNewUsers = true;
+                    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
+                    options.Lockout.MaxFailedAccessAttempts = 5;
                 })
                 .AddDefaultTokenProviders()
                 .AddEntityFrameworkStores<TUserStore>()

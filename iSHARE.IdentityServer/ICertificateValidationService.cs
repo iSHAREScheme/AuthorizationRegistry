@@ -30,7 +30,6 @@ namespace iSHARE.IdentityServer
         /// </summary>
         /// <param name="validationMoment">moment in time for which validation occurs</param>
         /// <param name="certificate">certificate to validate</param>
-        /// <param name="chain">optional certificate chain that the certificate will be checked against</param>
         /// <returns>validation state</returns>
         Task<bool> IsValid(DateTime validationMoment, X509Certificate2 certificate);
 
@@ -39,9 +38,14 @@ namespace iSHARE.IdentityServer
         /// </summary>
         /// <param name="periodStart"></param>
         /// <param name="periodEnd"></param>
-        /// <param name="certificate">X509Certificate2</param>
-        /// <param name="chain"></param>
+        /// <param name="certificate">X509Certificate2</param>        
         /// <returns></returns>
         Task<Response> ValidateBetween(DateTime periodStart, DateTime periodEnd, X509Certificate2 certificate);
+        /// <summary>
+        /// Validate a certificate. Return explicit errors messages.
+        /// </summary>        
+        /// <param name="certificate">X509Certificate2</param>        
+        /// <returns></returns>
+        Task<Response> Validate(X509Certificate2 certificate);
     }
 }

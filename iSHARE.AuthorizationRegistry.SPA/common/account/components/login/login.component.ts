@@ -60,13 +60,14 @@ export class LoginComponent implements OnInit {
 
     if (this.auth.isLoggedIn()) {
       this.router.navigateByUrl('');
+    } else {
+      this.route.queryParams.subscribe(params => {
+        this.returnUrl = params['returnUrl'];
+        if (!this.returnUrl) {
+          this.auth.goToLogin();
+        }
+      });
     }
-    this.route.queryParams.subscribe(params => {
-      this.returnUrl = params['returnUrl'];
-      if (!this.returnUrl) {
-        this.auth.goToLogin();
-      }
-    });
   }
 
   login() {
@@ -87,7 +88,7 @@ export class LoginComponent implements OnInit {
             this.show2FaSetup = true;
             this.getKey();
           } else {
-            this.serverError = 'Wrong email or password.';
+            this.serverError = err.data;
           }
         }
       );

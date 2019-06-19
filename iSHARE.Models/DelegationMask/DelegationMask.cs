@@ -2,12 +2,21 @@
 using System.Globalization;
 using System.Linq;
 using iSHARE.Models.DelegationEvidence;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace iSHARE.Models.DelegationMask
 {
     public class DelegationMask
     {
         public DelegationRequest DelegationRequest { get; set; }
+
+        [JsonProperty("previous_steps")]
+        public List<string> PreviousSteps { get; set; }
+
+        [JsonProperty("delegation_path")]
+        public List<string> DelegationPath { get; set; }
+
         public DelegationMask()
         {
         }
