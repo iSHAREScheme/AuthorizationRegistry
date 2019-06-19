@@ -25,7 +25,7 @@ namespace iSHARE.IdentityServer
         /// </summary>
         protected readonly ISystemClock Clock;
 
-        public TokenCreationService(ISystemClock clock, IKeyMaterialService keys, ILogger<DefaultTokenCreationService> logger, ITokenGenerator tokenGenerator)
+        public TokenCreationService(ISystemClock clock, IKeyMaterialService keys, ILogger<TokenCreationService> logger, ITokenGenerator tokenGenerator)
         {
             Clock = clock;
             Keys = keys;
@@ -34,20 +34,18 @@ namespace iSHARE.IdentityServer
         }
         public async Task<string> CreateTokenAsync(Token token)
         {
-            var header = CreateHeaderAsync(token);
+            var header = CreateHeaderAsync();
             var payload = await CreatePayloadAsync(token);
 
             return await _tokenGenerator.GenerateToken(header, payload);
         }
 
-        private JwtHeader CreateHeaderAsync(Token token)
-        {
-            var header = new JwtHeader();
-            header["alg"] = SecurityAlgorithms.RsaSha256;
-            header["typ"] = "JWT";
-
-            return header;
-        }
+        private JwtHeader CreateHeaderAsync() =>
+            new JwtHeader
+            {
+                ["alg"] = SecurityAlgorithms.RsaSha256,
+                ["typ"] = "JWT"
+            };
 
         /// <summary>
         /// Creates the JWT payload
@@ -56,7 +54,6 @@ namespace iSHARE.IdentityServer
         /// <returns>The JWT payload</returns>
         protected virtual Task<JwtPayload> CreatePayloadAsync(Token token)
         {
-            //var payload = new JwtPayload(token.Claims);
             var payload = token.CreateJwtPayload(Clock, Logger);
             return Task.FromResult(payload);
         }

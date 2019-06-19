@@ -1,4 +1,9 @@
-﻿using iSHARE.Abstractions;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
+using iSHARE.Abstractions;
 using iSHARE.Abstractions.Email;
 using iSHARE.Configuration.Configurations;
 using iSHARE.Identity;
@@ -7,11 +12,6 @@ using iSHARE.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
 using Constants = iSHARE.Identity.Constants;
 
 namespace iSHARE.AuthorizationRegistry.Core
@@ -39,7 +39,7 @@ namespace iSHARE.AuthorizationRegistry.Core
             {
                 return false;
             }
-            var userRoles = principal.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value);
+            var userRoles = principal.Claims.Where(c => c.Type == ClaimTypes.Role || c.Type == "role").Select(c => c.Value);
 
             if (userRoles.Contains(Constants.Roles.SchemeOwner))
             {
@@ -62,7 +62,7 @@ namespace iSHARE.AuthorizationRegistry.Core
             var roleValidation = ValidateRoles(request.Roles, principal);
             if (!roleValidation)
             {
-                return Response<UserModel>.ForError("Missing permissions.");
+                return Response.ForError("Missing permissions.");
             }
             if (!principal.IsSchemeOwner())
             {
@@ -87,7 +87,7 @@ namespace iSHARE.AuthorizationRegistry.Core
 
             if (!result.Succeeded)
             {
-                return Response<UserModel>.ForErrors(result.Errors.Select(e => e.Description));
+                return Response.ForErrors(result.Errors.Select(e => e.Description));
             }
 
             foreach (var role in request.Roles)
@@ -118,10 +118,10 @@ namespace iSHARE.AuthorizationRegistry.Core
             catch (Exception ex)
             {
                 _logger.LogError("Unable to delete invalid account: ", ex);
-                return Response<UserModel>.ForError("Unable to create account.");
+                return Response.ForError("Unable to create account.");
             }
 
-            return Response<UserModel>.ForErrors(result.Errors.Select(e => e.Description));
+            return Response.ForErrors(result.Errors.Select(e => e.Description));
         }
 
         public async Task<Response<UserModel>> Update(UpdateUserRequest request, ClaimsPrincipal principal)
@@ -129,7 +129,7 @@ namespace iSHARE.AuthorizationRegistry.Core
             var roleValidation = ValidateRoles(request.Roles, principal);
             if (!roleValidation)
             {
-                return Response<UserModel>.ForError("Missing permissions.");
+                return Response.ForError("Missing permissions.");
             }
             if (!principal.IsSchemeOwner())
             {
@@ -163,14 +163,14 @@ namespace iSHARE.AuthorizationRegistry.Core
             var isSchemeOwner = request.Roles.Any() && request.Roles.Has(Constants.Roles.SchemeOwner) && request.Roles.Length == 1;
             if (isSchemeOwner)
             {
-                request.PartyId = iSHARE.Models.Constants.SchemeOwnerPartyId;
-                request.PartyName = iSHARE.Models.Constants.SchemeOwnerPartyName;
+                request.PartyId = string.Empty;
+                request.PartyName = string.Empty;
                 return Response<UserModel>.ForSuccess();
             }
 
             if (string.IsNullOrWhiteSpace(request.PartyId))
             {
-                return Response<UserModel>.ForError("Party ID cannot be empty.");
+                return Response.ForError("Party ID cannot be empty.");
             }
 
             return Response<UserModel>.ForSuccess();

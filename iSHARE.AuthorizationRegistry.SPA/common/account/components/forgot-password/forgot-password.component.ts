@@ -21,7 +21,7 @@ export class ForgotPasswordComponent implements OnInit {
   }
 
   login(): void {
-    this.auth.goToLogin();
+    this.auth.goToLoginPage();
   }
 
   sendForgotPasswordEmail(): void {

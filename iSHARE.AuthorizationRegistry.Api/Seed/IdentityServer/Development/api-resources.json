@@ -8,13 +8,19 @@
       }
     ]
   },
-  {
+    {
     "Name": "ar.api",
     "DisplayName": "ar.api",
     "Scopes": [
       {
         "Name": "ar.api"
       }
+    ],
+    "Secrets": [
+      {
+        "Type": "SharedSecret",
+        "Value": "secret"
+      }
     ]
-  }
+  },
 ]

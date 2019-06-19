@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27130.2027
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28803.352
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{1E0D50D6-F88F-4F2D-B730-B061759ED4B6}"
 EndProject
@@ -48,6 +48,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "iSHARE.IdentityServer.Data", "iSHARE.IdentityServer.Data\iSHARE.IdentityServer.Data.csproj", "{AA5D133A-29FD-423E-93B9-FD7ADE1C3B1C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "iSHARE.AzureKeyVaultClient", "iSHARE.AzureKeyVaultClient\iSHARE.AzureKeyVaultClient.csproj", "{9F8E0063-30B6-438C-A767-6070D5022CD3}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "iSHARE.Identity.Api", "iSHARE.Identity.Api\iSHARE.Identity.Api.csproj", "{4DB55396-8592-41DF-A43F-D5F0B38C9D56}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -299,6 +301,18 @@ Global
 		{9F8E0063-30B6-438C-A767-6070D5022CD3}.Release|x64.Build.0 = Release|Any CPU
 		{9F8E0063-30B6-438C-A767-6070D5022CD3}.Release|x86.ActiveCfg = Release|Any CPU
 		{9F8E0063-30B6-438C-A767-6070D5022CD3}.Release|x86.Build.0 = Release|Any CPU
+		{4DB55396-8592-41DF-A43F-D5F0B38C9D56}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4DB55396-8592-41DF-A43F-D5F0B38C9D56}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4DB55396-8592-41DF-A43F-D5F0B38C9D56}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{4DB55396-8592-41DF-A43F-D5F0B38C9D56}.Debug|x64.Build.0 = Debug|Any CPU
+		{4DB55396-8592-41DF-A43F-D5F0B38C9D56}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{4DB55396-8592-41DF-A43F-D5F0B38C9D56}.Debug|x86.Build.0 = Debug|Any CPU
+		{4DB55396-8592-41DF-A43F-D5F0B38C9D56}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4DB55396-8592-41DF-A43F-D5F0B38C9D56}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4DB55396-8592-41DF-A43F-D5F0B38C9D56}.Release|x64.ActiveCfg = Release|Any CPU
+		{4DB55396-8592-41DF-A43F-D5F0B38C9D56}.Release|x64.Build.0 = Release|Any CPU
+		{4DB55396-8592-41DF-A43F-D5F0B38C9D56}.Release|x86.ActiveCfg = Release|Any CPU
+		{4DB55396-8592-41DF-A43F-D5F0B38C9D56}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

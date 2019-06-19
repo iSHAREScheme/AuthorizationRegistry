@@ -6,6 +6,8 @@
         public string Name { get; set; }
         public string BaseUri { get; set; }
 
+        public bool IdPEnabled { get; set; }
+
         public void Validate(ConfigurationOptionsValidator validateConfigurationOptions)
         {
             ConfigurationException.AssertNotNull(ClientId, $"{nameof(PartyDetailsOptions)}.{nameof(ClientId)}");

@@ -106,7 +106,7 @@ namespace iSHARE.Api.Filters
             var serviceProvider = context.HttpContext.RequestServices;
             var logger = serviceProvider.GetRequiredService<ILogger<SignResponseAttribute>>();
             var environment = serviceProvider.GetRequiredService<IHostingEnvironment>();
-            if (environment.IsLive())
+            if (environment.IsLiveOrQaLive())
             {
                 return true;
             }

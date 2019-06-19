@@ -7,10 +7,11 @@
   background-color: grey;
   width: 100%;
   height: 100%;
+  position: fixed;
 }
 .loader-overlay {
   transition-delay: 0.5s;
-  position: absolute;
+  position: fixed;
   width: 100%;
   z-index: 500000;
   top: 0;

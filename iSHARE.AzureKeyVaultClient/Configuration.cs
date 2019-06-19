@@ -1,4 +1,5 @@
-﻿using iSHARE.Abstractions;
+﻿using System.Threading.Tasks;
+using iSHARE.Abstractions;
 using iSHARE.Configuration;
 using iSHARE.Configuration.Configurations;
 using iSHARE.IdentityServer.Services;
@@ -9,7 +10,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Clients.ActiveDirectory;
-using System.Threading.Tasks;
 
 namespace iSHARE.AzureKeyVaultClient
 {
@@ -19,12 +19,12 @@ namespace iSHARE.AzureKeyVaultClient
             IConfiguration configuration,
             IHostingEnvironment environment, ILoggerFactory loggerFactory)
         {
-            if (configuration.GetSection("KeyVaultOptions").Exists())
+            if (configuration.GetSection("DigitalSigner").Exists())
             {
-                return AddKeyVaultSigner(services, configuration, environment, loggerFactory);
+                return AddByCertificateSigner(services, configuration);
             }
 
-            return AddByCertificateSigner(services, configuration);
+            return AddKeyVaultSigner(services, configuration, environment, loggerFactory);
         }
 
         private static IServiceCollection AddKeyVaultSigner(IServiceCollection services, IConfiguration configuration,

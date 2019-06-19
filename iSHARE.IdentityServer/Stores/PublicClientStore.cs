@@ -37,7 +37,11 @@ namespace iSHARE.IdentityServer.Stores
             return new Client
             {
                 ClientId = clientId,
-                AllowedGrantTypes = new List<string> { OidcConstants.GrantTypes.ClientCredentials },
+                AllowedGrantTypes = new List<string>
+                {
+                    OidcConstants.GrantTypes.ClientCredentials,
+                    OidcConstants.GrantTypes.AuthorizationCode,
+                },
                 AllowedScopes = new List<string> { StandardScopes.iSHARE }
             };
         }

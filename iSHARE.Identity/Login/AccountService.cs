@@ -9,6 +9,7 @@ using iSHARE.Configuration.Configurations;
 using iSHARE.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
+using Response = iSHARE.Models.Response;
 
 namespace iSHARE.Identity.Login
 {
@@ -20,7 +21,10 @@ namespace iSHARE.Identity.Login
         private readonly SpaOptions _spaOptions;
         private readonly ILogger<AccountService<TIdentity>> _logger;
 
-        public AccountService(UserManager<TIdentity> userManager, UrlEncoder urlEncoder, SpaOptions spaOptions, ILogger<AccountService<TIdentity>> logger)
+        public AccountService(UserManager<TIdentity> userManager,
+            UrlEncoder urlEncoder,
+            SpaOptions spaOptions,
+            ILogger<AccountService<TIdentity>> logger)
         {
             _userManager = userManager;
             _urlEncoder = urlEncoder;
@@ -32,11 +36,44 @@ namespace iSHARE.Identity.Login
         {
             _logger.LogInformation("Check credentials for {username}", username);
             var user = await _userManager.FindByNameAsync(username);
-            if (user != null && await _userManager.CheckPasswordAsync(user, password))
+            if (user == null)
             {
+                return Response.ForError("Invalid credentials.");
+            }
+
+            Response lockout;
+            if ((lockout = await GetLockedStatus(user)) != null)
+            {
+                return lockout;
+            }
+
+            if (await _userManager.CheckPasswordAsync(user, password))
+            {
+                await _userManager.ResetAccessFailedCountAsync(user);
+                _logger.LogInformation("Credentials valid for {username}, access failed count is reset.", username);
                 return Response<TIdentity>.ForSuccess(user);
             }
-            return Response<TIdentity>.ForError("Credentials are not valid.");
+
+            await _userManager.AccessFailedAsync(user);
+
+            if ((lockout = await GetLockedStatus(user)) != null)
+            {
+                return lockout;
+            }
+
+            return Response.ForError("Invalid credentials.");
+        }
+
+        private async Task<Response> GetLockedStatus(TIdentity user)
+        {
+            if (!await _userManager.IsLockedOutAsync(user))
+            {
+                return null;
+            }
+
+            _logger.LogInformation("Username {username} is locked out", user.UserName);
+            return Response.ForError("Your account has been locked out due to multiple failed login attempts.");
+
         }
         public async Task<Response> EnableAuthenticator(EnableAuthenticatorRequest request, string userId)
         {
@@ -73,19 +110,19 @@ namespace iSHARE.Identity.Login
             _logger.LogInformation("Verify {code}", code);
             if (code.IsNullOrEmpty())
             {
-                return Response<TIdentity>.ForError("Code is missing.");
+                return Response.ForError("Code is missing.");
             }
 
             var user = await _userManager.FindByNameAsync(username);
             if (user == null)
             {
                 _logger.LogInformation("User {username} not found", username);
-                return Response<TIdentity>.ForError("Credentials are not valid.");
+                return Response.ForError("Credentials are not valid.");
             }
 
             if (!await _userManager.CheckPasswordAsync(user, password))
             {
-                return Response<TIdentity>.ForError("Credentials are not valid.");
+                return Response.ForError("Credentials are not valid.");
             }
 
             var authenticatorCode = CleanCode(code);
@@ -95,7 +132,7 @@ namespace iSHARE.Identity.Login
             var is2FaTokenValid = await _userManager.VerifyTwoFactorTokenAsync(user, _userManager.Options.Tokens.AuthenticatorTokenProvider, authenticatorCode);
             if (!is2FaTokenValid)
             {
-                return Response<TIdentity>.ForError("2FA token is not valid.");
+                return Response.ForError("2FA token is not valid.");
             }
 
             return Response<TIdentity>.ForSuccess();
@@ -109,11 +146,11 @@ namespace iSHARE.Identity.Login
             if (user == null)
             {
                 _logger.LogInformation("User {userId} not found", userId);
-                return Response<AuthenticatorKey>.ForError("Credentials are not valid.");
+                return Response.ForError("Credentials are not valid.");
             }
             if (user.TwoFactorEnabled)
             {
-                return Response<AuthenticatorKey>.ForError("2FA already enabled.");
+                return Response.ForError("2FA already enabled.");
             }
 
             var unformattedKey = await _userManager.GetAuthenticatorKeyAsync(user);
@@ -135,14 +172,14 @@ namespace iSHARE.Identity.Login
             _logger.LogInformation("Login for {username}", request?.Username);
             if (request == null)
             {
-                return Response<TIdentity>.ForError(LoginErrorMessages.InvalidCredentials);
+                return Response.ForError(LoginErrorMessages.InvalidCredentials);
             }
 
             var result = await CheckCredentials(request.Username, request.Password);
 
             if (!result.Success)
             {
-                return Response<TIdentity>.ForError(LoginErrorMessages.InvalidCredentials);
+                return Response.ForError(result.Errors.FirstOrDefault());
             }
 
             if (!_spaOptions.TwoFactorEnabled.HasValue || !_spaOptions.TwoFactorEnabled.Value)
@@ -154,22 +191,23 @@ namespace iSHARE.Identity.Login
             {
                 if (request.TwoFactorCode.IsNullOrEmpty())
                 {
-                    return Response<TIdentity>.ForError(LoginErrorMessages.TwoFactorCodeRequired);
+                    return Response.ForError(LoginErrorMessages.TwoFactorCodeRequired);
                 }
                 var result2Fa = await Verify(request.TwoFactorCode, request.Username, request.Password);
                 if (!result2Fa.Success)
                 {
-                    return Response<TIdentity>.ForError(LoginErrorMessages.InvalidCredentials);
+                    return Response.ForError(LoginErrorMessages.InvalidCredentials);
                 }
             }
             else
             {
-                return Response<TIdentity>.ForError(LoginErrorMessages.TwoFactorSetupRequired);
+                return Response.ForError(LoginErrorMessages.TwoFactorSetupRequired);
             }
 
             return Response<TIdentity>.ForSuccess(result.Model);
 
         }
+
         private static string FormatKey(string unformattedKey)
         {
             var result = new StringBuilder();

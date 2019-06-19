@@ -43,6 +43,7 @@ export class AppComponent implements OnInit {
     } else {
       this.menuItems = _.filter(MENU_ITEMS, x => x.text !== 'Users');
     }
+    this.auth.registerReload(this);
   }
 
   ngOnInit() {

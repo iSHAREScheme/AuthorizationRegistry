@@ -106,7 +106,7 @@ label {
   display: block;
   color: #aaa;
   text-transform: uppercase;
-  margin: 5px 0 0 0;
+  margin: 15px 0 10px 0;
   &.inline {
     display: inline;
   }
@@ -123,6 +123,11 @@ label {
   .fa {
     margin-right: 10px;
   }
+}
+
+.row label ~ span {
+  display: block;
+  margin-top: 10px;
 }
 
 .multiselect-dropdown {
@@ -153,4 +158,20 @@ label {
     }
   }
   padding-top: 0px !important;
+}
+
+.actions {
+  i.fa {
+    width: 30px;
+    height: 30px;
+    text-align: center;
+    line-height: 30px;
+    color: #61385f;
+    &:hover {
+      color: #fff;
+      background-color: #61385f;
+      transition: 0.5s all;
+      cursor: pointer;
+    }
+  }
 }

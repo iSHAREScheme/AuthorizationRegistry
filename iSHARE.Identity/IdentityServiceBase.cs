@@ -95,12 +95,12 @@ namespace iSHARE.Identity
 
             if (user != null && user.Active)
             {
-                return Response<UserModel>.ForError("Account already activated.");
+                return Response.ForError("Account already activated.");
             }
 
             if (user.PartyId != principal.GetPartyId() && !principal.IsSchemeOwner())
             {
-                return Response<UserModel>.ForError("Missing permisssions.");
+                return Response.ForError("Missing permissions.");
             }
 
             var identity = await _userManager.Users.FirstAsync(u => u.Id == user.AspNetUserId);
@@ -118,18 +118,18 @@ namespace iSHARE.Identity
         {
             if (!request.Id.HasValue)
             {
-                return Response<UserModel>.ForError("Request id is required.");
+                return Response.ForError("Request id is required.");
             }
 
             var user = await _usersRepository.GetById(request.Id.Value);
             if (user == null)
             {
-                return Response<UserModel>.ForError("Associated user not found.");
+                return Response.ForError("Associated user not found.");
             }
 
             if (user.Active)
             {
-                return Response<UserModel>.ForError("Account already activated.");
+                return Response.ForError("Account already activated.");
             }
 
             var aspNetUser = await _userManager.FindByIdAsync(user.AspNetUserId);
@@ -155,13 +155,18 @@ namespace iSHARE.Identity
             return ConvertToResponse(passwordResult);
         }
 
-        public async Task<Response> MakeInactive(Guid id)
+        public async Task<Response> MakeInactive(Guid id, ClaimsPrincipal principal)
         {
             var user = await _usersRepository.GetById(id);
 
             if (user == null)
             {
-                return Response.ForError("User not found.");
+                return Response.ForNotFound("User not found.");
+            }
+
+            if (string.Equals(user.AspNetUserId, principal.GetUserId(), StringComparison.OrdinalIgnoreCase))
+            {
+                return Response.ForError("Cannot delete own account.");
             }
 
             var identity = await _userManager.Users.FirstOrDefaultAsync(u => u.Id == user.AspNetUserId);
@@ -188,12 +193,12 @@ namespace iSHARE.Identity
             var aspNetUser = await _userManager.FindByIdAsync(aspNetUserId);
             if (aspNetUser == null)
             {
-                return Response<UserModel>.ForError("User not found.");
+                return Response.ForError("User not found.");
             }
 
             if (request.NewPassword == request.CurrentPassword)
             {
-                return Response<UserModel>.ForError("The new password should be different from the current password.");
+                return Response.ForError("The new password should be different from the current password.");
             }
 
             var passwordValidationResult = await GetPasswordErrors(aspNetUser, request.NewPassword);
@@ -210,13 +215,13 @@ namespace iSHARE.Identity
         {
             if (!request.Id.HasValue)
             {
-                return Response<UserModel>.ForError("Request id is required.");
+                return Response.ForError("Request id is required.");
             }
 
             var user = await _usersRepository.GetById(request.Id.Value);
             if (user == null)
             {
-                return Response<UserModel>.ForError("User not found.");
+                return Response.ForError("User not found.");
             }
 
             var identity = await _userManager.FindByIdAsync(user.AspNetUserId);
@@ -280,7 +285,7 @@ namespace iSHARE.Identity
 
         private static Response<UserModel> ConvertToResponse(IdentityResult result)
             => result.Succeeded ? Response<UserModel>.ForSuccess()
-                : Response<UserModel>.ForErrors(result.Errors.Select(e => e.Description));
+                : Response.ForErrors(result.Errors.Select(e => e.Description));
 
         private async Task<Response<UserModel>> GetPasswordErrors(AspNetUser identity, string password)
         {
@@ -291,7 +296,7 @@ namespace iSHARE.Identity
             var errorMessages = results.SelectMany(r => r.Errors).Select(i => i.Description).ToArray();
             if (errorMessages.Any())
             {
-                return Response<UserModel>.ForErrors(errorMessages);
+                return Response.ForErrors(errorMessages);
             }
             return Response<UserModel>.ForSuccess();
         }

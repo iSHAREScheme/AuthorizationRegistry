@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using iSHARE.Api.Interfaces;
+using iSHARE.Models;
 using iSHARE.Models.Capabilities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.FileProviders;
@@ -20,7 +21,7 @@ namespace iSHARE.Api.Services
             _fileInfo = fileInfo("capabilities.json");
         }
 
-        public async Task<Capabilities> Get()
+        public async Task<Response<Capabilities>> Get()
         {
             using (var stream = _fileInfo.CreateReadStream())
             using (var streamReader = new StreamReader(stream))
@@ -31,6 +32,16 @@ namespace iSHARE.Api.Services
                 if (_contextAccessor.HttpContext.User.Identity.IsAuthenticated)
                 {
                     return capabilities;
+                }
+
+                if (_contextAccessor.HttpContext.Request.Headers.ContainsKey("Authorization"))
+                {
+                    if (((string)_contextAccessor.HttpContext.Request.Headers["Authorization"]).StartsWith("Bearer "))
+                    {
+                        return Response.ForNotAuthorized();
+                    }
+
+                    return Response.ForError("invalid_authorization");
                 }
 
                 foreach (var supportedFeature in capabilities.SupportedVersions.SelectMany(sv => sv.SupportedFeatures))

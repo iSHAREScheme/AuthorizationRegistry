@@ -19,10 +19,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Manatee.Json" Version="9.9.5" />
+
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.1.4" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.4" />
-    <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="3.0.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -35,6 +34,7 @@
     <ProjectReference Include="..\iSHARE.AuthorizationRegistry.Core\iSHARE.AuthorizationRegistry.Core.csproj" />
     <ProjectReference Include="..\iSHARE.AuthorizationRegistry.Data\iSHARE.AuthorizationRegistry.Data.csproj" />
     <ProjectReference Include="..\iSHARE.AzureKeyVaultClient\iSHARE.AzureKeyVaultClient.csproj" />
+    <ProjectReference Include="..\iSHARE.Identity.Api\iSHARE.Identity.Api.csproj" />
     <ProjectReference Include="..\iSHARE.Identity.Data\iSHARE.Identity.Data.csproj" />
     <ProjectReference Include="..\iSHARE.IdentityServer.Data\iSHARE.IdentityServer.Data.csproj" />
     <ProjectReference Include="..\iSHARE.EmailClient\iSHARE.EmailClient.csproj" />
@@ -45,14 +45,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Update="policySchema.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Update="delegationMaskSchema.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Update="Resources\capabilities.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    <Content Update="Resources\**\*.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
 

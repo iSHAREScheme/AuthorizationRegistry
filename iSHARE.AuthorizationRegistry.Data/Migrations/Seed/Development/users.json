@@ -6,7 +6,6 @@
     "PartyId": "EU.EORI.NL000000000",
     "PartyName": "iSHARE Scheme Owner",
     "CreatedDate": "2018-01-04T08:00:00",
-    "Deleted": "false",
     "Active": true
   },
   {
@@ -16,7 +15,6 @@
     "PartyId": "EU.EORI.NL812972715",
     "PartyName": "Fictive Party",
     "CreatedDate": "2018-01-04T08:00:00",
-    "Deleted": "false",
     "Active": true
   },
   {
@@ -26,7 +24,6 @@
     "PartyId": "EU.EORI.NL820599669",
     "PartyName": "Fictive Party",
     "CreatedDate": "2018-02-04T08:00:00",
-    "Deleted": "false",
     "Active": true
   },
   {
@@ -36,7 +33,6 @@
     "PartyId": "EU.EORI.NL850169513",
     "PartyName": "Fictive Party",
     "CreatedDate": "2018-03-04T08:00:00",
-    "Deleted": "false",
     "Active": true
   },
   {
@@ -46,7 +42,6 @@
     "PartyId": "EU.EORI.NL000000005",
     "PartyName": "Banana & Co BV",
     "CreatedDate": "2018-11-01T10:30:00",
-    "Deleted": "false",
     "Active": true
   }
 ]

@@ -39,9 +39,17 @@ import { CustomMultiSelectComponent } from './components/custom-multi-select/cus
 import { ClickOutsideDirective } from './directives/click-outside.directive';
 import { ListFilterPipe } from './pipes/list-filter.pipe';
 import { SelfAuthGuard } from './guards/self-auth.guard';
+import { StorageService } from './services/storage.service';
+import { CookieService } from 'ngx-cookie-service';
 
 @NgModule({
-  imports: [RouterModule, AngularCommonModule, FormsModule, ReactiveFormsModule, NgMultiSelectDropDownModule ],
+  imports: [
+    RouterModule,
+    AngularCommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    NgMultiSelectDropDownModule
+  ],
   declarations: [
     AuthorizedDirective,
     ForbiddenPageComponent,
@@ -81,7 +89,8 @@ import { SelfAuthGuard } from './guards/self-auth.guard';
     CustomMultiSelectComponent,
     ClickOutsideDirective,
     ListFilterPipe
-  ]
+  ],
+  providers: [CookieService, StorageService]
 })
 export class GenericModule {
   static forRoot(): ModuleWithProviders {
@@ -101,7 +110,9 @@ export class GenericModule {
         ErrorInterceptorProvider,
         LoaderInterceptorProvider,
         AlertService,
-        AppInsightsService
+        AppInsightsService,
+        CookieService,
+        StorageService
       ]
     };
   }

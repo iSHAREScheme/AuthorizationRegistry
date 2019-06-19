@@ -64,3 +64,19 @@ $menu-size: 90px;
     left: 0;
   }
 }
+
+@supports (-moz-appearance: none) {
+  :host {
+    #menu-toggler {
+      left: $menu-size + 10px;
+    }
+  }
+}
+
+@supports (-ms-ime-align: auto) {
+  :host {
+    #menu-toggler {
+      left: $menu-size + 10px;
+    }
+  }
+}

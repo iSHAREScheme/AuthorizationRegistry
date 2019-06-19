@@ -3,6 +3,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using iSHARE.Identity;
 using iSHARE.Identity.Api;
+using iSHARE.Models;
 
 namespace iSHARE.AuthorizationRegistry.Core
 {
@@ -18,7 +19,7 @@ namespace iSHARE.AuthorizationRegistry.Core
 
         public async Task Handle(ClaimsPrincipal principal)
         {
-            var identityId = principal.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var identityId = principal.GetUserId();
             var user = await _tenantUsersRepository.GetByIdentity(identityId);
             if (user == null)
             {
@@ -26,20 +27,20 @@ namespace iSHARE.AuthorizationRegistry.Core
                 {
                     Id = Guid.NewGuid(),
                     AspNetUserId = identityId,
-                    Name = principal.FindFirst(ClaimTypes.Email)?.Value,
+                    Name = principal.GetEmail(),
                     CreatedDate = DateTime.UtcNow,
                     Deleted = false,
                     Active = true,
-                    PartyId = principal.FindFirst("partyId")?.Value,
-                    PartyName = principal.FindFirst("partyName")?.Value
+                    PartyId = principal.GetPartyId(),
+                    PartyName = principal.GetPartyName()
                 });
                 await _tenantUsersRepository.Save();
             }
             else
             {
-                user.Name = principal.FindFirst(ClaimTypes.Email)?.Value;
-                user.PartyId = principal.FindFirst("partyId")?.Value;
-                user.PartyName = principal.FindFirst("partyName")?.Value;
+                user.Name = principal.GetEmail();
+                user.PartyId = principal.GetPartyId();
+                user.PartyName = principal.GetPartyName();
                 await _tenantUsersRepository.Save();
             }
         }

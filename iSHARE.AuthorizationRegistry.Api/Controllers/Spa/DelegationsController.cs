@@ -2,10 +2,10 @@
 using System.Linq;
 using System.Threading.Tasks;
 using iSHARE.Abstractions;
-using iSHARE.Api.Controllers;
 using iSHARE.AuthorizationRegistry.Api.ViewModels;
 using iSHARE.AuthorizationRegistry.Core.Api;
 using iSHARE.AuthorizationRegistry.Core.Requests;
+using iSHARE.Identity.Api.Controllers;
 using iSHARE.IdentityServer.Delegation;
 using iSHARE.Models;
 using iSHARE.Models.DelegationMask;
@@ -15,7 +15,6 @@ using Microsoft.AspNetCore.Mvc;
 namespace iSHARE.AuthorizationRegistry.Api.Controllers.Spa
 {
     [Route("delegations")]
-    [ApiExplorerSettings(IgnoreApi = true)]
     public class DelegationsController : SpaAuthorizedController
     {
         private readonly IDelegationService _delegationService;
@@ -108,9 +107,9 @@ namespace iSHARE.AuthorizationRegistry.Api.Controllers.Spa
                 return BadRequest(ex.Message);
             }
 
-            var result = await _delegationService.Update(arId, request);
+            var delegation = await _delegationService.Update(arId, request);
 
-            return Ok(result.MapToViewModel());
+            return Ok(delegation.MapToViewModel());
         }
 
         [HttpDelete, Route("{arId}"), Authorize(Roles = Constants.Roles.AuthorizationRegistry.EntitledPartyCreator)]

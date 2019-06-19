@@ -63,7 +63,7 @@ export class ResetPasswordComponent implements OnInit, OnDestroy {
     );
   }
   login() {
-    this.auth.goToLogin();
+    this.auth.goToLoginPage();
   }
   reload() {
     const url = `account/reset-password?uid=${this.model.id}&token=${

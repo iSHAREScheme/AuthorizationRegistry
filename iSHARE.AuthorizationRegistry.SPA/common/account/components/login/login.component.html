@@ -24,12 +24,14 @@
                         <div [ngClass]="{'error-message': !!serverError}" *ngIf="!!serverError">
                             {{serverError}}
                         </div>
-                        <button type="submit" class="btn btn-primary login" [disabled]="form.pristine || form.dirty && !form.valid">login
-                            <i class="fa fa-arrow-right custom-arrow-right" aria-hidden="true"></i>
-                        </button>
-                        <a id="forgotPassword" *ngIf="config.enableForgotPassword" class="pull-right" (click)="forgotPassword()">Forgot
-                            password?
-                        </a>
+                        <div class="actions-container">
+                            <button type="submit" class="btn btn-primary login" [disabled]="form.pristine || form.dirty && !form.valid">login
+                                <i class="fa fa-arrow-right custom-arrow-right" aria-hidden="true"></i>
+                            </button>
+                            <a id="forgotPassword" *ngIf="config.enableForgotPassword" class="pull-right" (click)="forgotPassword()">Forgot
+                                password?
+                            </a>
+                        </div>
                     </form>
                 </div>
             </div>

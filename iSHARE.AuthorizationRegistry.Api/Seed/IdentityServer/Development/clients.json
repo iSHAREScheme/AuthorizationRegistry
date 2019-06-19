@@ -23,6 +23,7 @@
       }
     ],
     "AllowAccessTokensViaBrowser": true,
-    "RequireConsent": false
+    "RequireConsent": false,
+	"AccessTokenType": 1
   }
 ]

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { AuthService } from '@common/generic';
+import { AuthService, EnvironmentModel } from '@common/generic';
+import { HttpParams, HttpClient, HttpHeaders } from '@angular/common/http';
 
 @Component({
   selector: 'app-auth-callback',
@@ -9,13 +10,26 @@ import { AuthService } from '@common/generic';
 })
 export class AuthCallbackComponent implements OnInit {
   environment: any;
-  constructor(private route: ActivatedRoute, private auth: AuthService) {}
+  constructor(
+    private route: ActivatedRoute,
+    private auth: AuthService,
+    private config: EnvironmentModel,
+    private http: HttpClient
+  ) {}
 
   ngOnInit() {
     this.route.fragment.subscribe(fragment => {
-      const currentToken = this.getUrlParameter('access_token', fragment);
-      const expires_in = this.getUrlParameter('expires_in', fragment);
-      this.auth.setAccessToken(currentToken, expires_in);
+      const code = this.getUrlParameter('code', fragment);
+      const identityToken = this.getUrlParameter('id_token', fragment);
+      const url = this.config.apiEndpoint + '/account/code';
+      this.http.post<any>(url, { code: code }).subscribe(
+        response => {
+          this.auth.setAccessToken(response['access_token'], identityToken, response['expires_in']);
+        },
+        error => {
+          this.auth.logout();
+        }
+      );
     });
   }
   getUrlParameter(name, location) {

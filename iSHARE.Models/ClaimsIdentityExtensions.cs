@@ -24,7 +24,7 @@ namespace iSHARE.Models
         /// <returns>The value of the requested claim</returns>
         public static string GetUserId(this ClaimsPrincipal principal)
         {
-            return ((ClaimsIdentity)principal.Identity).Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value;
+            return ((ClaimsIdentity)principal.Identity).Claims.First(c => c.Type == ClaimTypes.NameIdentifier || c.Type == "sub").Value;
         }
 
         /// <summary>
@@ -34,7 +34,7 @@ namespace iSHARE.Models
         /// <returns>The value of the requested claim</returns>
         public static bool HasUserId(this ClaimsPrincipal principal)
         {
-            return ((ClaimsIdentity)principal.Identity).Claims.Any(c => c.Type == ClaimTypes.NameIdentifier);
+            return ((ClaimsIdentity)principal.Identity).Claims.Any(c => c.Type == ClaimTypes.NameIdentifier || c.Type == "sub");
         }
 
         /// <summary>
@@ -59,12 +59,7 @@ namespace iSHARE.Models
 
         public static string GetRole(this ClaimsPrincipal principal)
         {
-            return ((ClaimsIdentity)principal.Identity).Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
-        }
-
-        public static string GetNameIdentifier(this ClaimsPrincipal principal)
-        {
-            return principal.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            return ((ClaimsIdentity)principal.Identity).Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role || c.Type == "role")?.Value;
         }
 
         public static string GetPartyName(this ClaimsPrincipal principal)
@@ -74,8 +69,13 @@ namespace iSHARE.Models
 
         public static bool IsSchemeOwner(this ClaimsPrincipal principal)
         {
-            var userRoles = principal.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value);
+            var userRoles = principal.Claims.Where(c => c.Type == ClaimTypes.Role || c.Type == "role").Select(c => c.Value);
             return userRoles.Contains(Constants.Roles.SchemeOwner);
+        }
+
+        public static string GetEmail(this ClaimsPrincipal principal)
+        {
+            return ((ClaimsIdentity)principal.Identity).Claims.FirstOrDefault(c => c.Type == "email" || c.Type == ClaimTypes.Email)?.Value;
         }
     }
 }

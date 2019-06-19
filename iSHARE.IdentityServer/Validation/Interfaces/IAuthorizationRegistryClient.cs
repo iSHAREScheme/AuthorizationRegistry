@@ -9,6 +9,6 @@ namespace iSHARE.IdentityServer.Validation.Interfaces
     /// </summary>
     public interface IAuthorizationRegistryClient
     {
-        Task<DelegationEvidence> GetDelegation(DelegationMask mask, string client_assertion);
+        Task<DelegationEvidence> GetDelegation(DelegationMask mask);
     }
 }

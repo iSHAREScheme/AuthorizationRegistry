@@ -21,6 +21,17 @@ namespace iSHARE.IdentityServer
 
         public async Task<Response> ValidateBetween(DateTime periodStart, DateTime periodEnd, X509Certificate2 certificate)
         {
+            return await DoValidation(periodStart, periodEnd, certificate);
+        }
+
+        public async Task<Response> Validate(X509Certificate2 certificate)
+        {
+            return await DoValidation(default, default, certificate, false);
+        }
+
+
+        private async Task<Response> DoValidation(DateTime periodStart, DateTime periodEnd, X509Certificate2 certificate, bool periodCheck = true)
+        {
             if (certificate == null)
             {
                 throw new ArgumentNullException(nameof(certificate));
@@ -28,35 +39,21 @@ namespace iSHARE.IdentityServer
 
             _logger.LogInformation("Start validating {thumbprint}.", certificate.Thumbprint);
 
-            var keyUsage = (X509KeyUsageExtension)certificate.Extensions
-                .OfType<X509Extension>()
-                .FirstOrDefault(c => c.Oid.FriendlyName == "Key Usage");
-
-            if (keyUsage == null)
-            {
-                var message = "Key usage of the certificate was not found.";
-                _logger.LogWarning(message);
-
-                return Response.ForError(message);
-            }
-
 
             var checks = new List<string>();
-            AddCheck(checks, certificate.NotBefore <= periodStart && periodEnd <= certificate.NotAfter, "Certificate dates invalid.");
-            AddCheck(checks, await IsCertificatePartOfChain(certificate), "Certificate is not part of the chain.");
+            AddCheck(checks, HasKeyKeyUsage(certificate), "Key usage of the certificate was not found.");
+            AddCheck(checks, await IsCertificatePartOfChain(certificate, periodCheck), "Certificate is not part of the chain.");
             AddCheck(checks, certificate.SignatureAlgorithm.FriendlyName == "sha256RSA", "Certificate signature invalid.");
+            AddCheck(checks, certificate.PublicKey.Key.SignatureAlgorithm == "RSA", "RSA algorithm");
             AddCheck(checks, certificate.PublicKey.Key.KeySize >= 2048, "Certificate public key size is smaller than 2048.");
             AddCheck(checks, !string.IsNullOrEmpty(certificate.SerialNumber), "Certificate has no serial number");
+            AddCheck(checks, IsValidKeyKeyUsage(certificate), "Key usage is for digital signature and not for CA.");
 
-            var keyUsagesIsForDigitalOnly = keyUsage.KeyUsages.HasFlag(X509KeyUsageFlags.DigitalSignature)
-                                            &&
-                                            !(
-                                                keyUsage.KeyUsages.HasFlag(X509KeyUsageFlags.KeyCertSign)
-                                                ||
-                                                keyUsage.KeyUsages.HasFlag(X509KeyUsageFlags.CrlSign)
-                                            );
-
-            AddCheck(checks, keyUsagesIsForDigitalOnly, "Key usage is for digital signature and not for CA.");
+            if (periodCheck)
+            {
+                AddCheck(checks, certificate.NotBefore <= periodStart && periodEnd <= certificate.NotAfter,
+                    "Certificate dates invalid.");
+            }
 
             checks.ForEach(check => _logger.LogInformation(check));
 
@@ -66,6 +63,7 @@ namespace iSHARE.IdentityServer
 
             return result;
         }
+
 
         public async Task<bool> IsValid(DateTime validationMoment, X509Certificate2 certificate)
             => await IsValidBetween(validationMoment, validationMoment, certificate);
@@ -86,17 +84,37 @@ namespace iSHARE.IdentityServer
             }
         }
 
-        private async Task<bool> IsCertificatePartOfChain(X509Certificate2 clientCertificate)
+        private bool HasKeyKeyUsage(X509Certificate2 certificate) => GetKeyUsage(certificate) != null;
+
+        private bool IsValidKeyKeyUsage(X509Certificate2 certificate)
         {
-            if (clientCertificate == null)
+            var keyUsage = GetKeyUsage(certificate);
+            if (keyUsage == null)
             {
-                throw new ArgumentNullException(nameof(clientCertificate));
+                return false;
             }
 
+            var keyUsagesIsForDigitalOnly = keyUsage.KeyUsages.HasFlag(X509KeyUsageFlags.DigitalSignature)
+                                            &&
+                                            !(
+                                                keyUsage.KeyUsages.HasFlag(X509KeyUsageFlags.KeyCertSign)
+                                                ||
+                                                keyUsage.KeyUsages.HasFlag(X509KeyUsageFlags.CrlSign)
+                                            );
+            return keyUsagesIsForDigitalOnly;
+        }
+
+        private static X509KeyUsageExtension GetKeyUsage(X509Certificate2 certificate) =>
+            (X509KeyUsageExtension)certificate.Extensions
+                .OfType<X509Extension>()
+                .FirstOrDefault(c => c.Oid.FriendlyName == "Key Usage");
+
+        private async Task<bool> IsCertificatePartOfChain(X509Certificate2 clientCertificate, bool periodCheck)
+        {
             using (var chain = new X509Chain())
             {
-                var certificates = await _certificatesAuthorities.GetCertificates();
-                chain.ChainPolicy.ExtraStore.AddRange(certificates.ToArray());
+                var authorities = await _certificatesAuthorities.GetCertificates();
+                chain.ChainPolicy.ExtraStore.AddRange(authorities.ToArray());
 
                 chain.ChainPolicy.RevocationMode = X509RevocationMode.NoCheck;
                 var isValidByPolicy = chain.Build(clientCertificate);
@@ -106,16 +124,30 @@ namespace iSHARE.IdentityServer
                     var statuses = chain
                         .ChainElements
                         .OfType<X509ChainElement>()
-                        .SelectMany(c => c.ChainElementStatus);
+                        .SelectMany(c => c.ChainElementStatus)
+                        .ToList();
 
-                    if (statuses.All(c => c.Status.HasFlag(X509ChainStatusFlags.UntrustedRoot)))
+                    if (statuses.Any(c => c.Status.HasFlag(X509ChainStatusFlags.UntrustedRoot)))
                     {
                         // allow untrusted root
                         // for the places where the iSHARE root is not installed (build server)
                         isValidByPolicy = true;
                     }
 
-                    _logger.LogInformation("Chain validation status information {results}.", statuses.Select(c => c.StatusInformation));
+                    if (!periodCheck && statuses.Any(c => c.Status.HasFlag(X509ChainStatusFlags.NotTimeValid)))
+                    {
+                        // bypass not valid time if requested
+                        isValidByPolicy = true;
+                    }
+
+                    // if it has other status than UntrustedRoot or NotTimeValid then invalidate
+                    if (statuses.Any(c => !(c.Status.HasFlag(X509ChainStatusFlags.UntrustedRoot)
+                                            || !periodCheck && c.Status.HasFlag(X509ChainStatusFlags.NotTimeValid))))
+                    {
+                        isValidByPolicy = false;
+                    }
+
+                    _logger.LogInformation("Chain validation status information {results}.", statuses.Select(c => c.StatusInformation).ToList());
                 }
 
                 _logger.LogInformation("IsCertificatePartOfChain is {result}.", isValidByPolicy);

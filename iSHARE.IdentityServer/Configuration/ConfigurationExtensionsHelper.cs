@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Linq;
 using IdentityServer4.Validation;
-using iSHARE.Configuration;
-using iSHARE.Configuration.Configurations;
-using iSHARE.IdentityServer.Services;
 using iSHARE.IdentityServer.Validation;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
@@ -44,15 +40,24 @@ namespace iSHARE.IdentityServer
             return builder;
         }
 
-        public static IIdentityServerBuilder AddPki(this IIdentityServerBuilder builder,
-            IConfiguration configuration)
+        public static IIdentityServerBuilder AddCustomAuthorizeRequestValidators(this IIdentityServerBuilder builder, params Type[] validators)
         {
             var services = builder.Services;
-            services.AddTransient<ICertificateRepository, CertificateRepository>();
-            services.AddTransient<ICertificatesAuthorities, CertificatesAuthorities>();
+            var types = validators.ToList();
+            types.ForEach(t => services.AddTransient(t));
+            services.AddTransient<ICustomAuthorizeRequestValidator>(provider =>
+            {
+                var resolved = types.Select(t => provider.GetService(t) as ICustomAuthorizeRequestValidator).ToList();
+                return new AllOrNothingAuthorizeRequestValidator(resolved, provider.GetService<ILogger<AllOrNothingAuthorizeRequestValidator>>());
+            });
+            return builder;
+        }
+
+        public static IIdentityServerBuilder AddPki(this IIdentityServerBuilder builder)
+        {
+            var services = builder.Services;
+            services.AddSingleton<ICertificatesAuthorities, CertificatesAuthorities>();
             services.AddTransient<ICertificateValidationService, CertificateValidationService>();
-            services.ConfigureOptions<PkiOptions>(configuration, "Pki", ConfigurationOptionsValidator.NullValidator);
-            services.AddTransient<ICertificateManager, CertificateManager>();
 
             return builder;
         }

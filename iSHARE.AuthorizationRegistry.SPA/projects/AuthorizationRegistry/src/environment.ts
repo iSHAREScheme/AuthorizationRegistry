@@ -25,7 +25,7 @@ export const environmentConfigurationMap: EnvironmentModel[] = [
     disablePartyUsersManagement: false,
     environmentType: EnvironmentType.Development,
     identityProvider: {
-      authorizeEndpoint: 'http://localhost:61433/connect/authorize',
+      authorityUrl: 'http://localhost:61433/'
     },
     userManagement: true
   }

@@ -13,28 +13,30 @@ namespace iSHARE.Api.Swagger
 {
     public static class Configuration
     {
-        public static void UseSwagger(this IApplicationBuilder app, string name)
+        public static void UseSwagger(this IApplicationBuilder app, string name, string version)
         {
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", name);
+                c.SwaggerEndpoint($"/swagger/{version}/swagger.json", name);
             });
         }
 
         public static void AddSwagger(this IServiceCollection services,
             string title,
             IHostingEnvironment hostingEnvironment,
-            params Assembly[] supportingAssemblies)
+            string version,
+            params Assembly[] supportingAssemblies
+            )
         {
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new Info { Title = title });
+                c.SwaggerDoc(version, new Info { Title = title, Version = version });
                 c.EnableAnnotations();
 
-                c.DocInclusionPredicate((version, desc) =>
+                c.DocInclusionPredicate((vers, desc) =>
                 {
-                    var isLiveEnvironment = hostingEnvironment.IsLive();
+                    var isLiveEnvironment = hostingEnvironment.IsLiveOrQaLive();
 
                     return isLiveEnvironment ? desc.GroupName != SwaggerGroups.TestSpec : desc.GroupName == SwaggerGroups.TestSpec || string.IsNullOrEmpty(desc.GroupName);
                 });

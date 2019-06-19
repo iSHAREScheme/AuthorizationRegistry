@@ -21,7 +21,6 @@ namespace iSHARE.IdentityServer.Validation
         public Task ValidateAsync(CustomTokenRequestValidationContext context)
         {
             _logger.LogInformation("Start token request validator");
-
             var validatedRequest = context.Result.ValidatedRequest;
 
             if (validatedRequest.Client.ClientId == "SPA")
