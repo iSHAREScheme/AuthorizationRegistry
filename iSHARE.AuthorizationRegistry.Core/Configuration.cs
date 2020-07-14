@@ -1,13 +1,13 @@
-﻿using iSHARE.AuthorizationRegistry.Core.Api;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using iSHARE.AuthorizationRegistry.Core.Api;
 using iSHARE.Configuration.Configurations;
 using iSHARE.Identity;
 using iSHARE.Identity.Api;
 using iSHARE.Identity.Login;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace iSHARE.AuthorizationRegistry.Core
 {
@@ -29,7 +29,7 @@ namespace iSHARE.AuthorizationRegistry.Core
             {
                 services.AddTransient<IUsersService, UsersService>();
                 services.AddTransient<IIdentityService, IdentityService>();
-                services.AddTransient<IUserHandler, DefaultUserHandler>();
+
                 services.AddTransient(opts =>
                 {
                     Func<string, Task<IReadOnlyCollection<ValueTuple<string, string>>>> func = identityUserId =>

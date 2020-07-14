@@ -22,7 +22,7 @@ namespace iSHARE.AuthorizationRegistry.Api
     public class Startup : StartupSpa
     {
         public IIdentityServerBuilder IdentityServerBuilder { get; private set; }
-        public Startup(IHostingEnvironment env, IConfiguration configuration, ILoggerFactory loggerFactory) : base(env, configuration, loggerFactory)
+        public Startup(IWebHostEnvironment env, IConfiguration configuration, ILoggerFactory loggerFactory) : base(env, configuration, loggerFactory)
         {
             SwaggerName = "Authorization Registry";
             ApplicationInsightsName = "ar.api";
@@ -76,13 +76,15 @@ namespace iSHARE.AuthorizationRegistry.Api
                     app.UseMigrations<AspNetUserDbContext>(Configuration).UseSeed<AspNetUserDbContext>(HostingEnvironment);
                 }
             }
+
+            app.UseRouting();
             ConfigureCors(app);
 
             app.UseMigrations(Configuration, HostingEnvironment);
             app.UseIdentityServer() // this calls UseAuth
                .UseIdentityServerDb(Configuration, HostingEnvironment);
 
-            base.Configure(app, loggerFactory); // this calls UseMvc, the order needs to be UseAuth, then UseMvc
+            base.Configure(app, loggerFactory); // this calls UseEndpoints, the order needs to be UseAuth, then UseEndpoints
 
         }
     }

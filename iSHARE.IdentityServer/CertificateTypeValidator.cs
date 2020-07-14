@@ -20,23 +20,20 @@ namespace iSHARE.IdentityServer
             _logger = logger;
             _certificateTypeValidationService = certificateTypeValidationService;
         }
+
         public async Task<SecretValidationResult> ValidateAsync(IEnumerable<Secret> secrets, ParsedSecret parsedSecret)
         {
             var assertion = _assertionManager.Parse(parsedSecret.Credential as string);
 
             var result = await _assertionManager.ValidateAsync(assertion);
-
             if (!result.Success)
             {
                 return result;
             }
 
             var validity = await _certificateTypeValidationService.Validate(assertion.Certificates, parsedSecret.Id);
-            if (validity)
-            {
-                return new SecretValidationResult { Success = true };
-            }
-            return new SecretValidationResult { Success = false };
+
+            return new SecretValidationResult { Success = validity };
         }
     }
 }

@@ -60,18 +60,14 @@ namespace iSHARE.EntityFramework
 
             return (bool)deleted.GetValue(dbVal);
         }
+
+        internal static DbContext GetContext<TEntity>(this DbSet<TEntity> dbSet)
+            where TEntity : class
+        {
+            return (DbContext)dbSet
+                .GetType().GetTypeInfo()
+                .GetField("_context", BindingFlags.NonPublic | BindingFlags.Instance)
+                .GetValue(dbSet);
+        }
     }
 }
-
-internal static class HackyDbSetGetContextTrick
-{
-    internal static DbContext GetContext<TEntity>(this DbSet<TEntity> dbSet)
-        where TEntity : class
-    {
-        return (DbContext)dbSet
-            .GetType().GetTypeInfo()
-            .GetField("_context", BindingFlags.NonPublic | BindingFlags.Instance)
-            .GetValue(dbSet);
-    }
-}
-

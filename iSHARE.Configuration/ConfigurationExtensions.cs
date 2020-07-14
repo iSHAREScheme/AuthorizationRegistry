@@ -69,7 +69,7 @@ namespace iSHARE.Configuration
 
 
         public static PartyDetailsOptions ConfigurePartyDetailsOptions(this IServiceCollection services,
-            IConfiguration configuration, IHostingEnvironment environment)
+            IConfiguration configuration, IWebHostEnvironment environment)
         {
             return services.ConfigureOptions<PartyDetailsOptions>(configuration, "PartyDetails", new ConfigurationOptionsValidator
             {

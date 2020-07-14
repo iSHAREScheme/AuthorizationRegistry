@@ -10,9 +10,9 @@ namespace iSHARE.EmailClient
 {
     public class TemplateService : ITemplateService
     {
-        private readonly IHostingEnvironment _hostingEnvironment;
+        private readonly IWebHostEnvironment _hostingEnvironment;
         private readonly ConcurrentDictionary<string, string> _templates;
-        public TemplateService(IHostingEnvironment hostingEnvironment)
+        public TemplateService(IWebHostEnvironment hostingEnvironment)
         {
             _hostingEnvironment = hostingEnvironment;
             _templates = new ConcurrentDictionary<string, string>();

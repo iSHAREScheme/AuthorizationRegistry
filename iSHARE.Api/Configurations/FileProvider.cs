@@ -10,7 +10,7 @@ namespace iSHARE.Api.Configurations
 {
     public static class FileProvider
     {
-        public static IServiceCollection AddFileProvider(this IServiceCollection services, IHostingEnvironment environment)
+        public static IServiceCollection AddFileProvider(this IServiceCollection services, IWebHostEnvironment environment)
         {
             services.AddSingleton<Func<string, IFileInfo>>(srv => filename =>
             {

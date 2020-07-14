@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
+using iSHARE.Abstractions;
 using iSHARE.Models;
 using Microsoft.Extensions.Logging;
 
@@ -68,7 +69,7 @@ namespace iSHARE.IdentityServer
         public async Task<bool> IsValid(DateTime validationMoment, X509Certificate2 certificate)
             => await IsValidBetween(validationMoment, validationMoment, certificate);
         public async Task<bool> IsValid(DateTime validationMoment, string certificate, IReadOnlyCollection<string> chain)
-            => await IsValid(validationMoment, ConvertRaw(certificate));
+            => await IsValid(validationMoment, certificate.ConvertToX509Certificate2FromBase64());
 
         public async Task<bool> IsValid(DateTime validationMoment, string[] chain)
             => await IsValid(validationMoment, chain[0], chain.Skip(1).ToList());
@@ -154,11 +155,5 @@ namespace iSHARE.IdentityServer
                 return isValidByPolicy;
             }
         }
-
-        private static X509Certificate2 ConvertRaw(string rawCertificate)
-            => new X509Certificate2(Convert.FromBase64String(rawCertificate));
-
-        private static IReadOnlyCollection<X509Certificate2> ConvertRaw(IReadOnlyCollection<string> chain)
-            => (chain ?? new List<string>()).Select(raw => new X509Certificate2(Convert.FromBase64String(raw))).ToList();
     }
 }

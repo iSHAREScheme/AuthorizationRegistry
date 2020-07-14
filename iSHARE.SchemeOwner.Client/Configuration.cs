@@ -10,7 +10,7 @@ namespace iSHARE.SchemeOwner.Client
 {
     public static class Configuration
     {
-        public static IServiceCollection AddSchemeOwnerClient(this IServiceCollection services, IConfiguration configuration, IHostingEnvironment environment)
+        public static IServiceCollection AddSchemeOwnerClient(this IServiceCollection services, IConfiguration configuration, IWebHostEnvironment environment)
         {
             var options = services.ConfigureOptions<SchemeOwnerClientOptions>(configuration,
                 "SchemeOwner",
@@ -25,7 +25,7 @@ namespace iSHARE.SchemeOwner.Client
                 Thumbprint = options.Thumbprint
             });
 
-            services.AddTransient<SchemeOwnerClient>();
+            services.AddTransient<ISchemeOwnerClient, SchemeOwnerClient>();
 
             return services;
         }

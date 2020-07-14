@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using iSHARE.Abstractions.Json;
+using iSHARE.Abstractions.Json.Interfaces;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace iSHARE.Api.Configurations
 {

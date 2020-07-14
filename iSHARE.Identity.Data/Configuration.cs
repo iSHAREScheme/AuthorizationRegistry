@@ -12,7 +12,7 @@ namespace iSHARE.Identity.Data
     {
         public static void AddIdentityServices<TUser, TUserContext>(this IServiceCollection services,
             IConfiguration configuration,
-            IHostingEnvironment environment,
+            IWebHostEnvironment environment,
             string @namespace,
             Assembly assembly)
             where TUserContext : DbContext

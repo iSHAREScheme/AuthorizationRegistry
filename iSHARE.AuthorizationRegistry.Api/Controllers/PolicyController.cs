@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using iSHARE.Abstractions.Json;
 using iSHARE.Api.Controllers;
 using iSHARE.Api.Filters;
 using iSHARE.AuthorizationRegistry.Api.ViewModels;
@@ -33,7 +34,7 @@ namespace iSHARE.AuthorizationRegistry.Api.Controllers
         /// </remarks>
         /// <returns>JWT encoded delegation policy</returns>
         [HttpPost]
-        [TypeFilter(typeof(JsonSchemaValidateAttribute), Arguments = new object[] { "policySchema.json" })]
+        [TypeFilter(typeof(JsonSchemaValidateAttribute), Arguments = new object[] { JsonSchema.Policy })]
         [SignResponse("policy_token", "delegationEvidence", "Policy", JsonContractType = typeof(CamelCasePropertyNamesContractResolver))]
         public async Task<IActionResult> Create([FromBody, SwaggerParameter(Required = true)]PolicyRequest delegationPolicy)
         {

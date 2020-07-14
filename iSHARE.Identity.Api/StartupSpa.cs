@@ -13,8 +13,7 @@ namespace iSHARE.Identity.Api
 {
     public class StartupSpa : Startup
     {
-
-        public StartupSpa(IHostingEnvironment env, IConfiguration configuration, ILoggerFactory loggerFactory)
+        public StartupSpa(IWebHostEnvironment env, IConfiguration configuration, ILoggerFactory loggerFactory)
             : base(env, configuration, loggerFactory)
         {
 
@@ -34,10 +33,11 @@ namespace iSHARE.Identity.Api
 
         public override void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory)
         {
+            app.UseStaticFiles();
+
             base.Configure(app, loggerFactory);
 
             app.UseClientCaching();
-            app.UseStaticFiles();
             app.UseSpaStaticFiles();
 
             app.Map("/admin", admin =>

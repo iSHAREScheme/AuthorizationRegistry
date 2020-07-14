@@ -38,7 +38,7 @@ namespace iSHARE.IdentityServer.Services
                     {
                         var assertion = _assertionParser.Parse(step);
                         var result = await _assertionParser.ValidateAsync(assertion);
-                        if (!result.Success || !_defaultJwtValidator.Validate(step,
+                        if (!result.Success || !_defaultJwtValidator.IsValid(step,
                                 mask.DelegationRequest.Target.AccessSubject, // client id should be access subject
                                 _context.HttpContext.User.GetRequestingClientId() // audience should be the requester id
                             ))

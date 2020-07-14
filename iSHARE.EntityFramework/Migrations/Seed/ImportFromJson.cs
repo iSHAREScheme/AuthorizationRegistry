@@ -13,6 +13,7 @@ namespace iSHARE.EntityFramework.Migrations.Seed
         {
             ContractResolver = new PrivateOrInternalPropertiesResolver()
         };
+
         public static TEntity[] DeserializeCollectionOf<TEntity>(string json)
         {
             if (string.IsNullOrEmpty(json))

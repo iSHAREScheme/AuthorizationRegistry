@@ -6,5 +6,6 @@ namespace iSHARE.Abstractions.Storage
     {
         Task<string> ReadAsString(string path);
         Task Upload(string path, byte[] content);
+        Task<bool> Exists(string path);
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using iSHARE.Abstractions;
 using Microsoft.Azure.KeyVault;
 
@@ -14,7 +15,7 @@ namespace iSHARE.AzureKeyVaultClient
             _keyVaultClient = keyVaultClient;
             _keyVaultOptions = keyVaultOptions;
         }
-
+        
         public async Task<byte[]> SignAsync(string algorithm, byte[] digest)
         {
             return (await _keyVaultClient.SignAsync(_keyVaultOptions.KeyIdentifier, algorithm, digest)).Result;
@@ -30,6 +31,23 @@ namespace iSHARE.AzureKeyVaultClient
             var secretBundle = await _keyVaultClient.GetSecretAsync(_keyVaultOptions.KeyVaultUri, _keyVaultOptions.PublicKeySecretName);
 
             return secretBundle.Value;
+        }
+
+        public async Task<string[]> GetPublicKeyChain()
+        {
+            if (string.IsNullOrEmpty(_keyVaultOptions.PublicKeyChainSecretNames))
+            {
+                return new string[0];
+            }
+
+            var secretNames = _keyVaultOptions.PublicKeyChainSecretNames.Split(';');
+
+            var tasks = secretNames
+                .Select(secretName => _keyVaultClient.GetSecretAsync(_keyVaultOptions.KeyVaultUri, secretName))
+                .ToArray();
+            await Task.WhenAll(tasks);
+
+            return tasks.Select(t => t.Result.Value).ToArray();
         }
     }
 }

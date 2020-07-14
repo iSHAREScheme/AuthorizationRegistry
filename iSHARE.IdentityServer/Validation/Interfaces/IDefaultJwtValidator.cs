@@ -2,6 +2,6 @@
 {
     public interface IDefaultJwtValidator
     {
-        bool Validate(string jwtTokenString, string clientId, string audience);
+        bool IsValid(string jwtTokenString, string clientId, string audience);
     }
 }

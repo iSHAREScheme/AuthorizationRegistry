@@ -6,9 +6,10 @@ namespace iSHARE.Api.Configurations
 {
     public static class HostingEnvironment
     {
-        public static bool IsLiveOrQaLive(this IHostingEnvironment hostingEnvironment) =>
+        public static bool IsLiveOrQaLive(this IWebHostEnvironment hostingEnvironment) =>
             hostingEnvironment.EnvironmentName.Contains(Environments.Live, StringComparison.OrdinalIgnoreCase);
-        public static bool IsTest(this IHostingEnvironment hostingEnvironment) =>
+
+        public static bool IsTest(this IWebHostEnvironment hostingEnvironment) =>
             hostingEnvironment.EnvironmentName.Equals(Environments.Test, StringComparison.OrdinalIgnoreCase);
     }
 }

@@ -82,8 +82,8 @@ namespace iSHARE.AuthorizationRegistry.Core
                 Policy = request.Policy,
                 CreatedById = createdBy.Id,
                 UpdatedById = createdBy.Id,
-                CreatedDate = DateTime.Now,
-                UpdatedDate = DateTime.Now,
+                CreatedDate = DateTime.UtcNow,
+                UpdatedDate = DateTime.UtcNow,
                 DelegationHistory = new List<DelegationHistory>()
             };
 
@@ -106,7 +106,7 @@ namespace iSHARE.AuthorizationRegistry.Core
             {
                 DelegationId = entity.Id,
                 Policy = entity.Policy,
-                CreatedDate = DateTime.Now,
+                CreatedDate = DateTime.UtcNow,
                 CreatedById = createdBy.Id
             });
 
@@ -114,7 +114,7 @@ namespace iSHARE.AuthorizationRegistry.Core
             entity.AccessSubject = accessSubject;
             entity.Policy = request.Policy;
             entity.UpdatedById = createdBy.Id;
-            entity.UpdatedDate = DateTime.Now;
+            entity.UpdatedDate = DateTime.UtcNow;
 
             await _delegationsRepository.Save();
 
@@ -147,8 +147,8 @@ namespace iSHARE.AuthorizationRegistry.Core
                     PolicyIssuer = policyIssuer,
                     AccessSubject = accessSubject,
                     Policy = policyJson,
-                    CreatedDate = DateTime.Now,
-                    UpdatedDate = DateTime.Now,
+                    CreatedDate = DateTime.UtcNow,
+                    UpdatedDate = DateTime.UtcNow,
                     DelegationHistory = new List<DelegationHistory>()
                 };
 
@@ -172,7 +172,7 @@ namespace iSHARE.AuthorizationRegistry.Core
                 CreatedById = currentUser.Id,
                 DelegationId = delegation.Id,
                 Policy = delegation.Policy,
-                CreatedDate = DateTime.Now
+                CreatedDate = DateTime.UtcNow
             });
 
             await _delegationsRepository.Save();
@@ -208,11 +208,11 @@ namespace iSHARE.AuthorizationRegistry.Core
             {
                 DelegationId = delegation.Id,
                 Policy = delegation.Policy,
-                CreatedDate = DateTime.Now,
+                CreatedDate = DateTime.UtcNow,
             });
 
             delegation.Policy = newPolicy;
-            delegation.UpdatedDate = DateTime.Now;
+            delegation.UpdatedDate = DateTime.UtcNow;
             return delegation;
         }
 

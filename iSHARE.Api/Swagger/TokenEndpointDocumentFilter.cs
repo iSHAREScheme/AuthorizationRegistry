@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Swashbuckle.AspNetCore.Swagger;
+using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace iSHARE.Api.Swagger
@@ -13,97 +13,111 @@ namespace iSHARE.Api.Swagger
             _title = title;
         }
 
-        public void Apply(SwaggerDocument swaggerDoc, DocumentFilterContext context)
+        public void Apply(OpenApiDocument swaggerDoc, DocumentFilterContext context)
         {
-            swaggerDoc.Paths.Add("/connect/token", new PathItem
+            swaggerDoc.Paths.Add("/connect/token", new OpenApiPathItem
             {
-                Post = new Operation
+                Operations = new Dictionary<OperationType, OpenApiOperation>
                 {
-                    Tags = new[] { "Access Token" },
-                    Summary = "Obtains access token",
-                    Description = $"Used to obtain an OAuth access token from the {_title}. " +
-                                  $"The format of access_token is not defined by this specification. " +
-                                  $"They are left to the {_title} and should be opaque to the Service Consumer.",
-                    OperationId = "OAuth2TokenPost",
-                    Parameters = new List<IParameter>
                     {
-                        new Parameter
+                        OperationType.Post, new OpenApiOperation
                         {
-                            Name = "grant_type",
-                            Description = "OAuth 2.0 grant type. MUST contain “client_credentials”",
-                            In = "formData",
-                            Required = true
-                        },
-                        new Parameter
-                        {
-                            Name = "scope",
-                            Description = "OAuth 2.0 scope. Defaults to ”iSHARE”, indicating all rights are requested. " +
-                                          "Other values MAY be specified by the API owner and allow to get tokens that do not include all rights",
-                            In = "formData",
-                            Required = true
-                        },
-                        new Parameter
-                        {
-                            Name = "client_id",
-                            Description = "OpenID Connect 1.0 client ID. Used in iSHARE for all client identification for OAuth/OpenID Connect. " +
-                                          "MUST contain a valid iSHARE identifier of the Service Consumer",
-                            In = "formData",
-                            Required = true
-                        },
-                        new Parameter
-                        {
-                            Name = "client_assertion_type",
-                            Description = "OpenID Connect 1.0 client assertion type. Used in iSHARE for all client identification for OAuth/OpenID Connect. " +
-                                          "MUST contain “urn:ietf:params:oauth:client-assertion-type:jwt-bearer”",
-                            In = "formData",
-                            Required = true
-                        },
-                        new Parameter
-                        {
-                            Name = "client_assertion",
-                            Description = "OpenID Connect 1.0 client assertion. Used in iSHARE for all client identification for OAuth/OpenID Connect. " +
-                                          "MUST contain JWT token conform iSHARE specifications, signed by the client.",
-                            In = "formData",
-                            Required = true
-                        }
-                    },
-                    Responses = new Dictionary<string, Response>
-                    {
-                        {
-                            "200", _tokenResponse
+                            Tags = new[] {new OpenApiTag {Name = "Access Token"}},
+                            Summary = "Obtains access token",
+                            Description = $"Used to obtain an OAuth access token from the {_title}. " +
+                                          $"The format of access_token is not defined by this specification. " +
+                                          $"They are left to the {_title} and should be opaque to the Service Consumer.",
+                            OperationId = "OAuth2TokenPost",
+                            RequestBody = CreateRequestBody(),
+                            Responses = new OpenApiResponses {{"200", CreateResponseBody()}},
                         }
                     }
                 }
             });
         }
 
-        private readonly Response _tokenResponse = new Response
+        private static OpenApiResponse CreateResponseBody() => new OpenApiResponse
         {
             Description = "Ok",
-            Schema = new Schema
+            Content = new Dictionary<string, OpenApiMediaType>()
             {
-                Type = "object",
-                Properties = new Dictionary<string, Schema>
                 {
+                    "application/json",
+                    new OpenApiMediaType
                     {
-                        "access_token",
-                        new Schema
+                        Schema = new OpenApiSchema
                         {
-                            Type = "string"
+                            Type = "object",
+                            Properties = new Dictionary<string, OpenApiSchema>
+                            {
+                                {"access_token", new OpenApiSchema {Type = "string"}},
+                                {"token_type", new OpenApiSchema {Type = "string"}},
+                                {"expires_in", new OpenApiSchema {Type = "number"}}
+                            }
                         }
-                    },
+                    }
+                }
+            }
+        };
+
+        private static OpenApiRequestBody CreateRequestBody() => new OpenApiRequestBody
+        {
+            Required = true,
+            Content = new Dictionary<string, OpenApiMediaType>
+            {
+                {
+                    "application/x-www-form-urlencoded", new OpenApiMediaType
                     {
-                        "token_type",
-                        new Schema
+                        Schema = new OpenApiSchema
                         {
-                            Type = "string"
-                        }
-                    },
-                    {
-                        "expires_in",
-                        new Schema
-                        {
-                            Type = "number"
+                            Type = "object",
+                            Properties = new Dictionary<string, OpenApiSchema>
+                            {
+                                {
+                                    "grant_type", new OpenApiSchema
+                                    {
+                                        Description =
+                                            "OAuth 2.0 grant type. MUST contain “client_credentials”",
+                                        Type = "string"
+                                    }
+                                },
+                                {
+                                    "scope", new OpenApiSchema
+                                    {
+                                        Description =
+                                            "OAuth 2.0 scope. Defaults to ”iSHARE”, indicating all rights are requested. " +
+                                            "Other values MAY be specified by the API owner and allow to get tokens that do not include all rights",
+                                        Type = "string"
+                                    }
+                                },
+                                {
+                                    "client_id", new OpenApiSchema
+                                    {
+                                        Description =
+                                            "OpenID Connect 1.0 client ID. Used in iSHARE for all client identification for OAuth/OpenID Connect. " +
+                                            "MUST contain a valid iSHARE identifier of the Service Consumer",
+                                        Type = "string"
+                                    }
+                                },
+                                {
+                                    "client_assertion_type", new OpenApiSchema
+                                    {
+                                        Description =
+                                            "OpenID Connect 1.0 client assertion type. Used in iSHARE for all client identification for OAuth/OpenID Connect. " +
+                                            "MUST contain “urn:ietf:params:oauth:client-assertion-type:jwt-bearer”",
+                                        Type = "string"
+                                    }
+                                },
+                                {
+                                    "client_assertion", new OpenApiSchema
+                                    {
+                                        Description =
+                                            "OpenID Connect 1.0 client assertion. Used in iSHARE for all client identification for OAuth/OpenID Connect. " +
+                                            "MUST contain JWT token conform iSHARE specifications, signed by the client.",
+                                        Type = "string"
+                                    }
+                                }
+                            }
                         }
                     }
                 }

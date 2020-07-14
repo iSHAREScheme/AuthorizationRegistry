@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using iSHARE.Abstractions.Json;
 using iSHARE.Api.Controllers;
 using iSHARE.Api.Filters;
 using iSHARE.AuthorizationRegistry.Core.Api;
@@ -12,24 +13,24 @@ using Newtonsoft.Json.Serialization;
 namespace iSHARE.AuthorizationRegistry.Api.Controllers
 {
     [Route("delegation")]
-    [TypeFilter(typeof(JsonSchemaValidateAttribute), Arguments = new object[] { "delegationMaskSchema.json" })]
+    [TypeFilter(typeof(JsonSchemaValidateAttribute), Arguments = new object[] { JsonSchema.DelegationMask })]
     public class DelegationEvidenceController : SchemeAuthorizedController
     {
         private readonly IDelegationService _delegationService;
         private readonly IDelegationTranslateService _delegationTranslateService;
         private readonly IDelegationMaskValidationService _delegationMaskValidationService;
-        private readonly IPreviousStepsValdiationService _previousStepsValdiationService;
+        private readonly IPreviousStepsValdiationService _previousStepsValidationService;
 
         public DelegationEvidenceController(
             IDelegationService delegationService,
             IDelegationTranslateService delegationTranslateService,
             IDelegationMaskValidationService delegationMaskValidationService,
-            IPreviousStepsValdiationService previousStepsValdiationService)
+            IPreviousStepsValdiationService previousStepsValidationService)
         {
             _delegationService = delegationService;
             _delegationTranslateService = delegationTranslateService;
             _delegationMaskValidationService = delegationMaskValidationService;
-            _previousStepsValdiationService = previousStepsValdiationService;
+            _previousStepsValidationService = previousStepsValidationService;
         }
 
         /// <summary>
@@ -57,7 +58,7 @@ namespace iSHARE.AuthorizationRegistry.Api.Controllers
 
         private async Task<ActionResult<DelegationTranslationTestResponse>> TranslateDelegation(DelegationMask delegationMask)
         {
-            var stepsValidation = await _previousStepsValdiationService.Validate(delegationMask);
+            var stepsValidation = await _previousStepsValidationService.Validate(delegationMask);
             if (!stepsValidation.Succeeded)
             {
                 return BadRequest(stepsValidation.Errors);

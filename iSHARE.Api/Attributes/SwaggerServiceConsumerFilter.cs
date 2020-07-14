@@ -1,15 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using iSHARE.Api.Swagger;
 using iSHARE.Api.Swagger.Authorization;
-using Swashbuckle.AspNetCore.Swagger;
+using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace iSHARE.Api.Attributes
 {
     public class SwaggerServiceConsumerFilter : IOperationFilter
     {
-        public void Apply(Operation operation, OperationFilterContext context)
+        public void Apply(OpenApiOperation operation, OperationFilterContext context)
         {
             var filterDescriptors = context.ApiDescription.ActionDescriptor.FilterDescriptors;
 
@@ -27,23 +26,23 @@ namespace iSHARE.Api.Attributes
 
             if (operation.Parameters == null)
             {
-                operation.Parameters = new List<IParameter>();
+                operation.Parameters = new List<OpenApiParameter>();
             }
 
-            operation.Parameters.Add(new Parameter
+            operation.Parameters.Add(new OpenApiParameter
             {
                 Name = "client_assertion",
-                In = "header",
+                In = ParameterLocation.Header,
                 Description = "iSHARE specific optional client assertion. Used when Service Provider is requesting a service on behalf of a Service Consumer.",
-                Type = "string"
+                Schema = new OpenApiSchema { Type = "string" }
             });
 
-            operation.Parameters.Add(new Parameter
+            operation.Parameters.Add(new OpenApiParameter
             {
                 Name = "delegation_evidence",
-                In = "header",
+                In = ParameterLocation.Header,
                 Description = "iSHARE delegation evidence regarding the requested service. The Service Consumer can obtain this evidence from an Authorization Registry / Entitled Party before requesting a specific service.",
-                Type = "string"
+                Schema = new OpenApiSchema { Type = "string" }
             });
         }
     }

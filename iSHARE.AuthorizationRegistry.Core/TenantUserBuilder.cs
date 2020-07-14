@@ -14,7 +14,7 @@ namespace iSHARE.AuthorizationRegistry.Core
                 Id = Guid.NewGuid(),
                 AspNetUserId = identityId,
                 Name = request.Username,
-                CreatedDate = DateTime.Now,
+                CreatedDate = DateTime.UtcNow,
                 PartyId = request.PartyId,
                 PartyName = request.PartyName
             };

@@ -3,7 +3,6 @@ using System.Globalization;
 using System.Linq;
 using iSHARE.Models.DelegationEvidence;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 
 namespace iSHARE.Models.DelegationMask
 {

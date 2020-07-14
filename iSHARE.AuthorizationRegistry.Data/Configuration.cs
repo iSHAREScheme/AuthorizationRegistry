@@ -15,7 +15,7 @@ namespace iSHARE.AuthorizationRegistry.Data
     {
         public static void AddDb(this IServiceCollection services,
             IConfiguration configuration,
-            IHostingEnvironment environment)
+            IWebHostEnvironment environment)
         {
             var connectionString = configuration.GetConnectionString("Main");
             services.AddDbContext<AuthorizationRegistryDbContext>(options => options.UseSqlServer(connectionString));
@@ -32,7 +32,7 @@ namespace iSHARE.AuthorizationRegistry.Data
 
         public static void UseMigrations(this IApplicationBuilder app,
             IConfiguration configuration,
-            IHostingEnvironment environment)
+            IWebHostEnvironment environment)
         {
             app.UseMigrations<AuthorizationRegistryDbContext>(configuration);
             app.UseSeed<AuthorizationRegistryDbContext>(environment);

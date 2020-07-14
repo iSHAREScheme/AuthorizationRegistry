@@ -1,4 +1,5 @@
 ﻿using System;
+using iSHARE.Api.Configurations;
 using iSHARE.Configuration;
 using Microsoft.AspNetCore.Hosting;
 
@@ -19,14 +20,16 @@ namespace iSHARE.Api
 
             return builder
                 .UseAzureAppServices()
-                .UseApplicationInsights()
                 .UseStartup<TStartup>()
                 .UseSetting(WebHostDefaults.DetailedErrorsKey, showDetailedErrors.ToString())
 
                 // Capture startup errors if showDetailedErrors is set to true, so the errors are handled by .Net Core and not IIS
                 // Otherwise let IIS handle the error and customize the error page there
                 .CaptureStartupErrors(showDetailedErrors)
-                ;
+                .ConfigureLogging((hostingContext, logging) =>
+                {
+                    logging.AddLogging(hostingContext, environment);
+                });
         }
     }
 }

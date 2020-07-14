@@ -8,7 +8,9 @@ namespace iSHARE.Identity.Api.Controllers
 {
     [Route("users")]
     [Authorize(Roles = iSHARE.Models.Constants.Roles.SchemeOwner + "," +
-                       iSHARE.Models.Constants.Roles.AuthorizationRegistry.PartyAdmin)]
+                       iSHARE.Models.Constants.Roles.AuthorizationRegistry.PartyAdmin + "," +
+                       iSHARE.Models.Constants.Roles.BananaCo.PartyAdmin + "," +
+                       iSHARE.Models.Constants.Roles.ConformanceTool.PartyAdmin)]
     public class UsersController : SpaAuthorizedController
     {
         private readonly IIdentityService _identityService;

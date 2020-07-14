@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Jose;
 using Microsoft.IdentityModel.Tokens;
 using OpenSSL.PrivateKeyDecoder;
 
@@ -52,6 +54,63 @@ namespace iSHARE.Abstractions
             return jwt + "." + encodedSignature;
         }
 
+        public static string Encrypt(this string payload,
+            string publicKey,
+            string alg = "RSA-OAEP",
+            string enc = "A256GCM",
+            string typ = "JWE")
+        {
+            var (jweAlgorithm, jweEncryption) = GetSupported(alg, enc);
+
+            var encryptedExtraHeaders = new Dictionary<string, object>
+            {
+                { "typ", typ}
+            };
+
+            var encrypted = JWT.Encode(payload,
+                publicKey.ConvertToX509Certificate2FromBase64().GetRSAPublicKey(),
+                jweAlgorithm,
+                jweEncryption,
+                null,
+                encryptedExtraHeaders);
+
+            return encrypted;
+        }
+
+        public static string Decrypt(this string encrypted,
+            string privateKey,
+            string alg = "RSA-OAEP",
+            string enc = "A256GCM")
+        {
+            var (jweAlgorithm, jweEncryption) = GetSupported(alg, enc);
+
+            var decrypted = JWT.Decode(encrypted,
+                privateKey.ConvertToRsa(),
+                jweAlgorithm,
+                jweEncryption);
+
+            return decrypted;
+        }
+
+        private static (JweAlgorithm alg, JweEncryption enc) GetSupported(string alg, string enc)
+        {
+            var supportedJweAlgorithms = new Dictionary<string, JweAlgorithm>
+            {
+                {"RSA-OAEP", JweAlgorithm.RSA_OAEP},
+                {"RSA-OAEP-256", JweAlgorithm.RSA_OAEP_256}
+            };
+
+            var supportedJweEncryptions = new Dictionary<string, JweEncryption>
+            {
+                {"A256GCM", JweEncryption.A256GCM},
+                {"A128GCM", JweEncryption.A128GCM}
+            };
+
+            var jweAlgorithm = supportedJweAlgorithms[alg];
+            var jweEncryption = supportedJweEncryptions[enc];
+            return (jweAlgorithm, jweEncryption);
+        }
+
         private static string EncodeJwtFromJson(string contentJson)
         {
             var newContent = Regex.Replace(contentJson, "(\"(?:[^\"\\\\]|\\\\.)*\")|\\s+", "$1");
@@ -81,12 +140,15 @@ namespace iSHARE.Abstractions
             return jwt;
         }
 
-        public static X509Certificate2 CreateX509Certificate2(this string source)
+        public static X509Certificate2 ConvertToX509Certificate2(this string source)
             => new X509Certificate2(Encoding.ASCII.GetBytes(source));
+
+        public static X509Certificate2 ConvertToX509Certificate2FromBase64(this string source)
+            => new X509Certificate2(Convert.FromBase64String(source));
 
         public static string ConvertToBase64Der(this string certificate)
         {
-            using (var cert = certificate.CreateX509Certificate2())
+            using (var cert = certificate.ConvertToX509Certificate2())
             {
                 return Convert.ToBase64String(cert.Export(X509ContentType.Cert));
             }

@@ -44,7 +44,6 @@ namespace iSHARE.Api.Services
 
         protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
         {
-            string token = null;
             try
             {
                 // Give application opportunity to find from a different location, adjust, or reject token
@@ -58,7 +57,7 @@ namespace iSHARE.Api.Services
                 }
 
                 // If application retrieved token from somewhere else, use that.
-                token = messageReceivedContext.Token;
+                var token = messageReceivedContext.Token;
 
                 if (string.IsNullOrEmpty(token))
                 {
@@ -213,19 +212,16 @@ namespace iSHARE.Api.Services
 
             var digest = Encoding.UTF8.GetBytes(jws.EncodedHeader + "." + jws.EncodedPayload).ToSha256();
 
-            byte[] signature = null;
             try
             {
-                signature = Base64UrlEncoder.DecodeBytes(jws.RawSignature);
+                var signature = Base64UrlEncoder.DecodeBytes(jws.RawSignature);
+                return await _digitalSigner.VerifyAsync(SecurityAlgorithms.RsaSha256, digest, signature);
             }
             catch (Exception ex)
             {
                 Logger.LogWarning(ex, "Exception while decoding the signature");
                 return false;
             }
-
-            var isSigned = await _digitalSigner.VerifyAsync(SecurityAlgorithms.RsaSha256, digest, signature);
-            return isSigned;
         }
     }
 }

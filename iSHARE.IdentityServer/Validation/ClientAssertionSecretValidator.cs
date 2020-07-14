@@ -18,13 +18,14 @@ namespace iSHARE.IdentityServer.Validation
             _logger = logger;
             _assertionManager = assertionManager;
         }
+
         public async Task<SecretValidationResult> ValidateAsync(IEnumerable<Secret> secrets, ParsedSecret parsedSecret)
         {
             _logger.LogDebug("Validate client assertion started");
             var fail = new SecretValidationResult { Success = false };
             if (parsedSecret.Type != IdentityServerConstants.ParsedSecretTypes.JwtBearer)
             {
-                _logger.LogDebug("Secret type is not a JwtBearer");
+                _logger.LogDebug($"Secret type is not a JwtBearer, instead it was {parsedSecret.Type}");
                 return fail;
             }
             if (!(parsedSecret.Credential is string jwtTokenString))

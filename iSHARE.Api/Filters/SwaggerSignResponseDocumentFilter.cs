@@ -1,16 +1,17 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using iSHARE.Api.Swagger;
-using Swashbuckle.AspNetCore.Swagger;
+using Microsoft.OpenApi.Any;
+using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace iSHARE.Api.Filters
 {
     public class SwaggerSignResponseDocumentFilter : IDocumentFilter
     {
-        public void Apply(SwaggerDocument swaggerDoc, DocumentFilterContext context)
+        public void Apply(OpenApiDocument swaggerDoc, DocumentFilterContext context)
         {
-            var filterDescriptors = context.ApiDescriptions.SelectMany(ig => ig.ActionDescriptor.FilterDescriptors);
+            var filterDescriptors = context.ApiDescriptions.SelectMany(ig => ig.ActionDescriptor.FilterDescriptors).ToArray();
             var isSignResponseAttribute = filterDescriptors.Any(fd => fd.Filter is SignResponseAttribute);
 
             if (!isSignResponseAttribute)
@@ -20,9 +21,9 @@ namespace iSHARE.Api.Filters
 
             var attributes = filterDescriptors.Where(fd => fd.Filter is SignResponseAttribute);
 
-            if (swaggerDoc.Definitions == null)
+            if (swaggerDoc.Components.Schemas == null)
             {
-                swaggerDoc.Definitions = new Dictionary<string, Schema>();
+                swaggerDoc.Components.Schemas = new Dictionary<string, OpenApiSchema>();
             }
 
             AddJwtHeader(swaggerDoc);
@@ -34,38 +35,38 @@ namespace iSHARE.Api.Filters
             }
         }
 
-        private void AddJwtHeader(SwaggerDocument swaggerDoc)
+        private void AddJwtHeader(OpenApiDocument swaggerDoc)
         {
-            swaggerDoc.Definitions.Add(
+            swaggerDoc.Components.Schemas.Add(
                 "jwt_header",
-                new Schema
+                new OpenApiSchema
                 {
                     Type = "object",
-                    Required = new List<string> { "alg", "typ", "x5c" },
-                    Properties = new Dictionary<string, Schema>
+                    Required = new HashSet<string> { "alg", "typ", "x5c" },
+                    Properties = new Dictionary<string, OpenApiSchema>
                     {
                         {
                             "alg",
-                            new Schema
+                            new OpenApiSchema
                             {
                                 Type = "string",
-                                Example = "RS256"
+                                Example = new OpenApiString("RS256")
                             }
                         },
                         {
                             "typ",
-                            new Schema
+                            new OpenApiSchema
                             {
                                 Type = "string",
-                                Example = "JWT"
+                                Example = new OpenApiString("JWT")
                             }
                         },
                         {
                             "x5c",
-                            new Schema
+                            new OpenApiSchema
                             {
                                 Type = "array",
-                                Items = new Schema
+                                Items = new OpenApiSchema
                                 {
                                     Type = "string"
                                 }
@@ -75,16 +76,16 @@ namespace iSHARE.Api.Filters
                 });
         }
 
-        private void AddJwtPayload(SwaggerDocument swaggerDoc, SignResponseAttribute attribute)
+        private void AddJwtPayload(OpenApiDocument swaggerDoc, SignResponseAttribute attribute)
         {
             var key = "jwt_payload_" + attribute.TokenName;
-            Schema claimSchema;
+            OpenApiSchema claimSchema;
             var normalizedDefinitionName = SwaggerUtils.NormalizeModelName(attribute.SwaggerDefinitionName);
-            var claimDefinitionProperties = swaggerDoc.Definitions[normalizedDefinitionName].Properties;
+            var claimDefinitionProperties = swaggerDoc.Components.Schemas[normalizedDefinitionName].Properties;
 
             if (attribute.ResponseContainsList)
             {
-                claimSchema = new Schema
+                claimSchema = new OpenApiSchema
                 {
                     Type = "array",
                     Title = attribute.ClaimName,
@@ -96,60 +97,60 @@ namespace iSHARE.Api.Filters
                 claimSchema = NewSchemaItem(attribute.ClaimName, claimDefinitionProperties);
             }
 
-            swaggerDoc.Definitions.Add(
+            swaggerDoc.Components.Schemas.Add(
                 key,
-                new Schema
+                new OpenApiSchema
                 {
                     Type = "object",
-                    Required = new[] { "iss", "sub", attribute.AnonymousUsage ? "" : "aud", "jti", "exp", "iat", attribute.ClaimName },
-                    Properties = new Dictionary<string, Schema>
+                    Required = new HashSet<string> { "iss", "sub", attribute.AnonymousUsage ? "" : "aud", "jti", "exp", "iat", attribute.ClaimName },
+                    Properties = new Dictionary<string, OpenApiSchema>
                     {
                         {
                             "iss",
-                            new Schema
+                            new OpenApiSchema
                             {
                                 Type = "string",
-                                Example = "EU.EORI.NL123456789"
+                                Example = new OpenApiString("EU.EORI.NL123456789")
                             }
                         },
                         {
                             "sub",
-                            new Schema
+                            new OpenApiSchema
                             {
                                 Type = "string",
-                                Example = "EU.EORI.NL123456789"
+                                Example = new OpenApiString("EU.EORI.NL123456789")
                             }
                         },
                         {
                             "aud",
-                            new Schema
+                            new OpenApiSchema
                             {
                                 Type = "string",
-                                Example = "EU.EORI.NL123456789"
+                                Example = new OpenApiString("EU.EORI.NL123456789")
                             }
                         },
                         {
                             "jti",
-                            new Schema
+                            new OpenApiSchema
                             {
                                 Type = "string",
-                                Example = "378a47c4-2822-4ca5-a49a-7e5a1cc7ea59"
+                                Example = new OpenApiString("378a47c4-2822-4ca5-a49a-7e5a1cc7ea59")
                             }
                         },
                         {
                             "exp",
-                            new Schema
+                            new OpenApiSchema
                             {
                                 Type = "integer",
-                                Example = "1504683475"
+                                Example = new OpenApiString("1504683475")
                             }
                         },
                         {
                             "iat",
-                            new Schema
+                            new OpenApiSchema
                             {
                                 Type = "integer",
-                                Example = "1504683475"
+                                Example = new OpenApiString("1504683475")
                             }
                         },
                         {
@@ -160,9 +161,9 @@ namespace iSHARE.Api.Filters
                 });
         }
 
-        private Schema NewSchemaItem(string title, IDictionary<string, Schema> properties)
+        private OpenApiSchema NewSchemaItem(string title, IDictionary<string, OpenApiSchema> properties)
         {
-            return new Schema
+            return new OpenApiSchema
             {
                 Type = "object",
                 Title = title,
