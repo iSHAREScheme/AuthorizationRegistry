@@ -35,7 +35,7 @@
     "core-js": "^2.5.7",
     "font-awesome": "^4.7.0",
     "handlebars": "^4.1.2",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.19",
     "moment": "^2.22.2",
     "ng-multiselect-dropdown": "^0.2.1",
     "ng2-ace-editor": "^0.3.8",
