@@ -5,7 +5,6 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using IdentityModel;
-using IdentityServer4.Extensions;
 using IdentityServer4.Models;
 using IdentityServer4.Services;
 using IdentityServer4.Stores;
@@ -27,6 +26,7 @@ namespace iSHARE.IdentityServer.Services
         private readonly ILogger<TokenService> _logger;
         private readonly IReferenceTokenStore _referenceTokenStore;
         private readonly SchemeOwnerIdentityProviderOptions _idpOptions;
+
         public TokenService(
             IClaimsService claimsProvider,
             IReferenceTokenStore referenceTokenStore,
@@ -61,7 +61,8 @@ namespace iSHARE.IdentityServer.Services
 
             // add iat claim
             claims.Add(
-                new Claim(JwtClaimTypes.IssuedAt, _clock.UtcNow.ToEpochTime().ToString(), ClaimValueTypes.Integer));
+                new Claim(JwtClaimTypes.IssuedAt, _clock.UtcNow.DateTime.ToEpochTime().ToString(),
+                    ClaimValueTypes.Integer));
 
             // add at_hash claim
             if (!string.IsNullOrWhiteSpace(request.AccessTokenToHash))
@@ -87,27 +88,22 @@ namespace iSHARE.IdentityServer.Services
                 request.Resources,
                 request.ValidatedRequest));
 
-            if (request.ValidatedRequest.Client.IncludeJwtId)
-            {
-                claims.Add(new Claim(JwtClaimTypes.JwtId, CryptoRandom.CreateUniqueId(16)));
-            }
+            claims.Add(new Claim(JwtClaimTypes.JwtId, CryptoRandom.CreateUniqueId(16)));
 
-            var issuer = _context.HttpContext.GetIdentityServerIssuerUri();
+            var issuer = _partyDetailsOptions.ClientId;
+            var audience = request.ValidatedRequest.Client.ClientId;
 
-            var clientId = _idpOptions.Enable && request.ValidatedRequest
-                               .Client
-                               .AllowedGrantTypes
-                               .Any(g => g == GrantTypes.Hybrid.FirstOrDefault())
-                ? request.ValidatedRequest.Client.ClientId : _partyDetailsOptions.ClientId;
+            claims.Add(new Claim(JwtClaimTypes.AuthorizedParty, audience));
+            claims.Add(new Claim(JwtClaimTypes.AuthenticationContextClassReference, "urn:http://eidas.europa.eu/LoA/NotNotified/low"));
 
             var token = new Token(OidcConstants.TokenTypes.IdentityToken)
             {
                 CreationTime = _clock.UtcNow.UtcDateTime,
-                Audiences = { clientId },
+                Audiences = { audience },
                 Issuer = issuer,
                 Lifetime = request.ValidatedRequest.AccessTokenLifetime,
                 Claims = claims,
-                ClientId = request.ValidatedRequest.Client.ClientId,
+                ClientId = audience,
                 AccessTokenType = request.ValidatedRequest.AccessTokenType
             };
 
@@ -130,13 +126,14 @@ namespace iSHARE.IdentityServer.Services
                 claims.Add(new Claim(JwtClaimTypes.JwtId, CryptoRandom.CreateUniqueId(16)));
             }
 
-            var issuer = _context.HttpContext.GetIdentityServerIssuerUri();
+            var issuer = _partyDetailsOptions.ClientId;
 
             var clientId = _idpOptions.Enable && request.ValidatedRequest
-                .Client
-                .AllowedGrantTypes
-                .Any(g => g == GrantTypes.Hybrid.FirstOrDefault())
-                    ? request.ValidatedRequest.Client.ClientId : _partyDetailsOptions.ClientId;
+                               .Client
+                               .AllowedGrantTypes
+                               .Any(g => g == GrantTypes.Hybrid.FirstOrDefault())
+                ? request.ValidatedRequest.Client.ClientId
+                : _partyDetailsOptions.ClientId;
 
             var token = new Token(OidcConstants.TokenTypes.AccessToken)
             {

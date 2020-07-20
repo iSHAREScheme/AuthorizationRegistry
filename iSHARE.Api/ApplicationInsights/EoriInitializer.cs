@@ -3,6 +3,7 @@ using System.Diagnostics;
 using IdentityServer4.Extensions;
 using iSHARE.Models;
 using Microsoft.ApplicationInsights.Channel;
+using Microsoft.ApplicationInsights.DataContracts;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.Http;
 
@@ -19,6 +20,11 @@ namespace iSHARE.Api.ApplicationInsights
         [DebuggerStepThrough]
         public void Initialize(ITelemetry telemetry)
         {
+            if (_httpContextAccessor.HttpContext == null || !(telemetry is RequestTelemetry rt))
+            {
+                return;
+            }
+
             var user = _httpContextAccessor.HttpContext.User;
             if (user.IsAuthenticated())
             {
@@ -31,8 +37,8 @@ namespace iSHARE.Api.ApplicationInsights
                 telemetry.Context.User.AuthenticatedUserId = userId;
                 telemetry.Context.User.AccountId = user.GetPartyId();
 
-                AddOrUpdate(telemetry.Context.Properties, "Client_EORI", eori);
-                AddOrUpdate(telemetry.Context.Properties, "Client", user.GetRequestingClientId());
+                AddOrUpdate(rt.Properties, "Client_EORI", eori);
+                AddOrUpdate(rt.Properties, "Client", user.GetRequestingClientId());
             }
         }
 

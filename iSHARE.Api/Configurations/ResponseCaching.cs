@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Net;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json;
 
 namespace iSHARE.Api.Configurations
 {
@@ -22,7 +24,7 @@ namespace iSHARE.Api.Configurations
                     else
                     {
                         context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-                        await context.Response.WriteJsonAsync(new { error = "Incorrect date/time format." });
+                        await WriteJsonAsync(context.Response);
                         return;
                     }
                 }
@@ -34,6 +36,12 @@ namespace iSHARE.Api.Configurations
 
                 await next();
             });
+        }
+
+        private static async Task WriteJsonAsync(HttpResponse httpResponse)
+        {
+            var error = new { error = "Incorrect date/time format." };
+            await httpResponse.WriteAsync(JsonConvert.SerializeObject(error));
         }
     }
 }

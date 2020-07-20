@@ -13,14 +13,15 @@ using Newtonsoft.Json;
 
 namespace iSHARE.SchemeOwner.Client
 {
-    public class SchemeOwnerClient
+    internal class SchemeOwnerClient : ISchemeOwnerClient
     {
         private readonly ILogger _logger;
         private readonly ITokenClient _tokenClient;
         private readonly SchemeOwnerClientOptions _schemeOwnerClientOptions;
         private readonly PartyDetailsOptions _partyDetailsOptions;
 
-        public SchemeOwnerClient(ITokenClient tokenClient,
+        public SchemeOwnerClient(
+            ITokenClient tokenClient,
             SchemeOwnerClientOptions schemeOwnerClientOptions,
             PartyDetailsOptions partyDetailsOptions,
             ILogger<SchemeOwnerClient> logger)
@@ -38,22 +39,21 @@ namespace iSHARE.SchemeOwner.Client
             var accessToken = await GetAccessToken(new ClientAssertion(
                 _partyDetailsOptions.ClientId,
                 _schemeOwnerClientOptions.ClientId));
-
-
-            var request = await _schemeOwnerClientOptions.BaseUri
+            
+            var response = await _schemeOwnerClientOptions.BaseUri
                 .AppendPathSegment("parties")
                 .AppendPathSegment(partyId)
                 .WithOAuthBearerToken(accessToken)
-                .GetJsonAsync()
-                ;
+                .GetJsonAsync();
 
-            if (request == null)
+            if (response == null)
             {
                 _logger.LogInformation("No party with client id {partyId} was found at SO.", partyId);
                 return null;
             }
 
-            var partyClaim = new JwtSecurityTokenHandler().ReadJwtToken((string)request.party_token).Claims.FirstOrDefault(c => c.Type == "party_info") as Claim;
+            var jwtToken = new JwtSecurityTokenHandler().ReadJwtToken((string)response.party_token);
+            var partyClaim = jwtToken.Claims.FirstOrDefault(c => c.Type == "party_info") as Claim;
             var party = JsonConvert.DeserializeObject<Party>(partyClaim.Value);
 
             _logger.LogInformation("Party status : {status}", party.Adherence.Status);
@@ -73,11 +73,10 @@ namespace iSHARE.SchemeOwner.Client
                 Expiration = clientAssertion.Expiration
             };
 
-            var accessToken = await _tokenClient
-                .GetAccessToken(_schemeOwnerClientOptions.BaseUri,
-                    _partyDetailsOptions.ClientId,
-                    assertion);
-            return accessToken;
+            return await _tokenClient.GetAccessToken(
+                _schemeOwnerClientOptions.BaseUri,
+                _partyDetailsOptions.ClientId,
+                assertion);
         }
     }
 }

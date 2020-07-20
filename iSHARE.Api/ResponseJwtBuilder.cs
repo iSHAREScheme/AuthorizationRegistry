@@ -25,7 +25,13 @@ namespace iSHARE.Api
             _tokenGenerator = tokenGenerator;
         }
 
-        public async Task<string> Create(object payloadObject, string subject, string issuer, string audience, string payloadObjectClaim, IContractResolver contractResolver = null)
+        public async Task<string> Create(
+            object payloadObject,
+            string subject,
+            string issuer,
+            string audience,
+            string payloadObjectClaim,
+            IContractResolver contractResolver = null)
         {
             var payload = BuildJwtPayload(payloadObject, issuer, subject, audience, payloadObjectClaim, contractResolver);
             var header = await BuildJwtHeader();
@@ -37,16 +43,35 @@ namespace iSHARE.Api
         private async Task<JwtHeader> BuildJwtHeader()
         {
             var header = new JwtHeader();
+            header.Remove("alg");
 
-            var publicKey = await _digitalSigner.GetPublicKey();
-            header.Add("x5c", new[] { publicKey });
+            var keys = await GetCertificates();
+
+            header.Add("x5c", keys);
             header.Add("alg", SecurityAlgorithms.RsaSha256);
             header.Add("typ", "JWT");
 
             return header;
         }
 
-        private JwtPayload BuildJwtPayload(object payloadObject, string issuer, string subject, string audience, string payloadObjectClaim, IContractResolver jsonResolver = null)
+        private async Task<string[]> GetCertificates()
+        {
+            var publicKeyTask = _digitalSigner.GetPublicKey();
+            var publicKeysChainTask = _digitalSigner.GetPublicKeyChain();
+            await Task.WhenAll(publicKeyTask, publicKeysChainTask);
+            var keys = new List<string> { publicKeyTask.Result };
+            keys.AddRange(publicKeysChainTask.Result);
+
+            return keys.ToArray();
+        }
+
+        private JwtPayload BuildJwtPayload(
+            object payloadObject,
+            string issuer,
+            string subject,
+            string audience,
+            string payloadObjectClaim,
+            IContractResolver jsonResolver = null)
         {
             var claims = new List<Claim>
             {
@@ -94,8 +119,10 @@ namespace iSHARE.Api
             var jsonSettings = new JsonSerializerSettings
             {
                 Formatting = Formatting.None,
-                NullValueHandling = NullValueHandling.Ignore
+                NullValueHandling = NullValueHandling.Ignore,
+                DateTimeZoneHandling = DateTimeZoneHandling.Utc
             };
+
             if (jsonResolver != null)
             {
                 jsonSettings.ContractResolver = jsonResolver;

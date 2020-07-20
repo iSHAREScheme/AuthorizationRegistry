@@ -7,9 +7,9 @@ namespace iSHARE.Api.Attributes
 {
     public class HideLiveApiMethodAttribute : HideApiMethodAttribute
     {
-        private readonly IHostingEnvironment _environment;
+        private readonly IWebHostEnvironment _environment;
 
-        public HideLiveApiMethodAttribute(IHostingEnvironment environment) : base(environment)
+        public HideLiveApiMethodAttribute(IWebHostEnvironment environment) : base(environment)
         {
             _environment = environment;
         }
@@ -19,9 +19,9 @@ namespace iSHARE.Api.Attributes
 
     public class HideProductionMethodAttribute : HideApiMethodAttribute
     {
-        private readonly IHostingEnvironment _environment;
+        private readonly IWebHostEnvironment _environment;
 
-        public HideProductionMethodAttribute(IHostingEnvironment environment) : base(environment)
+        public HideProductionMethodAttribute(IWebHostEnvironment environment) : base(environment)
         {
             _environment = environment;
         }
@@ -31,9 +31,9 @@ namespace iSHARE.Api.Attributes
 
     public abstract class HideApiMethodAttribute : ActionFilterAttribute
     {
-        private readonly IHostingEnvironment _environment;
+        private readonly IWebHostEnvironment _environment;
 
-        protected HideApiMethodAttribute(IHostingEnvironment environment)
+        protected HideApiMethodAttribute(IWebHostEnvironment environment)
         {
             _environment = environment;
         }

@@ -1,21 +1,17 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <ProjectGuid>0D5236E0-BC1C-4149-A618-693FB3E3C880</ProjectGuid>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <CodeAnalysisRuleSet>iSHARE.Identity.Data.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <CodeAnalysisRuleSet>iSHARE.Identity.Data.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="IdentityServer4.AspNetIdentity" Version="2.1.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="2.1.3" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.1.3" />
-    <PackageReference Include="Microsoft.Extensions.Identity.Stores" Version="2.1.3" />
+    <PackageReference Include="IdentityServer4.AspNetIdentity" Version="3.1.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.2" />
+    <PackageReference Include="Microsoft.Extensions.Identity.Stores" Version="3.1.2" />
   </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\iSHARE.EntityFramework\iSHARE.EntityFramework.csproj" />
     <ProjectReference Include="..\iSHARE.Identity\iSHARE.Identity.csproj" />

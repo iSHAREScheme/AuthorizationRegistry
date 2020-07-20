@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using IdentityServer4.Models;
 using IdentityServer4.Stores;
 using iSHARE.Abstractions;
 using Microsoft.IdentityModel.Tokens;
@@ -15,12 +16,20 @@ namespace iSHARE.IdentityServer.Services
             _digitalSigner = digitalSigner;
         }
 
-        public async Task<IEnumerable<SecurityKey>> GetValidationKeysAsync()
+        public async Task<IEnumerable<SecurityKeyInfo>> GetValidationKeysAsync()
         {
             var publicKey = await _digitalSigner.GetPublicKey();
-            var certificate = publicKey.CreateX509Certificate2();
+            var certificate = publicKey.ConvertToX509Certificate2();
             var securityKey = new X509SecurityKey(certificate);
-            return new[] { securityKey };
+
+            return new[]
+            {
+                new SecurityKeyInfo
+                {
+                    Key = securityKey,
+                    SigningAlgorithm = SecurityAlgorithms.RsaSha256
+                }
+            };
         }
     }
 }

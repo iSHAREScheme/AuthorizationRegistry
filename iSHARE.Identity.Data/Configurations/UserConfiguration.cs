@@ -9,8 +9,7 @@ namespace iSHARE.Identity.Data.Configurations
     {
         public void Configure(EntityTypeBuilder<TUser> builder)
         {
-            builder
-                .HasKey(i => i.Id);
+            builder.HasKey(i => i.Id);
         }
     }
 }

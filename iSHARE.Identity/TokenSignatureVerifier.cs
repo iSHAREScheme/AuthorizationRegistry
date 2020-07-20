@@ -1,7 +1,6 @@
-﻿using System;
-using System.Security.Cryptography;
-using System.Security.Cryptography.X509Certificates;
+﻿using System.Security.Cryptography;
 using System.Threading.Tasks;
+using iSHARE.Abstractions;
 using iSHARE.Configuration.Configurations;
 using iSHARE.Identity.Api;
 
@@ -18,7 +17,7 @@ namespace iSHARE.Identity
 
         public Task<bool> Verify(string algorithm, byte[] digest, byte[] signature)
         {
-            using (var cert = new X509Certificate2(Convert.FromBase64String(_idpOptions.PublicKey)))
+            using (var cert = _idpOptions.PublicKey.ConvertToX509Certificate2FromBase64())
             {
                 var csp = (RSACng)cert.PublicKey.Key;
 

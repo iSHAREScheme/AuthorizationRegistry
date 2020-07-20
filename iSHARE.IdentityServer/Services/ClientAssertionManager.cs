@@ -90,9 +90,9 @@ namespace iSHARE.IdentityServer.Services
                 return fail;
             }
 
-            if (assertion.Exp - assertion.Iat > 30)
+            if (assertion.Exp - assertion.Iat != 30)
             {
-                _logger.LogError("Client assertion validity exceeds the maximum authorized.");
+                _logger.LogError("Client assertion validity should be exactly 30 seconds.");
                 return fail;
             }
 

@@ -33,7 +33,7 @@ namespace iSHARE.EntityFramework
         }
 
         public static IApplicationBuilder UseSeed<TContext>(this IApplicationBuilder app,
-            IHostingEnvironment environment)
+            IWebHostEnvironment environment)
         {
             using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
             {
@@ -51,8 +51,9 @@ namespace iSHARE.EntityFramework
             return app;
         }
 
-        public static IServiceCollection AddSeedServices<TContext>(this IServiceCollection services,
-            IHostingEnvironment environment,
+        public static IServiceCollection AddSeedServices<TContext>(
+            this IServiceCollection services,
+            IWebHostEnvironment environment,
             string @namespace,
             Assembly sourcesAssembly,
             Func<IServiceProvider, string, IDatabaseSeeder<TContext>> seederFactory)
@@ -76,12 +77,14 @@ namespace iSHARE.EntityFramework
             return services;
         }
 
-        public static IServiceCollection AddSeedFactory<TContext>(this IServiceCollection services,
-          Func<IServiceProvider, string, IDatabaseSeeder<TContext>> seederFactory, string environmentName)
-          where TContext : DbContext
+        public static IServiceCollection AddSeedFactory<TContext>(
+            this IServiceCollection services,
+            Func<IServiceProvider, string, IDatabaseSeeder<TContext>> seederFactory,
+            string environmentName)
+            where TContext : DbContext
             => services.AddScoped(srv => seederFactory(srv, environmentName));
 
-        public static IServiceCollection AddSeed<TContext>(this IServiceCollection services, IHostingEnvironment environment)
+        public static IServiceCollection AddSeed<TContext>(this IServiceCollection services, IWebHostEnvironment environment)
         {
             services.AddScoped((Func<IServiceProvider, Func<IDatabaseSeeder<TContext>>>)(opts => () =>
                 {

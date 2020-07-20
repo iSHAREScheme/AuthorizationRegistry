@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using AuthenticationOptions = iSHARE.Configuration.AuthenticationOptions;
 
@@ -16,7 +17,7 @@ namespace iSHARE.Api.Configurations
     public static class JwtAuthentication
     {
         public static IServiceCollection AddJwtAuthentication(this IServiceCollection services,
-            IHostingEnvironment hostingEnvironment,
+            IWebHostEnvironment hostingEnvironment,
             IConfiguration configuration)
         {
             services.ConfigureRuntimeOptions(configuration, "Auth", new AuthenticationOptions());
@@ -30,7 +31,7 @@ namespace iSHARE.Api.Configurations
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
                         ValidateIssuer = true,
-                        ValidIssuer = partyDetailsOptions.BaseUri,
+                        ValidIssuer = partyDetailsOptions.ClientId,
                         ValidAudiences = new List<string> { partyDetailsOptions.ClientId },
                         ValidateIssuerSigningKey = false,
                         SignatureValidator = delegate (string token, TokenValidationParameters parameters)

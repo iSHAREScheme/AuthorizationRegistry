@@ -14,6 +14,17 @@
                 public const string EntitledPartyCreator = "AR.EntitledPartyCreator";
                 public const string EntitledPartyViewer = "AR.EntitledPartyViewer";
             }
+            public static class ConformanceTool
+            {
+                public const string PartyAdmin = "CTT.PartyAdmin";
+                public const string PartyUser = "CTT.PartyUser";
+            }
+            public static class BananaCo
+            {
+                public const string PartyAdmin = "BC.PartyAdmin";
+                public const string EntitledPartyCreator = "BC.EntitledPartyCreator";
+                public const string EntitledPartyViewer = "BC.EntitledPartyViewer";
+            }
         }
     }
 }

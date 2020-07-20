@@ -21,9 +21,9 @@ namespace iSHARE.SchemeOwner.Client.Models
         [JsonProperty("capability_url")]
         public string CapabilityUrl { get; set; }
 
-        public bool IsValid => Adherence.Status == "Active"
-                       && Adherence.StartDate <= DateTime.Now
-                       && Adherence.EndDate >= DateTime.Now;
+        public bool IsValid() => Adherence.Status == "Active"
+                       && Adherence.StartDate <= DateTime.UtcNow
+                       && Adherence.EndDate >= DateTime.UtcNow;
     }
 
 }

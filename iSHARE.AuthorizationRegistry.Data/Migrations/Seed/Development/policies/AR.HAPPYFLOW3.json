@@ -1,7 +1,7 @@
 {
   "delegationEvidence": {
     "notBefore": 1529574873,
-    "notOnOrAfter": 1599574873,
+    "notOnOrAfter": 2147483647,
     "policyIssuer": "EU.EORI.NL000000002",
     "target": { "accessSubject": "EU.EORI.NL000000001" },
     "policySets": [

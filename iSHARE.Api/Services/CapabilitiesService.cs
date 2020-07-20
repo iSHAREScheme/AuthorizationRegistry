@@ -23,35 +23,33 @@ namespace iSHARE.Api.Services
 
         public async Task<Response<Capabilities>> Get()
         {
-            using (var stream = _fileInfo.CreateReadStream())
-            using (var streamReader = new StreamReader(stream))
+            await using var stream = _fileInfo.CreateReadStream();
+            using var streamReader = new StreamReader(stream);
+            var json = await streamReader.ReadToEndAsync();
+            var capabilities = Capabilities.FromJson(json);
+
+            if (_contextAccessor.HttpContext.User.Identity.IsAuthenticated)
             {
-                var json = await streamReader.ReadToEndAsync();
-                var capabilities = Capabilities.FromJson(json);
-
-                if (_contextAccessor.HttpContext.User.Identity.IsAuthenticated)
-                {
-                    return capabilities;
-                }
-
-                if (_contextAccessor.HttpContext.Request.Headers.ContainsKey("Authorization"))
-                {
-                    if (((string)_contextAccessor.HttpContext.Request.Headers["Authorization"]).StartsWith("Bearer "))
-                    {
-                        return Response.ForNotAuthorized();
-                    }
-
-                    return Response.ForError("invalid_authorization");
-                }
-
-                foreach (var supportedFeature in capabilities.SupportedVersions.SelectMany(sv => sv.SupportedFeatures))
-                {
-                    supportedFeature.Restricted = null;
-                    supportedFeature.Private = null;
-                }
-
                 return capabilities;
             }
+
+            if (_contextAccessor.HttpContext.Request.Headers.ContainsKey("Authorization"))
+            {
+                return IsBearer() ? Response.ForNotAuthorized() : Response.ForError("invalid_authorization");
+            }
+
+            foreach (var supportedFeature in capabilities.SupportedVersions.SelectMany(sv => sv.SupportedFeatures))
+            {
+                supportedFeature.Restricted = null;
+                supportedFeature.Private = null;
+            }
+
+            return capabilities;
+        }
+
+        private bool IsBearer()
+        {
+            return ((string)_contextAccessor.HttpContext.Request.Headers["Authorization"]).StartsWith("Bearer ");
         }
     }
 }

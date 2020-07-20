@@ -54,7 +54,39 @@ namespace iSHARE.TokenClient
 
                 var accessToken = (string)tokenResponse.access_token;
 
-                _logger.LogDebug("Retrieved {access_token}", "***REDACTED***");
+                _logger.LogDebug("Retrieved {access_token}", accessToken);
+
+                return accessToken;
+            }
+        }
+        public async Task<string> GetAccessToken(string source, string path, string clientId, ClientAssertion assertion, string privateKey, string[] publicKeys)
+        {
+            _logger.LogInformation("Get access_token for {clientId} from {source}", clientId, source);
+
+            var jwtAssertion = _assertionService.CreateJwtAssertion(assertion, privateKey, publicKeys);
+
+            return await DoGetAccessToken(source, path, clientId, jwtAssertion);
+        }
+        private async Task<string> DoGetAccessToken(string source, string path, string clientId,
+            string assertion)
+        {
+            using (var requestBody = new FormUrlEncodedContent(new Dictionary<string, string>
+            {
+                {"grant_type", "client_credentials"},
+                {"scope", "iSHARE"},
+                {"client_id", clientId},
+                {"client_assertion_type", "urn:ietf:params:oauth:client-assertion-type:jwt-bearer"},
+                {"client_assertion", assertion}
+            }))
+            {
+                var tokenResponse = await source.AppendPathSegment(path)
+                        .PostAsync(requestBody)
+                        .ReceiveJson()
+                    ;
+
+                var accessToken = (string)tokenResponse.access_token;
+
+                _logger.LogDebug("Retrieved {access_token}", accessToken);
 
                 return accessToken;
             }

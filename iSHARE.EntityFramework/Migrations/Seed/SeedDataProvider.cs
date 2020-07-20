@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -14,19 +15,32 @@ namespace iSHARE.EntityFramework.Migrations.Seed
         public SeedDataProvider(ILogger<SeedDataProvider<TContext>> logger, string sourcesPrefix, Assembly sourcesAssembly)
         {
             _logger = logger;
-
             _sourcesPrefix = sourcesPrefix;
             _sourcesAssembly = sourcesAssembly;
         }
+
         public TEntity[] GetEntities<TEntity>(string source, string environment) where TEntity : class
         {
-            _logger.LogInformation("Get entities data from {source}, {environment}", source, environment);
-            var json = JsonLoader.GetByName(source, environment, _sourcesPrefix, _sourcesAssembly);
+            try
+            {
+                _logger.LogInformation(
+                    "Get entities data from path: {path}, assembly: {assembly}.",
+                    $"{_sourcesPrefix}.{environment}.{source}",
+                    _sourcesAssembly.GetName());
+                var json = JsonLoader.GetByName(source, environment, _sourcesPrefix, _sourcesAssembly);
 
-            var items = ImportFromJson.DeserializeCollectionOf<TEntity>(json);
+                _logger.LogInformation("Retrieved json: {json}", json);
 
-            _logger.LogInformation("Found {count} item(s)", items.Length);
-            return items;
+                var items = ImportFromJson.DeserializeCollectionOf<TEntity>(json);
+
+                _logger.LogInformation("Found {count} item(s)", items.Length);
+                return items;
+            }
+            catch (Exception e)
+            {
+                _logger.LogCritical(e, "Couldn't retrieve entities.");
+                throw;
+            }
         }
 
         public string GetRaw(string source, string environment)

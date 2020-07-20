@@ -45,15 +45,13 @@ namespace iSHARE.AuthorizationRegistry.Client
                         _authorizationRegistryClientOptions.ClientId))
                 ;
 
-            JObject response;
             try
             {
-                response = await _authorizationRegistryClientOptions.BaseUri
+                var response = await _authorizationRegistryClientOptions.BaseUri
                     .AppendPathSegment("delegation")
                     .WithOAuthBearerToken(accessToken)
                     .PostJsonAsync(jObjectMask)
-                    .ReceiveJson<JObject>()
-                    ;
+                    .ReceiveJson<JObject>();
 
                 return GetDelegationEvidenceFromResponse(response);
             }

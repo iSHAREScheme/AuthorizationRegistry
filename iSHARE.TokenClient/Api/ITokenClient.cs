@@ -10,5 +10,6 @@ namespace iSHARE.TokenClient.Api
     {
         Task<string> GetAccessToken(string source, string clientId, ClientAssertion assertion);
         Task<string> GetAccessToken(string source, string clientId, string assertion);
+        Task<string> GetAccessToken(string source, string path, string clientId, ClientAssertion assertion, string privateKey, string[] publicKeys);
     }
 }

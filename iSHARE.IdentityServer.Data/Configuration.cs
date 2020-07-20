@@ -14,7 +14,7 @@ namespace iSHARE.IdentityServer.Data
     {
         public static IApplicationBuilder UseIdentityServerDb(this IApplicationBuilder app,
             IConfiguration configuration,
-            IHostingEnvironment environment
+            IWebHostEnvironment environment
             )
         {
             app.UseMigrations<PersistedGrantDbContext>(configuration);
@@ -26,7 +26,7 @@ namespace iSHARE.IdentityServer.Data
 
         public static IIdentityServerBuilder AddIdentityServerDb(this IIdentityServerBuilder identityServerBuilder,
             IConfiguration configuration,
-            IHostingEnvironment environment,
+            IWebHostEnvironment environment,
             string @namespace,
             Assembly assembly
             )

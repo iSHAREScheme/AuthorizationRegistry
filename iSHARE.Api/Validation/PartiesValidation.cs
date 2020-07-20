@@ -6,8 +6,9 @@ namespace iSHARE.Api.Validation
 {
     internal class PartiesValidation : IPartiesValidation
     {
-        private readonly SchemeOwnerClient _client;
-        public PartiesValidation(SchemeOwnerClient client)
+        private readonly ISchemeOwnerClient _client;
+
+        public PartiesValidation(ISchemeOwnerClient client)
         {
             _client = client;
         }
@@ -18,7 +19,7 @@ namespace iSHARE.Api.Validation
 
             if (party != null)
             {
-                return party.IsValid;
+                return party.IsValid();
             }
 
             return false;

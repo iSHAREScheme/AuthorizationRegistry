@@ -28,9 +28,8 @@ namespace iSHARE.IdentityServer
 
         public Task<IReadOnlyCollection<X509Certificate2>> GetCertificates() => Task.FromResult(_certificateAuthorities);
 
+        // TODO check why the certificate is converted to b64 and back from 64
         private static X509Certificate2 ConvertCertificate(string certificate)
-        {
-            return new X509Certificate2(Convert.FromBase64String(certificate.ConvertToBase64Der()));
-        }
+            => certificate.ConvertToBase64Der().ConvertToX509Certificate2FromBase64();
     }
 }

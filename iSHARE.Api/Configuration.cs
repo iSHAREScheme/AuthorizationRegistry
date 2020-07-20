@@ -11,7 +11,7 @@ namespace iSHARE.Api
 {
     public static class Configuration
     {
-        public static IIdentityServerBuilder AddSchemeOwnerValidator(this IIdentityServerBuilder builder, IConfiguration configuration, IHostingEnvironment environment)
+        public static IIdentityServerBuilder AddSchemeOwnerValidator(this IIdentityServerBuilder builder, IConfiguration configuration, IWebHostEnvironment environment)
         {
             builder.Services.AddSchemeOwnerClient(configuration, environment)
                 .AddTransient<IPartiesValidation, PartiesValidation>();

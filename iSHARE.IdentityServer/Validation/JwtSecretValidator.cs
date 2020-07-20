@@ -40,7 +40,7 @@ namespace iSHARE.IdentityServer.Validation
                 return fail;
             }
 
-            if (!_genericJwtValidator.Validate(jwtTokenString, parsedSecret.Id, _partyDetailsOptions.ClientId))
+            if (!_genericJwtValidator.IsValid(jwtTokenString, parsedSecret.Id, _partyDetailsOptions.ClientId))
             {
                 _logger.LogError("ParsedSecret.Credential is not a valid JWT.");
                 return fail;

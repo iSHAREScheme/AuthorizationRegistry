@@ -17,7 +17,7 @@ namespace iSHARE.IdentityServer.Delegation
 
                 for (int j = 0; j < policies.Count; j++)
                 {
-                    if (!policies[j].Rules.Any(r => r.Effect == PolicyRule.Permit().Effect))
+                    if (policies[j].Rules.All(r => r.Effect != PolicyRule.Permit().Effect))
                     {
                         return ValidationResult.Invalid(
                             "delegationRequest.policySets[" + i + "].policies[" + j + "] does not contain a rule with the Effect 'Permit'");

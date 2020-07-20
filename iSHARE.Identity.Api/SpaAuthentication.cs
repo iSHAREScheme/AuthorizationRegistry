@@ -1,4 +1,5 @@
 ﻿using System;
+using IdentityModel.AspNetCore.OAuth2Introspection;
 using IdentityServer4.AccessTokenValidation;
 using iSHARE.Configuration.Configurations;
 using iSHARE.Identity.Api.Configuration;
@@ -8,6 +9,7 @@ using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 
 namespace iSHARE.Identity.Api
@@ -15,7 +17,7 @@ namespace iSHARE.Identity.Api
     public static class SpaAuthentication
     {
         public static IServiceCollection AddDefaultSpaAuthentication(this IServiceCollection services,
-            IHostingEnvironment hostingEnvironment)
+            IWebHostEnvironment hostingEnvironment)
         {
 
             var spaOptions = services.BuildServiceProvider().GetRequiredService<SpaOptions>();

@@ -1,29 +1,3 @@
 [
-  {
-    "ClientId": "AR_SPA",
-    "ClientSecrets": [
-      {
-        "Type": "SharedSecret",
-        "Value": "secret"
-      }
-    ],
-    "AllowedGrantTypes": [
-      {
-        "GrantType": "hybrid"
-      }
-    ],
-    "AllowedScopes": [
-      { "Scope": "ar.api" },
-      { "Scope": "openid" },
-      { "Scope": "profile" }
-    ],
-    "RedirectUris": [
-      {
-        "RedirectUri": "http://localhost:4201/admin/callback"
-      }
-    ],
-    "AllowAccessTokensViaBrowser": true,
-    "RequireConsent": false,
-	"AccessTokenType": 1
-  }
+
 ]

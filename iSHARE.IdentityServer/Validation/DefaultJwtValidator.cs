@@ -1,135 +1,112 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using iSHARE.IdentityServer.Models;
-using iSHARE.IdentityServer.Services;
+using IdentityModel;
+using iSHARE.IdentityServer.Helpers;
+using iSHARE.IdentityServer.Helpers.Interfaces;
 using iSHARE.IdentityServer.Validation.Interfaces;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 
 namespace iSHARE.IdentityServer.Validation
 {
-    public class DefaultJwtValidator : IDefaultJwtValidator
+    internal class DefaultJwtValidator : IDefaultJwtValidator
     {
-        private readonly ILogger _logger;
-        private readonly IAssertionManager _assertionManager;
+        private readonly ILogger<DefaultJwtValidator> _logger;
+        private readonly IKeysExtractor _keysExtractor;
 
-        public DefaultJwtValidator(ILogger<DefaultJwtValidator> logger,
-            IAssertionManager assertionManager)
+        public DefaultJwtValidator(ILogger<DefaultJwtValidator> logger, IKeysExtractor keysExtractor)
         {
-            _assertionManager = assertionManager;
+            _keysExtractor = keysExtractor;
             _logger = logger;
         }
 
-        public bool Validate(string jwtTokenString, string clientId, string audience)
+        public bool IsValid(string jwtTokenString, string clientId, string audience)
         {
-            if (!ValidateJwt(jwtTokenString, clientId, audience))
+            if (IsJwtValid(jwtTokenString, clientId, audience))
             {
-                _logger.LogError("ParsedSecret.Credential is not a valid JWT.");
-                return false;
+                return true;
             }
 
-            return true;
+            _logger.LogError("ParsedSecret.Credential is not a valid JWT.");
+            return false;
         }
 
-        private bool ValidateJwt(string jwtTokenString, string clientId, string audience)
+        private bool IsJwtValid(string jwtTokenString, string clientId, string audience)
         {
-            var trustedKeys = ExtractSecurityKeys(jwtTokenString);
-
+            var trustedKeys = _keysExtractor.ExtractSecurityKeys(jwtTokenString);
             if (!trustedKeys.Any())
             {
-                return false;
+                return FromError("Trusted keys not found.");
             }
 
-            var tokenValidationParameters = new TokenValidationParameters
-            {
-                IssuerSigningKeys = trustedKeys,
-                ValidateIssuerSigningKey = true,
+            var tokenValidationParameters = TokenValidationParametersFactory.Create(clientId, audience, trustedKeys);
 
-                ValidIssuer = clientId,
-                ValidateIssuer = true,
-
-                ValidAudience = audience,
-                ValidateAudience = true,
-
-                RequireSignedTokens = true,
-                RequireExpirationTime = true
-            };
             try
             {
                 var handler = new JwtSecurityTokenHandler();
                 handler.ValidateToken(jwtTokenString, tokenValidationParameters, out var token);
 
                 var jwtToken = (JwtSecurityToken)token;
-                if (jwtToken.Subject != jwtToken.Issuer)
+
+                if (IsHeaderAlgInvalid(jwtToken.Header.Alg))
                 {
-                    _logger.LogError("Both 'sub' and 'iss' in the client assertion token must have a value of client_id.");
-                    return false;
+                    return FromError("Header alg value must be RS256.");
+                }
+
+                if (IsSubInvalid(jwtToken))
+                {
+                    return FromError("Both 'sub' and 'iss' in the client assertion token must have a value of client_id.");
                 }
 
                 if (string.IsNullOrEmpty(jwtToken.Payload.Jti))
                 {
-                    _logger.LogError("The 'jti' claim is missing from the client assertion.");
-                    return false;
+                    return FromError("The 'jti' claim is missing from the client assertion.");
                 }
 
-                //TODO IAT extract IssuedAt datetime from jwtToken.Payload.Iat into a datetime and check if has a value greater than DateTime.Now + ClockSkew and if so then return fail (The test Post_WithIatAfterCurrentTime_ReturnsInvalidClient should pass)
+                if (IsUnixTimestampGreaterThanUtcNow(jwtToken.Payload.Iat))
+                {
+                    return FromError("The 'iat' claim cannot have higher value than UtcNow.");
+                }
+
+                if (IsExpired(jwtToken.Payload.Exp))
+                {
+                    return FromError("The 'exp' claim states that token is expired.");
+                }
 
                 return true;
             }
             catch (Exception e)
             {
-                _logger.LogError(e, "JWT token validation error");
+                _logger.LogError(e, "JWT token validation error.");
                 return false;
             }
         }
 
-        private List<SecurityKey> ExtractSecurityKeys(string jwtTokenString)
+        protected virtual bool IsSubInvalid(JwtSecurityToken jwtToken)
         {
-            var assertion = _assertionManager.Parse(jwtTokenString);
-
-            var trustedKeys = new List<SecurityKey>();
-            try
-            {
-                trustedKeys = GetTrustedKeys(assertion);
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, "Could not parse assertion as JWT token");
-            }
-
-            if (!trustedKeys.Any())
-            {
-                _logger.LogError("There are no certificates available to validate client assertion.");
-            }
-
-            return trustedKeys;
+            return jwtToken.Issuer != jwtToken.Subject;
         }
 
-        private List<SecurityKey> GetTrustedKeys(AssertionModel assertion) =>
-            GetAllTrustedCertificates(assertion)
-                .Select(c => (SecurityKey)new X509SecurityKey(c))
-                .ToList();
-
-        private IEnumerable<X509Certificate2> GetAllTrustedCertificates(AssertionModel model) =>
-            model.Certificates
-                .Select(GetCertificateFromString)
-                .Where(c => c != null)
-                .ToList();
-
-        private X509Certificate2 GetCertificateFromString(string value)
+        private static bool IsUnixTimestampGreaterThanUtcNow(int? timestamp)
         {
-            try
-            {
-                return new X509Certificate2(Convert.FromBase64String(value));
-            }
-            catch
-            {
-                _logger.LogWarning("Could not read certificate from string: " + value);
-                return null;
-            }
+            return DateTime.UtcNow.ToEpochTime() < timestamp;
+        }
+
+        private static bool IsExpired(int? timestamp)
+        {
+            return DateTime.UtcNow.ToEpochTime() > timestamp;
+        }
+        
+        private static bool IsHeaderAlgInvalid(string alg)
+        {
+            return alg != SecurityAlgorithms.RsaSha256;
+        }
+
+        private bool FromError(string errorMessage)
+        {
+            _logger.LogError(errorMessage);
+            return false;
         }
     }
 }

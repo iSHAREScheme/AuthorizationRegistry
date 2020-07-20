@@ -20,12 +20,13 @@ namespace iSHARE.Abstractions
             return page == 0 ? source
                 : source.Skip((page - 1) * pageSize).Take(pageSize);
         }
+
         public static IOrderedQueryable<TEntity> OrderBy<TEntity, TKey>(
             this IQueryable<TEntity> query,
             Expression<Func<TEntity, TKey>> orderByExpression,
             SortOrder order)
             => order == SortOrder.Desc ? query.OrderByDescending(orderByExpression) : query.OrderBy(orderByExpression);
-
+        
         public static IOrderedQueryable<TEntity> ThenBy<TEntity, TKey>(
             this IOrderedQueryable<TEntity> query,
             Expression<Func<TEntity, TKey>> orderByExpression,
@@ -40,5 +41,27 @@ namespace iSHARE.Abstractions
                 Count = total
             };
         }
+
+        public static IEnumerable<TEntity> GetPage<TEntity>(this IEnumerable<TEntity> source, Query query)
+            => query.Page.HasValue && query.PageSize.HasValue ? source.GetPage(query.Page.Value, query.PageSize.Value) : source;
+
+        public static IEnumerable<TEntity> GetPage<TEntity>(this IEnumerable<TEntity> source, int page, int pageSize)
+        {
+            if (page > 0 && pageSize < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(pageSize), "The page size should be a positive value.");
+            }
+
+            return page == 0 ? source
+                : source.Skip((page - 1) * pageSize).Take(pageSize);
+        }
+
+        public static IOrderedEnumerable<TEntity> OrderBy<TEntity, TKey>(
+            this IEnumerable<TEntity> query,
+            Func<TEntity, TKey> orderByExpression,
+            SortOrder order)
+            => order == SortOrder.Desc
+                ? query.OrderByDescending(orderByExpression)
+                : query.OrderBy(orderByExpression);
     }
 }
