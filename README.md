@@ -20,7 +20,7 @@ The **Authorization Registry**-code that is in this repository is not a 'product
 
 ### Prerequisites
 
-- Install [.NET Core 2.1.4 Runtime](https://www.microsoft.com/net/download/dotnet-core/2.1) (or SDK 2.1.402 for development).
+- Install [.NET Core 3.1.106 Runtime](https://dotnet.microsoft.com/download/dotnet-core/3.1) (or SDK 3.1.106 for development).
 
 ### Clone or download the Authorization Registry repository:
 
