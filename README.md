@@ -74,11 +74,11 @@ The software you'll need before installing Authorization Registry SPA:
 
 ### Install dependencies
 
-Run `npm install` inside iSHARE.AuthorizationRegistry.SPA folder to get all dependencies downloaded locally.
+Run `npm install` inside iSHARE.Spas folder to get all dependencies downloaded locally.
 
 ### Run process
 
-Run `ng serve -o`.
+Run `npm start -- --project=AuthorizationRegistry`.
 
 - NOTE: The Authorization Registry API must be running in order for the application to work correctly
 - NOTE: The SPA will be available by default at http://localhost:4201/admin
