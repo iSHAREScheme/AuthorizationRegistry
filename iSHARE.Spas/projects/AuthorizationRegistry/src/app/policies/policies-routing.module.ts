@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { RoleGuard, constants, AppInsightsInterceptor } from 'common';
+import { constants } from 'common';
 import { PoliciesOverviewComponent } from './components/policies-overview/policies-overview.component';
 import { ViewPolicyComponent } from './components/view-policy/view-policy.component';
 import { CopyPolicyComponent } from './components/copy-policy/copy-policy.component';
@@ -11,7 +11,7 @@ const routes: Routes = [
   {
     path: '',
     component: PoliciesOverviewComponent,
-    canActivate: [RoleGuard],
+    canActivate: [],
     data: {
       allowedRoles: [
         constants.roles.ArEntitledPartyCreator,
@@ -24,7 +24,7 @@ const routes: Routes = [
   {
     path: 'view/:id',
     component: ViewPolicyComponent,
-    canActivate: [RoleGuard, AppInsightsInterceptor],
+    canActivate: [],
     data: {
       allowedRoles: [
         constants.roles.ArEntitledPartyCreator,
@@ -37,19 +37,19 @@ const routes: Routes = [
   {
     path: 'copy/:id',
     component: CopyPolicyComponent,
-    canActivate: [RoleGuard, AppInsightsInterceptor],
+    canActivate: [],
     data: { allowedRoles: [constants.roles.ArEntitledPartyCreator] }
   },
   {
     path: 'edit/:id',
     component: EditPolicyComponent,
-    canActivate: [RoleGuard, AppInsightsInterceptor],
+    canActivate: [],
     data: { allowedRoles: [constants.roles.ArEntitledPartyCreator] }
   },
   {
     path: 'create',
     component: CreatePolicyComponent,
-    canActivate: [RoleGuard, AppInsightsInterceptor],
+    canActivate: [],
     data: { allowedRoles: [constants.roles.ArEntitledPartyCreator] }
   }
 ];

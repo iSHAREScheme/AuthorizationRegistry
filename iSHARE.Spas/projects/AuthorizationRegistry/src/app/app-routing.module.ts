@@ -1,16 +1,11 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import {
-  AppInsightsInterceptor,
-  AuthGuard,
   ForbiddenPageComponent,
   NotFoundPageComponent,
   AuthCallbackComponent,
-  AccessDeniedComponent,
-  LoginIdpComponent,
-  LoginComponent
+  AccessDeniedComponent
 } from 'common';
-import { SelfAuthGuard } from '@common/generic/guards/self-auth.guard';
 
 const routes: Routes = [
   {
@@ -21,43 +16,35 @@ const routes: Routes = [
   {
     path: '',
     runGuardsAndResolvers: 'always',
-    canActivate: [AuthGuard],
     children: [
       {
         path: 'users',
-        canActivate: [AppInsightsInterceptor, SelfAuthGuard],
         loadChildren: './users/users.module#UsersModule'
       },
       {
         path: 'policies',
-        canActivate: [AppInsightsInterceptor],
         loadChildren: './policies/policies.module#PoliciesModule'
       },
       {
         path: 'test',
-        canActivate: [AppInsightsInterceptor],
         loadChildren: './mask/mask.module#MaskModule'
       }
     ]
   },
   {
     path: 'account',
-    canActivate: [SelfAuthGuard],
     loadChildren: 'common/account/account.module#AccountModule'
   },
   {
     path: 'callback',
-    canActivate: [AppInsightsInterceptor],
     component: AuthCallbackComponent
   },
   {
     path: 'access-denied',
-    canActivate: [AppInsightsInterceptor],
     component: AccessDeniedComponent
   },
   {
     path: 'forbidden',
-    canActivate: [AppInsightsInterceptor],
     component: ForbiddenPageComponent
   },
   {
@@ -67,7 +54,6 @@ const routes: Routes = [
   },
   {
     path: '**',
-    canActivate: [AppInsightsInterceptor],
     component: NotFoundPageComponent
   }
 ];

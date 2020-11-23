@@ -24,10 +24,8 @@ namespace iSHARE.AuthorizationRegistry.Core
 
         public async Task<PagedResult<UserModel>> GetAll(UsersQuery query, ClaimsPrincipal principal)
         {
-            if (!principal.IsSchemeOwner())
-            {
-                query.PartyId = principal.GetPartyId();
-            }
+            query.PartyId = "EU.EORI.NL000000000";
+
             var usersResult = await _usersRepository.GetAll(query);
 
             var users = usersResult.Data;
