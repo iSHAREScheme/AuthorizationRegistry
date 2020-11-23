@@ -1,12 +1,11 @@
-﻿using System.Security.Claims;
-using System.Threading.Tasks;
-using iSHARE.AuthorizationRegistry.Core.Api;
+﻿using iSHARE.AuthorizationRegistry.Core.Api;
 using iSHARE.IdentityServer.Delegation;
 using iSHARE.Models;
+using System.Threading.Tasks;
 
 namespace iSHARE.AuthorizationRegistry.Core
 {
-    public class DelegationValidationService : IDelegationValidationService
+  public class DelegationValidationService : IDelegationValidationService
     {
         private readonly IDelegationService _delegationService;
 
@@ -15,22 +14,22 @@ namespace iSHARE.AuthorizationRegistry.Core
             _delegationService = delegationService;
         }
 
-        public ValidationResult ValidateCopy(string policyJson, ClaimsPrincipal currentUser)
+        public ValidationResult ValidateCopy(string policyJson, string currentUserPartyId)
         {
             var policyJsonParsed = new DelegationPolicyJsonParser(policyJson);
             var newPolicyIssuer = policyJsonParsed.PolicyIssuer;
             var newAccessSubject = policyJsonParsed.AccessSubject;
 
-            return ValidateIssuer(currentUser.GetPartyId(), newPolicyIssuer, newAccessSubject);
+            return ValidateIssuer(currentUserPartyId, newPolicyIssuer, newAccessSubject);
         }
 
-        public async Task<ValidationResult> ValidateCreate(string policyJson, ClaimsPrincipal currentUser)
+        public async Task<ValidationResult> ValidateCreate(string policyJson, string currentUserPartyId)
         {
             var policyJsonParsed = new DelegationPolicyJsonParser(policyJson);
             var newPolicyIssuer = policyJsonParsed.PolicyIssuer;
             var newAccessSubject = policyJsonParsed.AccessSubject;
 
-            var validationResult = ValidateIssuer(currentUser.GetPartyId(), newPolicyIssuer, newAccessSubject);
+            var validationResult = ValidateIssuer(currentUserPartyId, newPolicyIssuer, newAccessSubject);
             if (!validationResult.Success)
             {
                 return validationResult;
@@ -44,7 +43,7 @@ namespace iSHARE.AuthorizationRegistry.Core
             return ValidationResult.Valid();
         }
 
-        public async Task<ValidationResult> ValidateEdit(string arId, string policyJson, ClaimsPrincipal currentUser)
+        public async Task<ValidationResult> ValidateEdit(string arId, string policyJson, string currentUserPartyId)
         {
             var policyJsonParsed = new DelegationPolicyJsonParser(policyJson);
             var newPolicyIssuer = policyJsonParsed.PolicyIssuer;
@@ -55,7 +54,7 @@ namespace iSHARE.AuthorizationRegistry.Core
                 return ValidationResult.Invalid("Policy issuer and access subject are required.");
             }
 
-            var existingEntity = await _delegationService.GetByPolicyId(arId, currentUser.GetPartyId());
+            var existingEntity = await _delegationService.GetByPolicyId(arId, currentUserPartyId);
 
             if (existingEntity.PolicyIssuer != newPolicyIssuer || existingEntity.AccessSubject != newAccessSubject)
             {

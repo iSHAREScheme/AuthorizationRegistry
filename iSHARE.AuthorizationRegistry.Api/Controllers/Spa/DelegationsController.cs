@@ -1,7 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using iSHARE.Abstractions;
+﻿using iSHARE.Abstractions;
 using iSHARE.AuthorizationRegistry.Api.ViewModels;
 using iSHARE.AuthorizationRegistry.Core.Api;
 using iSHARE.AuthorizationRegistry.Core.Requests;
@@ -9,8 +6,10 @@ using iSHARE.Identity.Api.Controllers;
 using iSHARE.IdentityServer.Delegation;
 using iSHARE.Models;
 using iSHARE.Models.DelegationMask;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace iSHARE.AuthorizationRegistry.Api.Controllers.Spa
 {
@@ -35,13 +34,9 @@ namespace iSHARE.AuthorizationRegistry.Api.Controllers.Spa
         }
 
         [HttpGet]
-        [Authorize(Roles = Constants.Roles.SchemeOwner + "," +
-                           Constants.Roles.AuthorizationRegistry.PartyAdmin + "," +
-                           Constants.Roles.AuthorizationRegistry.EntitledPartyViewer + "," +
-                           Constants.Roles.AuthorizationRegistry.EntitledPartyCreator)]
         public async Task<IActionResult> GetAll([FromQuery]DelegationQuery query)
         {
-            query.PartyId = User.GetPartyId();
+            query.PartyId = GetPartyId();
 
             var delegations = await _delegationService.GetAll(query);
 
@@ -54,25 +49,21 @@ namespace iSHARE.AuthorizationRegistry.Api.Controllers.Spa
 
         [HttpGet]
         [Route("{arId}", Name = "GetDelegation")]
-        [Authorize(Roles = Constants.Roles.SchemeOwner + "," +
-                           Constants.Roles.AuthorizationRegistry.PartyAdmin + "," +
-                           Constants.Roles.AuthorizationRegistry.EntitledPartyViewer + "," +
-                           Constants.Roles.AuthorizationRegistry.EntitledPartyCreator)]
         public async Task<IActionResult> GetByAuthorizationRegistryId(string arId)
         {
-            var delegation = await _delegationService.GetByPolicyId(arId, User.GetPartyId());
+            var delegation = await _delegationService.GetByPolicyId(arId, GetPartyId());
             return OkOrNotFound(delegation?.MapToViewModel());
         }
 
-        [HttpPost, Authorize(Roles = Constants.Roles.AuthorizationRegistry.EntitledPartyCreator)]
+        [HttpPost]
         public async Task<IActionResult> Create([FromBody]CreateOrUpdateDelegationRequest request)
         {
-            request.UserId = User.GetUserId();
-            request.PartyId = User.GetPartyId();
+            request.PartyId = GetPartyId();
+            request.UserId = GetUserId();
             try
             {
-                var validationResult = request.IsCopy ? _delegationValidationService.ValidateCopy(request.Policy, User)
-                                                  : await _delegationValidationService.ValidateCreate(request.Policy, User);
+                var validationResult = request.IsCopy ? _delegationValidationService.ValidateCopy(request.Policy, GetPartyId())
+                                                  : await _delegationValidationService.ValidateCreate(request.Policy, GetPartyId());
                 if (!validationResult.Success)
                 {
                     return BadRequest(validationResult.Error);
@@ -88,15 +79,15 @@ namespace iSHARE.AuthorizationRegistry.Api.Controllers.Spa
             return CreatedAtRoute("GetDelegation", new { arId = delegation.AuthorizationRegistryId }, delegation.MapToViewModel());
         }
 
-        [HttpPut, Route("{arId}"), Authorize(Roles = Constants.Roles.AuthorizationRegistry.EntitledPartyCreator)]
+        [HttpPut, Route("{arId}")]
         public async Task<IActionResult> Edit(string arId, [FromBody]CreateOrUpdateDelegationRequest request)
         {
-            request.UserId = User.GetUserId();
-            request.PartyId = User.GetPartyId();
+            request.PartyId = GetPartyId();
+            request.UserId = GetUserId();
 
             try
             {
-                var validationResult = await _delegationValidationService.ValidateEdit(arId, request.Policy, User);
+                var validationResult = await _delegationValidationService.ValidateEdit(arId, request.Policy, GetPartyId());
                 if (!validationResult.Success)
                 {
                     return BadRequest(validationResult.Error);
@@ -112,21 +103,17 @@ namespace iSHARE.AuthorizationRegistry.Api.Controllers.Spa
             return Ok(delegation.MapToViewModel());
         }
 
-        [HttpDelete, Route("{arId}"), Authorize(Roles = Constants.Roles.AuthorizationRegistry.EntitledPartyCreator)]
+        [HttpDelete, Route("{arId}")]
         public async Task<IActionResult> Delete(string arId)
         {
-            await _delegationService.MakeInactive(arId, User.GetUserId());
+            await _delegationService.MakeInactive(arId, GetUserId());
             return Ok();
         }
 
         [HttpGet, Route("json/{id:guid}")]
-        [Authorize(Roles = Constants.Roles.SchemeOwner + "," +
-                           Constants.Roles.AuthorizationRegistry.PartyAdmin + "," +
-                           Constants.Roles.AuthorizationRegistry.EntitledPartyViewer + "," +
-                           Constants.Roles.AuthorizationRegistry.EntitledPartyCreator)]
         public async Task<IActionResult> GetDelegationJson(Guid id)
         {
-            var delegation = await _delegationService.Get(id, User.GetPartyId());
+            var delegation = await _delegationService.Get(id, GetPartyId());
 
             if (delegation == null)
             {
@@ -138,16 +125,12 @@ namespace iSHARE.AuthorizationRegistry.Api.Controllers.Spa
         }
 
         [HttpGet, Route("history/json/{id:guid}")]
-        [Authorize(Roles = Constants.Roles.SchemeOwner + "," +
-                           Constants.Roles.AuthorizationRegistry.PartyAdmin + "," +
-                           Constants.Roles.AuthorizationRegistry.EntitledPartyViewer + "," +
-                           Constants.Roles.AuthorizationRegistry.EntitledPartyCreator)]
         public async Task<IActionResult> GetDelegationHistoryJson(Guid id)
         {
             var query = new DelegationHistoryQuery
             {
                 Id = id,
-                PartyId = User.GetPartyId()
+                PartyId = GetPartyId()
             };
 
             var delegationHistory = await _delegationService.GetDelegationHistoryById(query);
@@ -161,10 +144,6 @@ namespace iSHARE.AuthorizationRegistry.Api.Controllers.Spa
         }
 
         [HttpPost, Route("test")]
-        [Authorize(Roles = Constants.Roles.SchemeOwner + "," +
-                           Constants.Roles.AuthorizationRegistry.PartyAdmin + "," +
-                           Constants.Roles.AuthorizationRegistry.EntitledPartyViewer + "," +
-                           Constants.Roles.AuthorizationRegistry.EntitledPartyCreator)]
         public async Task<ActionResult<DelegationTranslationTestResponse>> TestDelegationTranslation([FromBody]DelegationMask delegationMask)
         {
             var validationResult = _delegationMaskValidationService.Validate(delegationMask);
@@ -182,5 +161,17 @@ namespace iSHARE.AuthorizationRegistry.Api.Controllers.Spa
             var delegationResponse = _delegationTranslateService.Translate(delegationMask, delegation.Policy);
             return delegationResponse;
         }
-    }
+
+        private string GetPartyId()
+        {
+            // return User.GetPartyId();
+            return "EU.EORI.NL000000000";
+        }
+
+        private string GetUserId()
+        {
+            // return User.GetUserId();
+            return "767ECA74-E8A9-485E-A69E-A6B99BE7C962";
+        }
+  }
 }

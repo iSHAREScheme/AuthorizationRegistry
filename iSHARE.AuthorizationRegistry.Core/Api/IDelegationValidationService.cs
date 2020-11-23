@@ -9,9 +9,9 @@ namespace iSHARE.AuthorizationRegistry.Core.Api
     /// </summary>
     public interface IDelegationValidationService
     {
-        Task<ValidationResult> ValidateCreate(string policyJson, ClaimsPrincipal currentUser);
-        Task<ValidationResult> ValidateEdit(string arId, string policyJson, ClaimsPrincipal currentUser);
-        ValidationResult ValidateCopy(string policyJson, ClaimsPrincipal currentUser);
+        Task<ValidationResult> ValidateCreate(string policyJson, string currentUserPartyId);
+        Task<ValidationResult> ValidateEdit(string arId, string policyJson, string currentUserPartyId);
+        ValidationResult ValidateCopy(string policyJson, string currentUserPartyId);
         ValidationResult ValidateIssuer(string partyId, string policyIssuer, string accessSubject);
     }
 }

@@ -25,7 +25,7 @@ export const environmentConfigurationMap: EnvironmentModel[] = [
     disablePartyUsersManagement: false,
     environmentType: EnvironmentType.Development,
     identityProvider: {
-      authorityUrl: 'http://localhost:43782/',
+      authorityUrl: 'http://localhost:43782/'
     },
     userManagement: false
   }

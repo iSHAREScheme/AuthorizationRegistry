@@ -1,5 +1,5 @@
 <app-search (action)="search($event)"></app-search>
-<button type="button" class="btn btn-primary" (click)="create()" *appAllowedForRoles="[roles.ArEntitledPartyCreator]">
+<button type="button" class="btn btn-primary" (click)="create()">
   <i class="fa fa-plus" aria-hidden="true"></i>add
 </button>
 <h3>Policies</h3>
@@ -25,15 +25,15 @@
       <td>{{policy.subject}}</td>
       <td class="actions-cell">
         <div class="actions">
-          <i *appAllowedForRoles="[roles.ArEntitledPartyCreator, roles.ArEntitledPartyViewer, roles.SchemeOwner]" class="fa fa-eye"
+          <i class="fa fa-eye"
             aria-hidden="true" (click)="view(policy)" title="View"></i>
-          <i *appAllowedForRoles="[roles.ArEntitledPartyCreator]" class="fa fa-clone" aria-hidden="true" (click)="copy(policy)"
+          <i class="fa fa-clone" aria-hidden="true" (click)="copy(policy)"
             title="Copy"></i>
-          <i *appAllowedForRoles="[roles.ArEntitledPartyCreator]" class="fa fa-pencil" aria-hidden="true" (click)="edit(policy)"
+          <i class="fa fa-pencil" aria-hidden="true" (click)="edit(policy)"
             title="Edit"></i>
-          <i *appAllowedForRoles="[roles.ArEntitledPartyCreator, roles.ArEntitledPartyViewer, roles.SchemeOwner]" class="fa fa-download"
+          <i class="fa fa-download"
             aria-hidden="true" (click)="download(policy)" title="Download"></i>
-          <i *appAllowedForRoles="[roles.ArEntitledPartyCreator]" class="fa fa-trash-o" aria-hidden="true" (click)="delete(policy)"
+          <i class="fa fa-trash-o" aria-hidden="true" (click)="delete(policy)"
             title="Delete"></i>
         </div>
       </td>
