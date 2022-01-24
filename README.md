@@ -1,6 +1,6 @@
 # iSHARE Authorization Registry
 
-**iSHARE** is a collaborative effort to improve conditions for data-sharing for organisations involved in the logistics sector. The functional scope of the iSHARE Scheme focuses on topics of identification, authentication and authorization.
+**iSHARE** is a collaborative effort to improve conditions for data-sharing for organisations within as well as across sectors. The functional scope of the iSHARE Scheme focuses on topics of identification, authentication and authorization.
 
 ## iSHARE Authorization Registry
 
