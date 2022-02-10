@@ -70,7 +70,7 @@
     "karma-coverage-istanbul-reporter": "^1.4.3",
     "karma-jasmine": "~1.1.1",
     "karma-jasmine-html-reporter": "^0.2.2",
-    "node-sass": "^4.14.1",
+    "node-sass": "^7.0.0",
     "protractor": "^5.4.4",
     "ts-node": "~5.0.1",
     "tslint": "~5.9.1",
