@@ -38,7 +38,7 @@
     "core-js": "^2.6.11",
     "font-awesome": "^4.7.0",
     "lodash": "^4.17.20",
-    "moment": "^2.22.2",
+    "moment": "^2.29.2",
     "ng-multiselect-dropdown": "^0.2.1",
     "ng2-ace-editor": "^0.3.8",
     "ng2-datepicker": "^3.1.1",
