@@ -34,7 +34,7 @@
     "alertifyjs": "^1.11.1",
     "applicationinsights-js": "^1.0.20",
     "bootstrap": "^4.5.2",
-    "chart.js": "^2.7.3",
+    "chart.js": "^2.9.4",
     "core-js": "^2.6.11",
     "font-awesome": "^4.7.0",
     "lodash": "^4.17.20",
