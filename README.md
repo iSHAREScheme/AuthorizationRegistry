@@ -1,6 +1,6 @@
 # iSHARE Authorization Registry
 
-**iSHARE** is a collaborative effort to improve conditions for data-sharing for organisations within as well as across sectors. The functional scope of the iSHARE Scheme focuses on topics of identification, authentication and authorization.
+iSHARE Trust Framework helps improve conditions for data-sharing for organisations across sectors. The functional scope of the iSHARE Framework focuses on topics of identification, authentication and authorization.
 
 ## iSHARE Authorization Registry
 
@@ -14,7 +14,7 @@ Within the iSHARE Scheme, the term Authorization Registry always refers to an ex
 
 The **Authorization Registry** is a role for which iSHARE Certification (iSHARE) is REQUIRED.
 
-The **Authorization Registry**-code that is in this repository is not a 'production-ready' Authorization Registry, meaning it has a limited set of functionalities. It can be used in proof of concepts or pilots to showcase the iSHARE Authorization protocol, however many functionalities can be improved. Furthermore, it should be noted that only the request and return made to the /delegation endpoint (as described on our [Developer Portal](https://dev.ishareworks.org)) is specified within the iSHARE standards. How  an authorization registry registers policies and translates these into delegation evidence is up to the authorization registry. This code only provides one of the options to do so.
+The **Authorization Registry**-code that is in this repository is not a 'production-ready' Authorization Registry, meaning it has a limited set of functionalities. It can be used in proof of concepts or pilots to showcase the Authorization protocol in the Framework, however many functionalities can be improved. Furthermore, it should be noted that only the request and return made to the /delegation endpoint (as described on our [Developer Portal](https://dev.ishare.eu)) is specified within the iSHARE specifications. How  an authorization registry registers policies and translates these into delegation evidence is up to the authorization registry. This code only provides one of the options to do so.
 
 ## Installation process for API
 
