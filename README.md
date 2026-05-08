@@ -10,7 +10,7 @@ The **Authorization Registry**:
 - Checks on the basis of the registered permission(s) whether a Machine Service Consumer (role) is authorized to take delivery of the requested service, and;
 - Confirms the established powers towards the Service Provider (role).
 
-Within the iSHARE Scheme, the term Authorization Registry always refers to an external Authorization Registry (not part of the Service Provider (role) or Entitled Party (role)).
+Within the iSHARE Trust Framework, the term Authorization Registry always refers to an external Authorization Registry (not part of the Service Provider (role) or Entitled Party (role)).
 
 The **Authorization Registry** is a role for which iSHARE Certification (iSHARE) is REQUIRED.
 
@@ -87,5 +87,5 @@ Run `npm start -- --project=AuthorizationRegistry`.
 
 ## API References
 
-1. https://ishareworks.atlassian.net/wiki/spaces/IS/pages/70222191/iSHARE+Scheme
-2. https://dev.ishareworks.org/
+1. https://framework.ishare.eu
+2. https://dev.ishare.eu
