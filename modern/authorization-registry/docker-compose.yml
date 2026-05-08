@@ -1,0 +1,30 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ar
+      POSTGRES_PASSWORD: ar
+      POSTGRES_DB: authorization_registry
+    ports:
+      - "5432:5432"
+    volumes:
+      - ar-pg-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ar -d authorization_registry"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build: .
+    depends_on:
+      postgres:
+        condition: service_healthy
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql://ar:ar@postgres:5432/authorization_registry?schema=public
+    ports:
+      - "8080:8080"
+
+volumes:
+  ar-pg-data:
