@@ -1,0 +1,68 @@
+name: authorization-registry-modernize
+region: ams
+
+services:
+  - name: api
+    environment_slug: docker
+    github:
+      repo: iSHAREScheme/AuthorizationRegistry
+      branch: modernize/typescript
+      deploy_on_push: true
+    dockerfile_path: Dockerfile
+    http_port: 8080
+    instance_count: 1
+    instance_size_slug: apps-s-1vcpu-1gb
+    health_check:
+      http_path: /health/ready
+    envs:
+      - key: NODE_ENV
+        scope: RUN_TIME
+        value: production
+      - key: PORT
+        scope: RUN_TIME
+        value: "8080"
+      - key: DATABASE_URL
+        scope: RUN_TIME
+        value: ${authorization-registry-db.DATABASE_URL}
+      - key: PARTY_CLIENT_ID
+        scope: RUN_TIME
+        value: REPLACE_WITH_PARTY_ID
+      - key: PARTY_NAME
+        scope: RUN_TIME
+        value: Authorization Registry
+      - key: DIGITAL_SIGNER_PRIVATE_KEY_PEM
+        scope: RUN_TIME
+        type: SECRET
+        value: REPLACE_WITH_PKCS8_PRIVATE_KEY
+      - key: DIGITAL_SIGNER_CERT_X5C_LEAF
+        scope: RUN_TIME
+        type: SECRET
+        value: REPLACE_WITH_LEAF_CERT_BASE64_DER
+      - key: DIGITAL_SIGNER_CERT_X5C_CHAIN
+        scope: RUN_TIME
+        type: SECRET
+        value: ""
+      - key: SCHEME_OWNER_BASE_URL
+        scope: RUN_TIME
+        value: https://scheme-owner.example/
+      - key: SCHEME_OWNER_CLIENT_ID
+        scope: RUN_TIME
+        value: REPLACE_WITH_SCHEME_OWNER_PARTY_ID
+      - key: SCHEME_OWNER_PUBLIC_KEY
+        scope: RUN_TIME
+        value: REPLACE_WITH_SCHEME_OWNER_PUBLIC_KEY
+      - key: ACCESS_TOKEN_TTL_SECONDS
+        scope: RUN_TIME
+        value: "3600"
+      - key: RESPONSE_JWT_TTL_SECONDS
+        scope: RUN_TIME
+        value: "30"
+      - key: ALLOW_DO_NOT_SIGN_HEADER
+        scope: RUN_TIME
+        value: "false"
+
+databases:
+  - name: authorization-registry-db
+    engine: PG
+    version: "16"
+    production: false

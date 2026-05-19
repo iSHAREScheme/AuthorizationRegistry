@@ -1,91 +1,137 @@
 # iSHARE Authorization Registry
 
-**iSHARE** is a collaborative effort to improve conditions for data-sharing for organisations within as well as across sectors. The functional scope of the iSHARE Scheme focuses on topics of identification, authentication and authorization.
+TypeScript / NestJS implementation of the iSHARE Authorization Registry.
+This branch is now a single Node service at the repository root.
 
-## iSHARE Authorization Registry
+## Stack
 
-The **Authorization Registry**:
+| Concern | Current choice |
+| --- | --- |
+| Web framework | NestJS 11 with the Express adapter |
+| OAuth2 token endpoint | Custom `/connect/token` using `jose` |
+| Persistence | Prisma 5 with PostgreSQL |
+| JWT signing | `jose` with RS256 and x5c headers |
+| JSON Schema validation | `ajv` 8 |
+| Request validation | `class-validator` and `zod` |
+| Logging | `pino` through `nestjs-pino` |
+| API docs | `@nestjs/swagger` |
+| Tests | Jest |
 
-- Manages records of Delegation and Authorization of Entitled Party (role) and/or Service Consumer (role);
-- Checks on the basis of the registered permission(s) whether a Machine Service Consumer (role) is authorized to take delivery of the requested service, and;
-- Confirms the established powers towards the Service Provider (role).
+## Running Locally
 
-Within the iSHARE Scheme, the term Authorization Registry always refers to an external Authorization Registry (not part of the Service Provider (role) or Entitled Party (role)).
+Prerequisites:
 
-The **Authorization Registry** is a role for which iSHARE Certification (iSHARE) is REQUIRED.
+- Node.js 20.11 or newer
+- PostgreSQL 14 or newer, unless you use the bundled Docker Compose setup
 
-The **Authorization Registry**-code that is in this repository is not a 'production-ready' Authorization Registry, meaning it has a limited set of functionalities. It can be used in proof of concepts or pilots to showcase the iSHARE Authorization protocol, however many functionalities can be improved. Furthermore, it should be noted that only the request and return made to the /delegation endpoint (as described on our [Developer Portal](https://dev.ishareworks.org)) is specified within the iSHARE standards. How  an authorization registry registers policies and translates these into delegation evidence is up to the authorization registry. This code only provides one of the options to do so.
+```bash
+cp .env.example .env
+# Fill in PARTY_CLIENT_ID, DIGITAL_SIGNER_PRIVATE_KEY_PEM, x5c chain, etc.
 
-## Installation process for API
+npm install
+npx prisma migrate dev
+npm run start:dev
+```
 
-### Prerequisites
+The API listens on `http://localhost:8080`. Swagger is available at
+`http://localhost:8080/swagger`.
 
-- Install [.NET Core 3.1.106 Runtime](https://dotnet.microsoft.com/download/dotnet-core/3.1) (or SDK 3.1.106 for development).
+With Docker:
 
-### Clone or download the Authorization Registry repository:
+```bash
+docker compose up --build
+```
 
-- `git clone https://github.com/iSHAREScheme/AuthorizationRegistry.git` (or download zip)
+The container runs `prisma migrate deploy` before starting the API. Use
+`/health/ready` as the readiness probe because it verifies database
+connectivity.
 
-### Setup the development environment
+## Release Gate
 
-1. Create environment variable 'ENVIRONMENT' with the value 'Development'
-2. Navigate to iSHARE.AuthorizationRegistry.Api and create a new file named 'appsettings.Development.json'
-3. Copy the content of 'appsettings.Development.json.template' into 'appsettings.Development.json' and complete all fields with the necessary information and save the changes
-4. Into appsettings.Development.json file: 
-    1. Change DigitalSigner -> PrivateKey value to the valid RSA private key value with the following format: "-----BEGIN RSA PRIVATE KEY-----\n...\n-----END RSA PRIVATE KEY-----". For this, you can use OpenSSL:
-        1. Extract the private key from the certificate: `openssl pkcs12 -in "certificate.p12" -out "certificate.key.pem" -nodes -nocerts -password pass:your_password_here`
-        2. Decrypt private key: `openssl rsa -in certificate.key.pem -out certificate.key.decr.pem`
-        3. Extract the content from `certificate.key.decr.pem` and replace the endline characters with "\n"
-    2. Change DigitalSigner -> RawPublicKey value to the valid certificate value with the following format: "-----BEGIN CERTIFICATE-----...-----END CERTIFICATE-----". For this you can use OpenSSL:
-        1. Extract .pem: `openssl pkcs12 -in certificate.p12 -clcerts -nokeys -out certificate.pem -password pass:your_password_here`
-        2. Extract the content from `certificate.pem` and remove the endline characters
-    3. Save changes
-5. Go to Resources\Development
-    1. Open certificate_authorities.json
-    2. Add the necessary certificate authorities in the following format: "-----BEGIN CERTIFICATE-----...-----END CERTIFICATE-----" (this value can be obtained from a .pem certificate by extracting the content and removing the line separators/endlines)
-    3. Save
+```bash
+npm ci
+npm run check
+docker build -t ishare-authorization-registry:modernize .
+```
 
-## Build API
+The GitHub Actions workflow runs the same Node checks, applies the Prisma
+migration against PostgreSQL 16, and fails on production dependency audit
+findings.
 
-Navigate to the local Authorization Registry repository and run `dotnet build`
+## Signing Material
 
-## Setup the database
+The service expects a PKCS#8 private key and a PEM-less x5c certificate chain.
+If your certificate bundle contains a PKCS#1 private key, convert it once:
 
-Authorization Registry is using a SQL database that is created at runtime.
-Various test records are inserted from JSON files present here
+```bash
+openssl pkcs12 -in cert.p12 -nocerts -nodes -out leaf.key.pem
+openssl pkcs8 -topk8 -in leaf.key.pem -nocrypt -out leaf.key.pkcs8.pem
+openssl pkcs12 -in cert.p12 -clcerts -nokeys -out leaf.crt.pem
+```
 
-- `iSHARE.AuthorizationRegistry.Api\Seed\Identity\Development`
-- `iSHARE.AuthorizationRegistry.Api\Seed\IdentityServer\Development`
-- `iSHARE.AuthorizationRegistry.Data\Migrations\Seed\Development`
+Use the PKCS#8 PEM as `DIGITAL_SIGNER_PRIVATE_KEY_PEM`. Export the certificate
+body without headers or line breaks as `DIGITAL_SIGNER_CERT_X5C_LEAF`.
 
-## Run process
+## API Surface
 
-1. Navigate to the local Authorization Registry repository, into iSHARE.AuthorizationRegistry.Api folder and run `dotnet run`
-2. Open a browser tab and navigate to `localhost:61433/swagger`
+| Method | Path | Auth | Description |
+| --- | --- | --- | --- |
+| POST | `/connect/token` | client assertion JWT | iSHARE OAuth2 token endpoint |
+| POST | `/delegation` | Bearer JWT | Translate a `delegation_mask` into signed evidence |
+| POST | `/policy` | Bearer JWT | Create or update a delegation policy |
+| GET | `/capabilities` | Anonymous | iSHARE capability advertisement |
+| GET | `/health` | Anonymous | Liveness probe |
+| GET | `/health/ready` | Anonymous | Database readiness probe |
 
-## Installation for SPA
+Signed responses use the iSHARE JWT envelope convention, for example:
 
-### Prerequisites
+```json
+{ "delegation_token": "<JWT>" }
+```
 
-The software you'll need before installing Authorization Registry SPA:
+## Current Status
 
-- [Node.js](https://nodejs.org/en/)
-- Angular CLI - `npm install -g @angular/cli`
+Implemented:
 
-### Install dependencies
+- Core delegation evidence, delegation mask, policy, and policy set types
+- Mask-to-evidence translation
+- Permit-rule validation
+- `previous_steps` JWT validation, including future `iat` rejection
+- Method-not-allowed responses for iSHARE endpoints
+- RS256 JWT signing with x5c headers
+- Bearer token guard for protected endpoints
+- `/connect/token`, `/delegation`, `/policy`, `/capabilities`, and `/health`
+- Prisma schema for `Delegation`, `DelegationHistory`, and `User`
+- Baseline Prisma migration and deploy-time migration command
+- Docker production image, Docker Compose test stack, and CI workflow
+- Health checks, request logging, Swagger UI, and Jest unit tests
 
-Run `npm install` inside iSHARE.Spas folder to get all dependencies downloaded locally.
+Still pending:
 
-### Run process
+- Real Scheme Owner `/trusted_list` certificate validation
+- Replacing the temporary `__bootstrap__` token shortcut in `TokenService`
+- Full Scheme Owner token acquisition for outbound iSHARE calls
+- Admin UI and admin CRUD endpoints
+- Wider Jest fixture coverage using `test/fixtures/delegation/*.json`
 
-Run `npm start -- --project=AuthorizationRegistry`.
+## Project Layout
 
-- NOTE: The Authorization Registry API must be running in order for the application to work correctly
-- NOTE: The SPA will be available by default at http://localhost:4201/admin
+```text
+src/
+  auth/          Bearer guard and current-party decorator
+  common/        filters, interceptors, pipes, health endpoint
+  config/        zod env schema and AppConfigService
+  crypto/        DigitalSigner, ResponseJwt builder, JwtBearerVerifier
+  delegation/    /delegation controller, translation, validation, schemas
+  parties/       adherence and certificate-trust facade
+  policy/        /policy controller and issuer validation
+  prisma/        PrismaService
+  scheme-owner/  outbound Scheme Owner client
+  token/         /connect/token controller and service
+  users/         /capabilities controller
+prisma/          Prisma schema
+deploy/          Test deployment notes and platform example
+test/fixtures/   iSHARE delegation JSON fixtures
+```
 
-### [Differences between the implementation and the official documentation](Differences.md)
-
-## API References
-
-1. https://ishareworks.atlassian.net/wiki/spaces/IS/pages/70222191/iSHARE+Scheme
-2. https://dev.ishareworks.org/
+See [MIGRATION.md](./MIGRATION.md) for the remaining modernization work.

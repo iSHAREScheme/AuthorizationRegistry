@@ -1,0 +1,65 @@
+// Authorization Registry Prisma schema.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              String   @id @default(uuid()) @db.Uuid
+  identityUserId  String?  @map("identity_user_id")
+  email           String?
+  partyId         String?  @map("party_id")
+  partyName       String?  @map("party_name")
+  active          Boolean  @default(true)
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  delegationsCreated   Delegation[]        @relation("DelegationCreatedBy")
+  delegationsUpdated   Delegation[]        @relation("DelegationUpdatedBy")
+  delegationHistories  DelegationHistory[] @relation("DelegationHistoryCreatedBy")
+
+  @@map("users")
+}
+
+model Delegation {
+  id                       String   @id @default(uuid()) @db.Uuid
+  authorizationRegistryId  String   @unique @map("authorization_registry_id")
+  policyIssuer             String   @map("policy_issuer")
+  accessSubject            String   @map("access_subject")
+  policy                   String   @db.Text
+  deleted                  Boolean  @default(false)
+  createdAt                DateTime @default(now()) @map("created_at")
+  updatedAt                DateTime @updatedAt @map("updated_at")
+
+  createdById String? @map("created_by_id") @db.Uuid
+  createdBy   User?   @relation("DelegationCreatedBy", fields: [createdById], references: [id], onDelete: Restrict, onUpdate: Restrict)
+
+  updatedById String? @map("updated_by_id") @db.Uuid
+  updatedBy   User?   @relation("DelegationUpdatedBy", fields: [updatedById], references: [id], onDelete: Restrict, onUpdate: Restrict)
+
+  history     DelegationHistory[]
+
+  @@index([policyIssuer, accessSubject])
+  @@index([deleted])
+  @@map("delegations")
+}
+
+model DelegationHistory {
+  id           String   @id @default(uuid()) @db.Uuid
+  delegationId String   @map("delegation_id") @db.Uuid
+  policy       String   @db.Text
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  delegation   Delegation @relation(fields: [delegationId], references: [id], onDelete: Cascade)
+
+  createdById  String?    @map("created_by_id") @db.Uuid
+  createdBy    User?      @relation("DelegationHistoryCreatedBy", fields: [createdById], references: [id], onDelete: Restrict, onUpdate: Restrict)
+
+  @@index([delegationId])
+  @@map("delegations_histories")
+}

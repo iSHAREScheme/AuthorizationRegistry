@@ -1,1 +1,0 @@
-<h3>Access denied</h3>
